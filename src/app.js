@@ -52,6 +52,6 @@ App = {
     }
 };
 
-$(window).load(function() {
+$(window).on('load', function() {
   App.initWeb3();
 });
