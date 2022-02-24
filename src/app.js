@@ -24,17 +24,33 @@ App = {
             KuoriciniDao.deployed().then(function(instance) {
                 return instance.balanceOf(accounts[0], {from: accounts[0]});
             }).then(function(result) {
+              console.log(result);              
                 $('#myKuori').text(result);
             }).catch(function(err) {
                 alert("error");
                 console.log(err.message);
             });
         });
+        
+        web3.eth.getAccounts(function(error, accounts) {
+          KuoriciniDao.deployed().then(function(instance) {
+              return instance.nameOf(accounts[0], {from: accounts[0]});
+          }).then(function(result) {
+              console.log("name is:");
+              console.log(result);
+              $('#myName').text(result);
+          }).catch(function(err) {
+              alert("error");
+              console.log(err.message);
+          });
+        });
+
       return App.bindEvents();      
     },
 
     bindEvents: function(){
       $(document).on('click', "#sendKuoriButton", App.sendKuori);
+      $(document).on('click', "#setNameButton", App.setName);
     }, 
 
     sendKuori: function(){
@@ -45,11 +61,27 @@ App = {
             }).then(function(result) {
                 App.readContract();
             }).catch(function(err) {
-                alert("error");
+                alert("Error!");
                 console.log(err.message);
             });
         });
-    }
+    },
+
+    setName: function(){
+      setName=$("#setName").val();
+      web3.eth.getAccounts(function(error, accounts) {
+          KuoriciniDao.deployed().then(function(instance) {
+              console.log("setting name "+setName);
+              return instance.nameSet(setName, {from: accounts[0]});
+          }).then(function(result) {
+              App.readContract();
+          }).catch(function(err) {
+              alert("error");
+              console.log(err.message);
+          });
+      });
+  }
+
 };
 
 $(window).on('load', function() {
