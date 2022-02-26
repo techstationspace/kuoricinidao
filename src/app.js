@@ -58,8 +58,6 @@ App = {
         web3.eth.getAccounts(function(error, accounts) {
             KuoriciniDao.deployed().then(function(instance) {
                 return instance.transfer(sendAddress, 1, {from: accounts[0]});
-            }).then(function(result) {
-                App.readContract();
             }).catch(function(err) {
                 alert("Error!");
                 console.log(err.message);
@@ -73,8 +71,6 @@ App = {
           KuoriciniDao.deployed().then(function(instance) {
               console.log("setting name "+setName);
               return instance.nameSet(setName, {from: accounts[0]});
-          }).then(function(result) {
-              App.readContract();
           }).catch(function(err) {
               alert("error");
               console.log(err.message);
