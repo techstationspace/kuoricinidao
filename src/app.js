@@ -40,7 +40,34 @@ App = {
               console.log(result);
               $('#myName').text(result);
           }).catch(function(err) {
-              alert("error");
+              alert("error Get Accounts");
+              console.log(err.message);
+          });
+        });
+/*
+        web3.eth.getAccounts(function(error, accounts) {
+          KuoriciniDao.deployed().then(function(instance) {
+              return instance.getCount({from: accounts[0]});
+          }).then(function(result) {
+              console.log("count is:");
+              console.log(result);
+              $('#myIncrement').text(result);
+          }).catch(function(err) {
+              alert("error getCount");
+              console.log(err.message);
+          });
+        });
+*/
+
+        web3.eth.getAccounts(function(error, accounts) {
+          KuoriciniDao.deployed().then(function(instance) {
+              return instance.getLeaderName({from: accounts[0]});
+          }).then(function(result) {
+              console.log("module leader is:");
+              console.log(result);
+              $('#leaderAge').text(result);
+          }).catch(function(err) {
+              alert("error Leader");
               console.log(err.message);
           });
         });
@@ -51,7 +78,20 @@ App = {
     bindEvents: function(){
       $(document).on('click', "#sendKuoriButton", App.sendKuori);
       $(document).on('click', "#setNameButton", App.setName);
+      $(document).on('click', "#setIncrement", App.getIncrement);
+      $(document).on('click', "#changeLeader", App.changeLeader);
     }, 
+
+    changeLeader: function(){
+      web3.eth.getAccounts(function(error, accounts) {
+          KuoriciniDao.deployed().then(function(instance) {
+              return instance.modifyLeader(23, "billy", {from: accounts[0]});
+          }).catch(function(err) {
+              alert("error changeledaer");
+              console.log(err.message);
+          });
+      });
+    },
 
     sendKuori: function(){
         sendAddress=$("#sendKuoriAddress").val();
@@ -76,7 +116,21 @@ App = {
               console.log(err.message);
           });
       });
-  }
+    },
+
+    getIncrement: function(){
+      web3.eth.getAccounts(function(error, accounts) {
+        KuoriciniDao.deployed().then(function(instance) {
+            return instance.counter({from: accounts[0]});
+        }).then(function(result){
+          console.log(result);
+//          $('#myIncrement').text(result);
+        }).catch(function(err) {
+            alert("error");
+            console.log(err.message);
+        });
+      });
+    }
 
 };
 
