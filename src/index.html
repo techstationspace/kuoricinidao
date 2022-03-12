@@ -6,15 +6,35 @@
   <P>Manda 1 kuoricino a: <input type="text" id="sendKuoriAddress">
      <button id="sendKuoriButton">Manda</button>
   </p>
+  <p>===============</p>
   <p>Il tuo nome e': <span id="myName"></span></p>
   <P>Setta il nome a: <input type="text" id="setName">
     <button id="setNameButton">Setta</button>
   </p>
-  <p>incremento nell'altro contratto: <span id="myIncrement"></span>    
-    <button id="setIncrement">Incrementa</button>
+  <p>===============</p>
+  <p>Crea gruppo: <input type="text" id="setGroupName">
+    <button id="createGroup">Crea</button>
   </p>
-  <p>Module leader: <span id="leaderAge"></span><span id="leaderName"></span>    
-    <button id="changeLeader">Cambialo</button>
+  <p>===============</p>
+  <p>mostra gruppo: <input type="text" id="showGroup">
+    <button id="gotoGroup">mostra</button>
+  </p>
+  <p>id:<span id="groupId"></span></p> 
+  <p>name: <span id="groupName"></span></p>
+  <p>members: <span id="groupMembers"></span></p>
+  <p>===============</p>
+  <p>Add member: <input type="text" id="addMemberAddress"> to group: <input type="text" id="addMemberId"> 
+    <button id="addMember">aggiungi indirizzo</button>
+  </p>
+  <p>===============</p>
+  <p>I miei gruppi (BROKEN): <span id="myGroups"></span>
+  <table id="groupTable">
+    <tr><th>id</th><th>nome</th><th>members</th></tr>
+    <tbody id="groupTableBody">
+    </tbody>
+  </table>
+
+    <button id="getMyGroups">Aggiorna</button>
   </p>
 
   <script src="jquery.min.js"></script>

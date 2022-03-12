@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
-import "./KuoriciniGroup.sol";
+//import "./KuoriciniGroup.sol";
 
 contract KuoriciniDao {
 
@@ -8,47 +8,66 @@ contract KuoriciniDao {
     string name;
     address[] members;
   }
-  Daogroup[] public daoGroups;
 
   mapping (address => uint) balances;
   mapping (address => string) names;
-  KuoriciniGroup kuoricinigroupContract;
+  DaoGroup[] daoGroups ;
+  event newGroup(uint id);
 
   string public symbol="KUORI";
   event Transfer(address indexed from, address indexed to, uint value);
 
-  constructor(address _addr) public {
+  constructor() public {
     balances[msg.sender] = 3500;
     names[msg.sender] = "asdrubale";
-    kuoricinigroupContract =  KuoriciniGroup(_addr);
-    daoGroups.name = "The original Group";
-    daoGroups.members[0] = msg.sender;
   }
 
-  function addGroup(string memory _name) public returns(bool){
-    Group storage new_group;
-    new_group.id = 2;
-    new_group.name = _name;
+  function addGroup(string calldata _name) public returns(bool){
+    address[] memory addr = new address[](1);
+    addr[0] = msg.sender;
+    DaoGroup memory new_group = DaoGroup({ name: _name, members: addr });
+    daoGroups.push(new_group);
+    emit newGroup(daoGroups.length);
     return true;
   }
 
   function getGroupNamefromId(uint _id) public view returns(string memory) {
-
+    return daoGroups[_id].name;
   }
 
-  function modifyLeader(uint _age, string memory _name) public returns(bool) {
-    Group storage new_first_group = first_group;
-    new_first_group.age = _age;
-    new_first_group.name = _name;
+  function getGroupAddressfromId(uint _id) public view returns(address[] memory) {
+    return daoGroups[_id].members;
+  }
+
+  function addAddresstoMembers(uint _id, address _addr) public returns(bool) {
+    uint l = daoGroups[_id].members.length;
+    address[] memory members = new address[](l+1);
+    for (uint i = 0; i < l; i++) {
+      members[i] = daoGroups[_id].members[i];
+    }
+    members[l] = _addr;
+    daoGroups[_id].members = members;
     return true;
   }
 
-  function getLeaderAge() public view returns(uint) {
-    return module_leader.age;
-  }
-
-  function getLeaderName() public view returns(string memory) {
-    return module_leader.name;
+  function myGroups() public view returns(uint[] memory) {
+    uint lg = daoGroups.length;
+    uint[] memory myGroups;
+    for (uint i = 0; i < lg; i++) {
+      uint lm = daoGroups[i].members.length;
+      for (uint q = 0; q < lm; q++) {
+        if(daoGroups[i].members[q] == msg.sender) {
+          uint gl = myGroups.length;
+          uint[] memory groups = new uint[](gl+1);
+          for (uint w = 0; w < gl; w++) {
+            groups[w] = myGroups[w];
+          }
+          groups[gl] = i;
+          myGroups = groups;
+        }
+      }
+    }
+    return myGroups;
   }
 
   function balanceOf(address owner) public view returns(uint) {
@@ -71,14 +90,5 @@ contract KuoriciniDao {
     emit Transfer(msg.sender, to, value);
     return true;
   }
-
-  function counter() public returns(bool) {
-    kuoricinigroupContract.increment();
-    return true;
-  }
-
-  function getCount() public returns(uint) {
-    return kuoricinigroupContract.getCount();
-    }
 
 }
