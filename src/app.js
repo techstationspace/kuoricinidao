@@ -31,86 +31,59 @@ async function readAccount() {
     alert("Error reading account info!");
     console.log(err);
   };
-}
-
-async function bindEvents(){
 
   $('#myAddress').text(user.address);
   $('#myName').text(user.name);
   $('#myKuori').text(user.kuori);
+}
 
+async function bindEvents(){
   $(document).on('click', "#setNameButton", setName);
   $(document).on('click', "#createGroup", createGroup);
   $(document).on('click', "#addMember", addGroupMember);
   $(document).on('click', "#homeButton", startAll);  
 }
 
-function createGroup() {
-      groupName=$("#setGroupName").val();
-      web3.eth.getAccounts(function(error, accounts) {
-        KuoriciniDao.deployed().then(function(instance) {
-          console.log("prima");
-            return instance.addGroup(groupName, {from: accounts[0]});
-        }).then(function(result) {
-            console.log("create group is:");
-            console.log(result);
-            console.log(result.logs[0].args[0]);
-            co=web3.utils.isBigNumber(result);
-            console.log("big: "+co);
-        }).catch(function(err) {
-            alert("error create Group");
-            console.log(err.message);
-        });
-      });
+async function createGroup() {
+  try {
+    groupName=$("#setGroupName").val();
+    await instance.addGroup(groupName, {from: user.address});
+    startAll();
+  } catch(err) {
+    alert("Error creating Group!");
+    console.log(err);
+  }
 }
 
-function addGroupMember() {
-      groupAddress=$("#addMemberAddress").val();
-      web3.eth.getAccounts(function(error, accounts) {
-        KuoriciniDao.deployed().then(function(instance) {
-            return instance.addAddresstoMembers(group.id, groupAddress, {from: accounts[0]});
-        }).then(function(result) {
-            console.log("create group is:");
-            console.log(result);
-            alert(result);
-        }).catch(function(err) {
-            alert("error create Group");
-            console.log(err.message);
-        });
-      });
+async function addGroupMember() {
+  try {
+    groupAddress=$("#addMemberAddress").val();
+    await instance.addAddresstoMembers(group.id, groupAddress, {from: user.address});
+    showGroup(group.id);
+  } catch(err) {
+    alert("Error adding member to group!");
+    console.log(err);
+  }
 }
 
-function getMyGroups() {
+async function getMyGroups() {
   var table=document.getElementById("myGroupsTable");
   table.innerHTML="";
-  web3.eth.getAccounts(function(error, accounts) {
-    KuoriciniDao.deployed().then(async function(instance) {
-      let myg = await instance.myGroups({from: accounts[0]});
-      console.log("myg");
-      console.log(myg);
-      myg.forEach(element => {
-        KuoriciniDao.deployed().then(async function(instance) {
-          var groupName = await instance.getGroupNamefromId(element, {from: accounts[0]});
-          var groupAddresses = await instance.getGroupAddressfromId(element, {from: accounts[0]});
+  let myg = await instance.myGroups({from: accounts[0]});
+  myg.forEach(element => {
+    KuoriciniDao.deployed().then(async function(instance) {    
+      var groupName = await instance.getGroupNamefromId(element, {from: accounts[0]});
+      var groupAddresses = await instance.getGroupAddressfromId(element, {from: accounts[0]});
 
-          newRow = table.insertRow(-1);
-          newRow.id="group_"+element;
-          newCell = newRow.insertCell(0); 
-          newCell.innerHTML=element;
-          newCell = newRow.insertCell(-1); 
-          newCell.innerHTML=groupName;
-          newCell = newRow.insertCell(-1); 
-          newCell.innerHTML=groupAddresses.length;
-
-          $(newRow).click(function() {
-            showGroup(element);
-          });
-   
-        });
+      newRow = table.insertRow(-1);
+      newRow.id="group_"+element;
+      newCell = newRow.insertCell(0); 
+      newCell.innerHTML=groupName;
+      newCell = newRow.insertCell(-1); 
+      newCell.innerHTML=groupAddresses.length;
+      $(newRow).click(function() {
+        showGroup(element);
       });
-    }).catch(function(err) {
-      alert("error my Groups");
-      console.log(err.message);
     });
   });
 }
@@ -142,27 +115,27 @@ async function showGroup(_gid) {
 
 };
 
-function sendKuori(sendAddress){
-  KuoriciniDao.deployed().then(function(instance) {
-      return instance.transfer(sendAddress, 1, {from: accounts[0]});
-  }).catch(function(err) {
-      alert("Error!");
-      console.log(err.message);
-  });
+async function sendKuori(sendAddress){
+  try {
+    await instance.transfer(sendAddress, 1, {from: accounts[0]});
+    await readAccount();    
+    showGroup(group.id);
+  } catch(err) {
+    alert("Error sending Kuori!");
+    console.log(err);
+  };
 }
 
-function setName(){
-      setName=$("#setName").val();
-      web3.eth.getAccounts(function(error, accounts) {
-          KuoriciniDao.deployed().then(function(instance) {
-              console.log("setting name "+setName);
-              return instance.nameSet(setName, {from: accounts[0]});
-          }).catch(function(err) {
-              alert("error");
-              console.log(err.message);
-          });
-      });
-    }
+async function setName() {
+  try {
+    _name=$("#setName").val();
+    await instance.nameSet(_name, {from: user.address});
+    startAll();
+  } catch(err) {
+    alert("Error setting name!");
+    console.log(err);
+  }  
+}
 
 function clearSections() {
   $("#setNameSection").hide();
@@ -175,13 +148,13 @@ async function startAll() {
 
   await initWeb3();
   await readAccount();
+
   if(user.name.length==0){
    $("#setNameSection").show();
   } else {
    $("#myGroupsSection").show();
+   getMyGroups();
   }
- 
-  getMyGroups();
 
 }
 

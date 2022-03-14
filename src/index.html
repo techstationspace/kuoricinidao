@@ -1,19 +1,23 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="ën">
+  <head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>  
 <body>
+  <div class="container">
+    
+    <header class="p-4 bg-dark text-white border-bottom">
+      <div class="" id="homeButton">KuoriciniDao</div>
+      <div class="text-end" id="myAddress"></span>      
+    </header>
 
-  <button id="homeButton">HOME</button>
-
-  <div id="welcomeSection">`
-    <p><strong>=== WELCOME! ===</strong></p>    
-    <p>Benvenuto su KuoriciniDao !</p>
-    <p>Il tuo indirizzo e': <span id="myAddress"></span></p>
-    <p>Il tuo nome e': <span id="myName"></span></p>
+  <div id="welcomeSection">
+    <p>Ciao, <span id="myName"></span></p>
     <p>kuori: <span id="myKuori"></span></p>
   </div>
 
-  <div id="setNameSection" >
-    <p><strong>=== NON HAI UN NICKNAME! ===</strong></p>
+  <div  id="setNameSection" >
+    <h5>Non hai un nickname</h5>
     Crea il tuo nickname per entrare. Riceverai 100 kuori!
     <P>Nickname: <input type="text" id="setName">
       <button id="setNameButton">Crea</button>
@@ -21,34 +25,36 @@
   </div>
 
   <div id="myGroupsSection" >
-    <p><strong>=== I MIEI GRUPPI ===</strong></p>
-    <table>
-      <tr><th>id</th><th>nome</th><th>members</th></tr>
+    <h5>I miei gruppi</h5>
+    <table class="table">
+      <tr><th>nome</th><th>members</th></tr>
       <tbody id="myGroupsTable">
       </tbody>
     </table>
     </p>
-  <p><strong>=== CREA NUOVO GRUPPO ===</strong></p>
+  <h5>Crea un nuovo gruppo</h5>
   <p>Crea gruppo: <input type="text" id="setGroupName">
     <button id="createGroup">Crea</button>
   </p>
 </div>
 
-<div id="showGroupSection" >
-  <p><strong>=== GRUPPO <span id="groupName"></span> ===</strong></p>
-  <table >
+<div class="container" id="showGroupSection" >
+  <h5>Gruppo <span id="groupName"></h5>
+  <table class="table">
     <tr><th>nome</th><th>manda un kuore</th></tr>
     <tbody id="groupTableBody">
     </tbody>
   </table>
-  <p>Aggiungi un nuovo membro del gruppo. Indirizzo: <input type="text" id="addMemberAddress"> <button id="addMember">aggiungi</button>
+  <p>Aggiungi un nuovo membro del gruppo. <br>Indirizzo: <input type="text" id="addMemberAddress"> <button id="addMember">aggiungi</button>
   </p>  
+</div>
 </div>
 
   <script src="jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
   <script src="web3.min.js"></script>
   <script src="truffle-contract.min.js"></script>
   <script src="app.js"></script>
-
 </body>
+
 </html>
