@@ -80,6 +80,7 @@ contract KuoriciniDao {
 
   function nameSet(string calldata name) public returns(bool) {
     names[msg.sender]=name;
+    balances[msg.sender] += 100;
     return true;
   }
 

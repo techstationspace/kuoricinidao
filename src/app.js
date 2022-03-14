@@ -1,121 +1,51 @@
-App = {
 
-    initWeb3: async function() {
-      if (window.ethereum) {
-        web3Provider = window.ethereum;
-        try {
-          await window.ethereum.request({ method: "eth_requestAccounts" });;
-        } catch (error) {
-          console.error("User denied account access")
-        }
-      } else {
-        alert("Ethereum provider not found!");
-      }
-      App.web3 = new Web3(web3Provider);
+async function initWeb3 () {
+  if (window.ethereum) {
+    web3Provider = window.ethereum;
+    try {
+      await window.ethereum.request({ method: "eth_requestAccounts" });;
+    } catch (error) {
+      console.error("User denied account access")
+    }
+  } else {
+    alert("Ethereum provider not found!");
+  }
+  web3 = new Web3(web3Provider);
 
-      $.getJSON('KuoriciniDao.json', function(data) {
-        KuoriciniDao = TruffleContract(data);
-        KuoriciniDao.setProvider(web3Provider);
-      });
+  await $.getJSON('KuoriciniDao.json', function(data) {
+    KuoriciniDao = TruffleContract(data);
+    KuoriciniDao.setProvider(web3Provider);
+  });
+}
 
+async function readAccount() {
+  user = {};
+  try {
+    accounts = await web3.eth.getAccounts();
+    user.address=accounts[0];      
+    instance = await KuoriciniDao.deployed();
+    let _kuori = await instance.balanceOf(user.address, {from: user.address});
+    user.kuori=_kuori["words"][0];
+    user.name = await instance.nameOf(user.address, {from: user.address});
+  } catch(err) {
+    alert("Error reading account info!");
+    console.log(err);
+  };
+}
 
-    },
+async function bindEvents(){
 
-    readAccount: function() {
-        App.web3.eth.getAccounts(function(error, accounts) {
-            $('#myAddress').text(accounts[0]);            
-            KuoriciniDao.deployed().then(function(instance) {
-                return instance.balanceOf(accounts[0], {from: accounts[0]});
-            }).then(function(result) {
-              console.log(result);              
-                $('#myKuori').text(result);
-            }).catch(function(err) {
-                alert("I cannot connect to KuoriciniDao!");
-                console.log(err.message);
-            });
-        });
-        
-        App.web3.eth.getAccounts(function(error, accounts) {
-          KuoriciniDao.deployed().then(function(instance) {
-              return instance.nameOf(accounts[0], {from: accounts[0]});
-          }).then(function(result) {
-              console.log("name is:");
-              console.log(result);
-              $('#myName').text(result);
-          }).catch(function(err) {
-              alert("error Get Accounts");
-              console.log(err.message);
-          });
-        });
-      App.getMyGroups();
-      return App.bindEvents();      
-    },
+  $('#myAddress').text(user.address);
+  $('#myName').text(user.name);
+  $('#myKuori').text(user.kuori);
 
-    bindEvents: function(){
-      $(document).on('click', "#sendKuoriButton", App.sendKuori);
-      $(document).on('click', "#setNameButton", App.setName);
-      $(document).on('click', "#gotoGroup", App.getTheGroup);
-      $(document).on('click', "#createGroup", App.createGroup);
-      $(document).on('click', "#addMember", App.addGroupMember);
-      $(document).on('click', "#getMyGroups", App.getMyGroups);
+  $(document).on('click', "#setNameButton", setName);
+  $(document).on('click', "#createGroup", createGroup);
+  $(document).on('click', "#addMember", addGroupMember);
+  $(document).on('click', "#homeButton", startAll);  
+}
 
-
-      console.log( window.location.pathname);
-/*
-      web3.eth.getAccounts(function(error, accounts) {
-        KuoriciniDao.deployed().then(function(instance) {
-          var newGroupEvent = KuoriciniDao.newGroup();
-          newGroupEvent.watch(function(error, result){
-            if (!error)
-                {
-                    console.log("got event!");
-                    console.log(result.args);
-                } else {
-                    console.log(error);
-                }
-          });
-        });
-      });
-  */    
-    }, 
-
-    getTheGroup: function() {
-       groupId=$("#showGroup").val();
-       App.getGroup(groupId);
-    },
-
-    getGroup: function(_gid) {
-      web3.eth.getAccounts(function(error, accounts) {
-        KuoriciniDao.deployed().then(function(instance) {
-            return instance.getGroupNamefromId(_gid, {from: accounts[0]});
-        }).then(function(result) {
-            console.log("group is:");
-            console.log(result);
-            $('#groupId').text(_gid);
-            $('#groupName').text(result);            
-        }).catch(function(err) {
-            alert("error get Group");
-            console.log(err.message);
-        });
-      });
-
-      web3.eth.getAccounts(function(error, accounts) {
-        KuoriciniDao.deployed().then(function(instance) {
-            return instance.getGroupAddressfromId(_gid, {from: accounts[0]});
-        }).then(function(result) {
-            console.log("members is: "+result);
-            console.log(result);
-            co=web3.utils.isBigNumber(result);
-            console.log("big: "+co);
-            $('#groupMembers').text(result);            
-        }).catch(function(err) {
-            alert("error get Group members");
-            console.log(err.message);
-        });
-      });
-    },
-
-    createGroup: function() {
+function createGroup() {
       groupName=$("#setGroupName").val();
       web3.eth.getAccounts(function(error, accounts) {
         KuoriciniDao.deployed().then(function(instance) {
@@ -132,15 +62,13 @@ App = {
             console.log(err.message);
         });
       });
+}
 
-    },
-
-    addGroupMember: function() {
-      groupId=$("#addMemberId").val();
+function addGroupMember() {
       groupAddress=$("#addMemberAddress").val();
       web3.eth.getAccounts(function(error, accounts) {
         KuoriciniDao.deployed().then(function(instance) {
-            return instance.addAddresstoMembers(groupId, groupAddress, {from: accounts[0]});
+            return instance.addAddresstoMembers(group.id, groupAddress, {from: accounts[0]});
         }).then(function(result) {
             console.log("create group is:");
             console.log(result);
@@ -150,60 +78,80 @@ App = {
             console.log(err.message);
         });
       });
+}
 
-    },
-
-    getMyGroups: function() {
-      var table=document.getElementById("groupTableBody");
-      table.innerHTML="";
-      web3.eth.getAccounts(function(error, accounts) {
+function getMyGroups() {
+  var table=document.getElementById("myGroupsTable");
+  table.innerHTML="";
+  web3.eth.getAccounts(function(error, accounts) {
+    KuoriciniDao.deployed().then(async function(instance) {
+      let myg = await instance.myGroups({from: accounts[0]});
+      console.log("myg");
+      console.log(myg);
+      myg.forEach(element => {
         KuoriciniDao.deployed().then(async function(instance) {
-          var myg = await instance.myGroups({from: accounts[0]});
-          myg.forEach(element => {
-            KuoriciniDao.deployed().then(async function(instance) {
-              var groupName = await instance.getGroupNamefromId(element, {from: accounts[0]});
-              var groupAddresses = await instance.getGroupAddressfromId(element, {from: accounts[0]});
+          var groupName = await instance.getGroupNamefromId(element, {from: accounts[0]});
+          var groupAddresses = await instance.getGroupAddressfromId(element, {from: accounts[0]});
 
-              newRow = table.insertRow(-1);
-              newCell = newRow.insertCell(0); 
-              newCell.innerHTML=element;
-              newCell = newRow.insertCell(-1); 
-              newCell.innerHTML=groupName;
-              newCell = newRow.insertCell(-1); 
-              newCell.innerHTML=groupAddresses;
+          newRow = table.insertRow(-1);
+          newRow.id="group_"+element;
+          newCell = newRow.insertCell(0); 
+          newCell.innerHTML=element;
+          newCell = newRow.insertCell(-1); 
+          newCell.innerHTML=groupName;
+          newCell = newRow.insertCell(-1); 
+          newCell.innerHTML=groupAddresses.length;
 
-/*              
-              groupAddresses.forEach(async function(addr) {
-                gid = await instance.nameOf(addr, {from: accounts[0]});
-                if(gid=="") {
-                  newCell.innerHTML=addr;
-                } else {
-                  newCell.innerHTML=gid;
-                }
-              });
-*/              
-            });
+          $(newRow).click(function() {
+            showGroup(element);
           });
-        }).catch(function(err) {
-          alert("error my Groups");
-          console.log(err.message);
+   
         });
       });
-    },
+    }).catch(function(err) {
+      alert("error my Groups");
+      console.log(err.message);
+    });
+  });
+}
 
-    sendKuori: function(){
-        sendAddress=$("#sendKuoriAddress").val();
-        web3.eth.getAccounts(function(error, accounts) {
-            KuoriciniDao.deployed().then(function(instance) {
-                return instance.transfer(sendAddress, 1, {from: accounts[0]});
-            }).catch(function(err) {
-                alert("Error!");
-                console.log(err.message);
-            });
-        });
-    },
+async function showGroup(_gid) {
+  clearSections();
+  $("#showGroupSection").show();
 
-    setName: function(){
+  group = {};
+  group.id = _gid;
+  group.name = await instance.getGroupNamefromId(_gid, {from: user.address});
+  $('#groupName').text(group.name);
+
+  group.members = await instance.getGroupAddressfromId(_gid, {from: user.address});
+  let table=document.getElementById("groupTableBody");
+  table.innerHTML="";
+  group.members.forEach(element => {
+    KuoriciniDao.deployed().then(async function(instance) {
+      _name = await instance.nameOf(element, {from: user.address});
+      newRow = table.insertRow(-1);
+      newCell = newRow.insertCell(0); 
+      newCell.innerHTML=_name; 
+      newCell = newRow.insertCell(-1);
+      if (element != user.address) {
+       newCell.innerHTML="<button onclick='sendKuori(\""+element+"\")'>manda</button>"; 
+      }
+    });
+  });
+
+};
+
+function sendKuori(sendAddress){
+  KuoriciniDao.deployed().then(function(instance) {
+      return instance.transfer(sendAddress, 1, {from: accounts[0]});
+  }).catch(function(err) {
+      alert("Error!");
+      console.log(err.message);
+  });
+}
+
+function setName(){
       setName=$("#setName").val();
       web3.eth.getAccounts(function(error, accounts) {
           KuoriciniDao.deployed().then(function(instance) {
@@ -214,15 +162,30 @@ App = {
               console.log(err.message);
           });
       });
-    },
+    }
 
+function clearSections() {
+  $("#setNameSection").hide();
+  $("#myGroupsSection").hide();
+  $("#showGroupSection").hide();
+}
 
-};
+async function startAll() {
+  clearSections();
 
-App.web3=null;  
+  await initWeb3();
+  await readAccount();
+  if(user.name.length==0){
+   $("#setNameSection").show();
+  } else {
+   $("#myGroupsSection").show();
+  }
+ 
+  getMyGroups();
 
-$(window).on('load', function() {
-  App.initWeb3();
- App.readAccount();  
+}
 
+$(window).on('load', async function() {
+  await startAll();
+  bindEvents();      
 });
