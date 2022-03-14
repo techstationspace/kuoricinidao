@@ -8,18 +8,21 @@ App = {
         } catch (error) {
           console.error("User denied account access")
         }
+      } else {
+        alert("Ethereum provider not found!");
       }
-      web3 = new Web3(web3Provider);
+      App.web3 = new Web3(web3Provider);
 
       $.getJSON('KuoriciniDao.json', function(data) {
         KuoriciniDao = TruffleContract(data);
         KuoriciniDao.setProvider(web3Provider);
       });
-      return App.readAccount();
+
+
     },
 
     readAccount: function() {
-        web3.eth.getAccounts(function(error, accounts) {
+        App.web3.eth.getAccounts(function(error, accounts) {
             $('#myAddress').text(accounts[0]);            
             KuoriciniDao.deployed().then(function(instance) {
                 return instance.balanceOf(accounts[0], {from: accounts[0]});
@@ -27,12 +30,12 @@ App = {
               console.log(result);              
                 $('#myKuori').text(result);
             }).catch(function(err) {
-                alert("error");
+                alert("I cannot connect to KuoriciniDao!");
                 console.log(err.message);
             });
         });
         
-        web3.eth.getAccounts(function(error, accounts) {
+        App.web3.eth.getAccounts(function(error, accounts) {
           KuoriciniDao.deployed().then(function(instance) {
               return instance.nameOf(accounts[0], {from: accounts[0]});
           }).then(function(result) {
@@ -216,6 +219,10 @@ App = {
 
 };
 
+App.web3=null;  
+
 $(window).on('load', function() {
   App.initWeb3();
+ App.readAccount();  
+
 });
