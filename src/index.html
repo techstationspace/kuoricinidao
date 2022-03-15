@@ -1,53 +1,81 @@
 <!DOCTYPE html>
-<html lang="ën">
+<html>
   <head>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 </head>  
 <body>
-  <div class="container">
-    
-    <header class="p-4 bg-dark text-white border-bottom">
-      <div class="" id="homeButton">KuoriciniDao</div>
-      <div class="text-end" id="myAddress"></span>      
-    </header>
-
-  <div id="welcomeSection">
-    <p>Ciao, <span id="myName"></span></p>
-    <p>kuori: <span id="myKuori"></span></p>
+<div class="container">    
+  <div class="container p-4 bg-dark text-white">
+    <div class="row justify-content-md-center">    
+      <div class="col fs-2 fw-bold" id="homeButton">Kuoricini Dao</div>
+      <div class="col text-end align-text-bottom fw-lighter" id="myAddress"></div>      
+    </div>
   </div>
 
-  <div  id="setNameSection" >
+  <div class="container p-4 bg-light">
+    <div class="row">
+      <div class="col">
+        <div class="card p-4 rounded-3 shadow-sm border-primary">Ciao, <span id="myName"></div>    
+      </div>
+      <div class="col">
+        <div class="card col p-4 rounded-3 shadow-sm border-primary">kuori: <span id="myKuori"></div>
+      </div>
+    </div>
+  </div>
+
+<div class="container p-4 bg-light" id="setNameSection" >
+  <div class="card p-4 rounded-3 shadow-sm border-primary">
     <h5>Non hai un nickname</h5>
-    Crea il tuo nickname per entrare. Riceverai 100 kuori!
+    <p>Crea il tuo nickname per entrare. Riceverai 100 kuori!</p>
     <P>Nickname: <input type="text" id="setName">
       <button id="setNameButton">Crea</button>
     </p>
   </div>
-
-  <div id="myGroupsSection" >
-    <h5>I miei gruppi</h5>
-    <table class="table">
-      <tr><th>nome</th><th>members</th></tr>
-      <tbody id="myGroupsTable">
-      </tbody>
-    </table>
-    </p>
-  <h5>Crea un nuovo gruppo</h5>
-  <p>Crea gruppo: <input type="text" id="setGroupName">
-    <button id="createGroup">Crea</button>
-  </p>
 </div>
 
-<div class="container" id="showGroupSection" >
-  <h5>Gruppo <span id="groupName"></h5>
-  <table class="table">
-    <tr><th>nome</th><th>manda un kuore</th></tr>
-    <tbody id="groupTableBody">
-    </tbody>
-  </table>
-  <p>Aggiungi un nuovo membro del gruppo. <br>Indirizzo: <input type="text" id="addMemberAddress"> <button id="addMember">aggiungi</button>
-  </p>  
+<div id="myGroupsSection">
+  <div class="container p-4 bg-light" >
+    <div class="card p-4 rounded-3 shadow-sm border-primary">
+      <h5>I miei gruppi</h5>
+      <table class="table">
+        <tr><th>nome</th><th>members</th></tr>
+        <tbody id="myGroupsTable"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="p-4 bg-light">
+    <div class="card p-4 rounded-3 shadow-sm border-primary">
+      <h5>Crea un nuovo gruppo</h5>
+      <p>Crea gruppo: <input type="text" id="setGroupName">
+        <button id="createGroup">Crea</button>
+      </p>
+    </div>
+  </div>
 </div>
+
+
+
+<div id="showGroupSection">
+  <div class="container p-4 bg-light" >
+    <div class="card p-4 rounded-3 shadow-sm border-primary">
+      <h5>Gruppo <span id="groupName">-</span></h5>
+      <table class="table">
+        <tr><th>nome</th><th>manda un kuore</th></tr>
+        <tbody id="groupTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="p-4 bg-light">
+    <div class="card p-4 rounded-3 shadow-sm border-primary">
+      <h5>Aggiungi un nuovo membro al gruppo</h5>
+      <p>Indirizzo: <input type="text" id="addMemberAddress">
+        <button id="addMember">Aggiungi</button>
+      </p>
+    </div>
+  </div>
+</div>
+
+
 </div>
 
   <script src="jquery.min.js"></script>
