@@ -77,6 +77,7 @@ async function getMyGroups() {
 
       newRow = table.insertRow(-1);
       newRow.id="group_"+element;
+      $("#group_"+element).addClass("cursor-pointer");
       newCell = newRow.insertCell(0); 
       newCell.innerHTML=groupName;
       newCell = newRow.insertCell(-1); 
