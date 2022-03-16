@@ -1,7 +1,16 @@
-tr {
+tbody {
     cursor: pointer;
 }
 
-th {
-    cursor: auto;
+#navbar {
+    background-color: #240653;
+}
+
+#homeButton {
+    cursor: pointer;
+}
+
+.container {
+    background-color: #791baa;
+
 }
