@@ -24,8 +24,6 @@ async function readAccount() {
     accounts = await web3.eth.getAccounts();
     user.address=accounts[0];      
     instance = await KuoriciniDao.deployed();
-    let _kuori = await instance.balanceOf(user.address, {from: user.address});
-    user.kuori=_kuori["words"][0];
     user.name = await instance.nameOf(user.address, {from: user.address});
   } catch(err) {
     alert("Error reading account info!");
@@ -34,7 +32,6 @@ async function readAccount() {
 
   $('#myAddress').text(user.address);
   $('#myName').text(user.name);
-  $('#myKuori').text(user.kuori);
 }
 
 async function bindEvents(){
@@ -47,7 +44,7 @@ async function bindEvents(){
 async function createGroup() {
   try {
     groupName=$("#setGroupName").val();
-    await instance.addGroup(groupName, {from: user.address});
+    await instance.createGroup(groupName, {from: user.address});
     startAll();
   } catch(err) {
     alert("Error creating Group!");
@@ -74,7 +71,6 @@ async function getMyGroups() {
     KuoriciniDao.deployed().then(async function(instance) {    
       var groupName = await instance.getGroupNamefromId(element, {from: accounts[0]});
       var groupAddresses = await instance.getGroupAddressfromId(element, {from: accounts[0]});
-
       newRow = table.insertRow(-1);
       newRow.id="group_"+element;
       $("#group_"+element).addClass("cursor-pointer");
@@ -97,6 +93,8 @@ async function showGroup(_gid) {
   group.id = _gid;
   group.name = await instance.getGroupNamefromId(_gid, {from: user.address});
   $('#groupName').text(group.name);
+  currentTokens = await groupProperties(_gid);
+  userProperties(_gid);
 
   group.members = await instance.getGroupAddressfromId(_gid, {from: user.address});
   let table=document.getElementById("groupTableBody");
@@ -107,25 +105,81 @@ async function showGroup(_gid) {
       newRow = table.insertRow(-1);
       newCell = newRow.insertCell(0); 
       newCell.innerHTML=_name; 
-      newCell = newRow.insertCell(-1);
       if (element != user.address) {
-       newCell.innerHTML="<button onclick='sendKuori(\""+element+"\")'>manda</button>"; 
+        currentTokens.forEach(tok => {
+          newCell = newRow.insertCell(-1);
+          newCell.innerHTML="<button onclick='sendToken("+tok.id+",\""+element+"\")'>"+tok.name+"</button>";
+        });
       }
+      
     });
   });
-
 };
 
-async function sendKuori(sendAddress){
+async function groupProperties(_gid) {
+  let _group = await instance.getGroup(_gid, {from: user.address});
+  let _tokenids = _group.tokenIds;
+  let table=document.getElementById("groupTokensTable");
+  cTokens = [];
+  table.innerHTML="";
+  _tokenids.forEach(element => {
+    KuoriciniDao.deployed().then(async function(instance) {
+      let _tok = await instance.getToken(element, {from: user.address});
+      newRow = table.insertRow(-1);
+      newCell = newRow.insertCell(0); 
+      newCell.innerHTML=_tok[0];
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=_tok[1]; 
+      newCell = newRow.insertCell(-1);
+      text = "<button onclick='resetToken("+element+","+_gid+")'>reset</button>";
+      newCell.innerHTML=_tok[2]+text; 
+      cTokens.push({id: element, name: _tok[0], roundSuppy: _tok[1], roundDuration: _tok[2]});
+    });
+  });
+  $("#groupRound").text(_group.roundDuration);
+  return cTokens;
+}
+
+async function userProperties(_gid) {
+  let _utokens = await instance.getUserTokens(_gid, {from: user.address});
+  let table=document.getElementById("userTokensTable");
+  table.innerHTML="";
+  _utokens.forEach(element => {
+    KuoriciniDao.deployed().then(async function(instance) {
+      let _tok = await instance.getToken(element.tokenId, {from: user.address});
+      newRow = table.insertRow(-1);
+      newCell = newRow.insertCell(0); 
+      newCell.innerHTML=_tok.name; 
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=element.gTokenBalance; 
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=element.xBalance; 
+    });
+  });
+}
+
+async function sendToken(tokenId, sendAddress){
   try {
-    await instance.transfer(sendAddress, 1, {from: accounts[0]});
+    await instance.transferToken(tokenId, sendAddress, 1, {from: accounts[0]});
     await readAccount();    
     showGroup(group.id);
   } catch(err) {
-    alert("Error sending Kuori!");
+    alert("Error sending Token!");
     console.log(err);
   };
 }
+
+async function resetToken(tokenId, groupId){
+  try {
+    await instance.resetRound(tokenId, groupId, {from: accounts[0]});
+    await readAccount();    
+    showGroup(group.id);
+  } catch(err) {
+    alert("Error resetting Token!");
+    console.log(err);
+  };
+}
+
 
 async function setName() {
   try {
