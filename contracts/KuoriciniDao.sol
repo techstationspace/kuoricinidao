@@ -29,8 +29,8 @@ contract KuoriciniDao {
   constructor() public {
     names[msg.sender] = "asdrubale";
     allTokens.push(GToken('kuori',10,1));
-    allTokens.push(GToken('matite',5,1));
-    allTokens.push(GToken('lampadine',7,1));
+    allTokens.push(GToken('matite',5,7));
+    allTokens.push(GToken('lampadine',7,30));
   }
 
   function createGroup(string calldata _name) public returns(bool) {
