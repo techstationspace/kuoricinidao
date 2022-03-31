@@ -13,6 +13,7 @@ contract KuoriciniDao {
     string name;
     uint roundSupply;
     uint roundDuration;
+    uint timestamp;
   }
 
   struct UToken {
@@ -27,19 +28,20 @@ contract KuoriciniDao {
   GToken[] allTokens;
 
   constructor() public {
-    names[msg.sender] = "asdrubale";
-    allTokens.push(GToken('kuori',10,1));
-    allTokens.push(GToken('matite',5,7));
-    allTokens.push(GToken('lampadine',7,30));
+//    names[msg.sender] = "asdrubale";
+//    allTokens.push(GToken('kuori',10,10800,block.timestamp));
+//    allTokens.push(GToken('matite',5,21600,block.timestamp));
+//    allTokens.push(GToken('lampadine',7,86400,block.timestamp));
   }
 
   function createGroup(string calldata _name) public returns(bool) {
     address[] memory addr = new address[](1);
     addr[0] = msg.sender;
-    uint[] memory defaultTokens = new uint[](3);
-    defaultTokens[0] = 0;
-    defaultTokens[1] = 2;
-    defaultTokens[2] = 1;
+    uint[] memory defaultTokens;
+//    uint[] memory defaultTokens = new uint[](3);
+//    defaultTokens[0] = 0;
+//    defaultTokens[1] = 2;
+//    defaultTokens[2] = 1;
     DaoGroup memory new_group = DaoGroup({ name: _name, members: addr, tokenIds: defaultTokens });
     daoGroups.push(new_group);
     return true;
@@ -53,6 +55,18 @@ contract KuoriciniDao {
     return daoGroups[_gid];
   }
   
+  function createGToken(string calldata _name, uint _supply, uint _duration, uint _groupId) public returns(bool){
+    allTokens.push(GToken({
+      name: _name,
+      roundSupply: _supply,
+      roundDuration: _duration,
+      timestamp: block.timestamp
+    }));
+    uint l = allTokens.length;
+    daoGroups[_groupId].tokenIds.push(l-1);
+    return true;
+  }
+
   function getUserTokens(uint _gid) public view returns(UToken[] memory) {
     uint l = daoGroups[_gid].tokenIds.length;
     UToken[] memory _userTokens = new UToken[](l);
@@ -63,6 +77,10 @@ contract KuoriciniDao {
       for (uint j = 0; j < m; j++) {
         if (userTokens[msg.sender][j].tokenId == q) {
           _userTokens[w]=userTokens[msg.sender][j];
+          uint newtime = allTokens[q].timestamp + allTokens[q].roundDuration;
+          if (block.timestamp > newtime ) {
+            _userTokens[w].xBalance = allTokens[q].roundSupply;
+          }      
           matchFound = true;
           break;
         }
@@ -89,6 +107,16 @@ contract KuoriciniDao {
     if (matchFoundSender == false){
       _tokSender = UToken({ tokenId: _tokenId, gTokenBalance: 0, xBalance: allTokens[_tokenId].roundSupply});
     }
+    
+    if (block.timestamp > (allTokens[_tokenId].timestamp + allTokens[_tokenId].roundDuration * 1 seconds) ) {
+      _tokSender.xBalance = allTokens[_tokenId].roundSupply;
+      uint _newTimestamp = allTokens[_tokenId].timestamp;
+      for (uint k = 0; _newTimestamp < block.timestamp ; k++) {
+        _newTimestamp += allTokens[_tokenId].roundDuration * k; 
+      }
+      allTokens[_tokenId].timestamp=_newTimestamp;
+    }
+    
     require(_tokSender.xBalance >= value, "non hai abbastanza token");
     UToken memory _tokReceiver;
     bool matchFoundReceiver = false;
@@ -116,7 +144,6 @@ contract KuoriciniDao {
     else {
       userTokens[receiver].push( UToken({ tokenId: _tokenId, gTokenBalance: _tokReceiver.gTokenBalance, xBalance: allTokens[_tokenId].roundSupply}));
     }
-    
     return true;
   }
 
@@ -157,6 +184,10 @@ contract KuoriciniDao {
       }
     }
     return myGroups;
+  }
+
+  function tellmeNow() public view returns (uint) {
+    return block.timestamp;
   }
 
   function nameOf(address owner) public view returns(string memory) {

@@ -8,7 +8,7 @@ async function initWeb3 () {
       console.error("User denied account access")
     }
   } else {
-    alert("Ethereum provider not found!");
+    alert("Non trovo il provider Ethereum. Hai installato Metamask?");
   }
   web3 = new Web3(web3Provider);
 
@@ -39,6 +39,22 @@ async function bindEvents(){
   $(document).on('click', "#createGroup", createGroup);
   $(document).on('click', "#addMember", addGroupMember);
   $(document).on('click', "#homeButton", startAll);  
+  $(document).on('click', "#nowButton", checkNow);  
+  $(document).on('click', "#groupSettingsButton", groupSettings);  
+}
+
+async function checkNow() {
+  $("#nowId").text("-");
+  t = parseInt(await instance.tellmeNow({from: user.address}));
+  console.log(t);
+  $("#nowId").text(t);
+  s0=parseInt(document.getElementById("stamp_0").innerHTML);
+  s1=parseInt(document.getElementById("stamp_0").innerHTML);
+  s2=parseInt(document.getElementById("stamp_0").innerHTML);
+  ts=parseInt(t);
+  $('#tok_0').text(ts-s0);
+  $('#tok_1').text(ts-s1);
+  $('#tok_2').text(ts-s2);
 }
 
 async function createGroup() {
@@ -88,6 +104,9 @@ async function getMyGroups() {
 async function showGroup(_gid) {
   clearSections();
   $("#showGroupSection").show();
+  $("#groupProperties").show();
+  $("#userBalances").show();  
+  $("#groupSettingsSection").hide();
 
   group = {};
   group.id = _gid;
@@ -105,15 +124,20 @@ async function showGroup(_gid) {
       newRow = table.insertRow(-1);
       newCell = newRow.insertCell(0); 
       newCell.innerHTML=_name; 
+      newCell = newRow.insertCell(-1);
       if (element != user.address) {
+        tokenText="";
         currentTokens.forEach(tok => {
-          newCell = newRow.insertCell(-1);
-          newCell.innerHTML="<button onclick='sendToken("+tok.id+",\""+element+"\")'>"+tok.name+"</button>";
+          tokenText+="<button class=\"btn btn-primary\"onclick='sendToken("+tok.id+",\""+element+"\")'>"+tok.name+"</button> ";
         });
+        newCell.innerHTML=tokenText;
+      } else {
+        newCell.innerHTML="non puoi mandare token a te stesso";
       }
-      
     });
   });
+
+
 };
 
 async function groupProperties(_gid) {
@@ -131,12 +155,16 @@ async function groupProperties(_gid) {
       newCell = newRow.insertCell(-1);
       newCell.innerHTML=_tok[1]; 
       newCell = newRow.insertCell(-1);
-      text = "<button onclick='resetToken("+element+","+_gid+")'>reset</button>";
-      newCell.innerHTML=_tok[2]+text; 
+      //text = "<button onclick='resetToken("+element+","+_gid+")'>reset</button>";
+      newCell.innerHTML=_tok[2];
+      newCell = newRow.insertCell(-1);
+      newCell.id="stamp_"+element;      
+      newCell.innerHTML=_tok[3]; 
+      newCell = newRow.insertCell(-1);
+      newCell.id="tok_"+element;      
       cTokens.push({id: element, name: _tok[0], roundSuppy: _tok[1], roundDuration: _tok[2]});
     });
   });
-  $("#groupRound").text(_group.roundDuration);
   return cTokens;
 }
 
@@ -157,6 +185,25 @@ async function userProperties(_gid) {
     });
   });
 }
+
+async function groupSettings() {  
+  $("#groupSettingsSection").toggle();
+}
+
+async function createToken() {
+  tokName=$("#newTokenName").val();
+  tokSupply=parseInt($("#newTokenSupply").val());
+  tokDuration=parseInt($("#newTokenDuration").val());
+  console.log(tokName);
+  console.log(tokSupply);
+  console.log(tokDuration);
+  console.log(group.id);
+  await instance.createGToken(tokName,tokSupply,tokDuration,parseInt(group.id), {from: accounts[0]});
+  $("#groupSettingsSection").hide();
+  await readAccount();    
+  showGroup(group.id);
+}
+
 
 async function sendToken(tokenId, sendAddress){
   try {
@@ -180,7 +227,6 @@ async function resetToken(tokenId, groupId){
   };
 }
 
-
 async function setName() {
   try {
     _name=$("#setName").val();
@@ -196,6 +242,9 @@ function clearSections() {
   $("#setNameSection").hide();
   $("#myGroupsSection").hide();
   $("#showGroupSection").hide();
+  $("#groupProperties").hide();
+  $("#groupSettingsSection").hide();
+  $("#userBalances").hide();  
 }
 
 async function startAll() {
@@ -205,12 +254,13 @@ async function startAll() {
   await readAccount();
 
   if(user.name.length==0){
+   $("#userPropertiesSection").hide();
    $("#setNameSection").show();
   } else {
+   $("#userPropertiesSection").show();
    $("#myGroupsSection").show();
    getMyGroups();
   }
-
 }
 
 $(window).on('load', async function() {

@@ -10,7 +10,22 @@ tbody {
     cursor: pointer;
 }
 
-.container {
+body {
     background-color: #791baa;
+/*    background-image: linear-gradient(red, yellow);*/
+}
 
+button {
+    width: 6rem;
+}
+
+.card-header {
+}
+
+.btn-primary {
+    background-color: #791baa;
+}
+
+.btn-primary:hover {
+    background-color: #240653;
 }
