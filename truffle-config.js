@@ -17,8 +17,8 @@
  * phrase from a file you've .gitignored so it doesn't accidentally become public.
  *
  */
-const { projectId, mnemonic } = require('./secrets.json');
-const HDWalletProvider = require('@truffle/hdwallet-provider');
+// const { projectId, mnemonic } = require('./secrets.json');
+// const HDWalletProvider = require('@truffle/hdwallet-provider');
 //
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();
@@ -42,7 +42,7 @@ module.exports = {
     // options below to some value.
     //
     development: {
-      host: "192.168.1.15",     // Localhost (default: none)
+      host: "192.168.1.7",     // Localhost (default: none)
       port: 7545,            // Standard Ethereum port (default: none)
       network_id: "*",       // Any network (default: none)
      },
