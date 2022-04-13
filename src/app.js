@@ -1,28 +1,27 @@
 
-async function initWeb3() {
-  web3 = new Web3(window.ethereum);
+async function init() {
+web3 = new Web3(window.ethereum);
 
-  await $.getJSON('KuoriciniDao.json', function(data) {
+$.getJSON("KuoriciniDao.json", function(data){
     KuoriciniDao = TruffleContract(data);
     KuoriciniDao.setProvider(window.ethereum);
-  });
+});
 
-  accounts = await web3.eth.getAccounts();
-  $("#myAddress").text(accounts[0]);
+accounts = await web3.eth.getAccounts();
+$("#myAddress").text(accounts[0]);
 
-  instance = await KuoriciniDao.deployed();
-  balance = await instance.balanceOf(accounts[0], {from: accounts[0]});
-  $("#myKuori").text(balance);
+instance = await KuoriciniDao.deployed();
+bal = await instance.balanceOf(accounts[0] , {from: accounts[0]});
 
-}
-
-async function sendKuori(){
-  addr = $("#sendKuoriAddress").val();
-  await instance.transfer(addr, 1, {from: accounts[0]});
+$("#myKuori").text(bal);
 
 }
 
+async function sendKuori() {
+    to = $("#sendAddress").val();
+    await instance.transfer(to, 1 , {from: accounts[0]});
 
-initWeb3();
-$(document).on("click", "#sendKuoriButton", sendKuori);
+}
 
+init();
+$(document).on("click", "#sendKuori", sendKuori);

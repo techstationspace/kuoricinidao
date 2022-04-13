@@ -168,6 +168,7 @@
     "universalify": "^0.1.2",
     "unpipe": "^1.0.0",
     "utils-merge": "^1.0.1",
+    "web3": "^1.7.1",
     "which-module": "^2.0.0",
     "wrap-ansi": "^6.2.0",
     "ws": "^7.5.7",
