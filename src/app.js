@@ -41,21 +41,32 @@ async function bindEvents(){
   $(document).on('click', "#homeButton", startAll);  
   $(document).on('click', "#nowButton", checkNow);  
   $(document).on('click', "#groupSettingsButton", groupSettings);  
+  $(document).on('click', "#addCandidate", addGroupCandidate);  
 }
 
 async function checkNow() {
+  // this function is only debuigging
   $("#nowId").text("-");
   t = parseInt(await instance.tellmeNow({from: user.address}));
   console.log(t);
   $("#nowId").text(t);
-  s0=parseInt(document.getElementById("stamp_0").innerHTML);
-  s1=parseInt(document.getElementById("stamp_0").innerHTML);
-  s2=parseInt(document.getElementById("stamp_0").innerHTML);
   ts=parseInt(t);
+  s0=parseInt(document.getElementById("stamp_0").innerHTML);
   $('#tok_0').text(ts-s0);
+  s1=parseInt(document.getElementById("stamp_1").innerHTML);
   $('#tok_1').text(ts-s1);
-  $('#tok_2').text(ts-s2);
+//  s2=parseInt(document.getElementById("stamp_2").innerHTML);
+//  $('#tok_2').text(ts-s2);
+//  s3=parseInt(document.getElementById("stamp_3").innerHTML);
+//  $('#tok_3').text(ts-s3);
+  s4=parseInt(document.getElementById("stamp_4").innerHTML);
+  $('#tok_4').text(ts-s4);
+//  s5=parseInt(document.getElementById("stamp_5").innerHTML);
+//  $('#tok_5').text(ts-s5);
+//  s6=parseInt(document.getElementById("stamp_6").innerHTML);
+//  $('#tok_6').text(ts-s6);
 }
+
 
 async function createGroup() {
   try {
@@ -71,13 +82,27 @@ async function createGroup() {
 async function addGroupMember() {
   try {
     groupAddress=$("#addMemberAddress").val();
-    await instance.addAddresstoMembers(group.id, groupAddress, {from: user.address});
+    await instance.addCandidate(group.id, groupAddress, {from: user.address});
     showGroup(group.id);
   } catch(err) {
     alert("Error adding member to group!");
     console.log(err);
   }
 }
+
+async function addGroupCandidate() {
+  try {
+    groupAddress=$("#addMemberAddress").val();
+    console.log(group.id);
+    console.log(groupAddress);
+    await instance.addCandidate(group.id, groupAddress, {from: user.address});
+    showGroup(group.id);
+  } catch(err) {
+    alert("Error adding candidate to group!");
+    console.log(err);
+  }
+}
+
 
 async function getMyGroups() {
   var table=document.getElementById("myGroupsTable");
@@ -137,8 +162,37 @@ async function showGroup(_gid) {
     });
   });
 
-
+  candidates = await instance.getGroupCandidates(_gid, {from: user.address});
+  let ctable=document.getElementById("candidatesTableBody");
+  ctable.innerHTML="";
+  candidates.forEach(element => {
+    KuoriciniDao.deployed().then(async function(instance) {
+      _name = await instance.nameOf(element.candidateAddress, {from: user.address});
+      newRow = ctable.insertRow(-1);
+      newCell = newRow.insertCell(0); 
+      newCell.innerHTML=_name; 
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=element.candidateAddress; 
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=element.votes;
+      newCell = newRow.insertCell(-1);
+      if (element.voters.includes(user.address)) {
+        voteText="hai gia' votato";
+      }
+      else {
+        voteText="<button class=\"btn btn-primary\" onclick='voteCandidate("+group.id+",\""+element.candidateAddress+"\",1)'>yay</button> ";
+        voteText+="<button class=\"btn btn-primary\" onclick='voteCandidate("+group.id+",\""+element.candidateAddress+"\",-1)'>ney</button> ";
+      }
+      newCell.innerHTML=voteText;
+    });
+  });
 };
+
+async function voteCandidate(gid,candidateAddress,vote) {
+  await instance.voteCandidate(gid, candidateAddress, vote, {from: user.address});
+  await readAccount();    
+  showGroup(group.id);
+}
 
 async function groupProperties(_gid) {
   let _group = await instance.getGroup(_gid, {from: user.address});
@@ -165,6 +219,8 @@ async function groupProperties(_gid) {
       cTokens.push({id: element, name: _tok[0], roundSuppy: _tok[1], roundDuration: _tok[2]});
     });
   });
+  $('#voteThreshold').text(parseInt(_group.voteThreshold)*10+"%");
+
   return cTokens;
 }
 

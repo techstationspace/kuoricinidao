@@ -1,12 +1,22 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import "./Voting.sol";
+
 contract KuoriciniDao {
 
   struct DaoGroup {
     string name;
     address[] members;
     uint[] tokenIds;
+    uint[] candidatesIds;
+    uint voteThreshold;
+  }
+  
+  struct Candidate {
+    address candidateAddress;
+    int votes;
+    address[] voters;
   }
 
   struct GToken {
@@ -26,34 +36,36 @@ contract KuoriciniDao {
   mapping (address => UToken[]) userTokens;
   DaoGroup[] daoGroups;
   GToken[] allTokens;
+  Candidate[] allCandidates;
 
   constructor() public {
-//    names[msg.sender] = "asdrubale";
-//    allTokens.push(GToken('kuori',10,10800,block.timestamp));
-//    allTokens.push(GToken('matite',5,21600,block.timestamp));
-//    allTokens.push(GToken('lampadine',7,86400,block.timestamp));
   }
 
   function createGroup(string calldata _name) public returns(bool) {
     address[] memory addr = new address[](1);
     addr[0] = msg.sender;
     uint[] memory defaultTokens;
-//    uint[] memory defaultTokens = new uint[](3);
-//    defaultTokens[0] = 0;
-//    defaultTokens[1] = 2;
-//    defaultTokens[2] = 1;
-    DaoGroup memory new_group = DaoGroup({ name: _name, members: addr, tokenIds: defaultTokens });
+    uint[] memory defaultCandidates;
+    uint threshold = 5;
+    DaoGroup memory new_group = DaoGroup({ name: _name, members: addr, tokenIds: defaultTokens, candidatesIds: defaultCandidates, voteThreshold: threshold });
     daoGroups.push(new_group);
     return true;
-  }
-
-  function getToken(uint _tokenid) public view returns(GToken memory) {
-    return allTokens[_tokenid];
   }
 
   function getGroup(uint _gid) public view returns(DaoGroup memory) {
     return daoGroups[_gid];
   }
+
+
+/*
+*   Tokens
+*
+*/
+
+  function getToken(uint _tokenid) public view returns(GToken memory) {
+    return allTokens[_tokenid];
+  }
+
   
   function createGToken(string calldata _name, uint _supply, uint _duration, uint _groupId) public returns(bool){
     allTokens.push(GToken({
@@ -91,6 +103,8 @@ contract KuoriciniDao {
     }
     return _userTokens;
   }
+
+
 
   function transferToken(uint _tokenId, address receiver, uint value) public returns(bool) {
     UToken memory _tokSender;
@@ -155,7 +169,90 @@ contract KuoriciniDao {
     return daoGroups[_id].members;
   }
 
+/*  
+*   Candidates
+*
+*/
+
+  function addCandidate(uint _gid, address candAddr) public returns(bool) {
+    require(!isAddressInGroup(_gid, candAddr), "member already present!");
+    // todo: check that group exists
+    // todo: check that msg.sender is allowed to add
+    // check if candidate already present in current candidate list
+    uint l = daoGroups[_gid].candidatesIds.length;
+    uint[] memory candidatesIds = new uint[](l+1);
+    for (uint i = 0; i < l; i++) {
+      candidatesIds[i] = daoGroups[_gid].candidatesIds[i];
+      require(allCandidates[candidatesIds[i]].candidateAddress != candAddr, "candidate already added!");
+    }
+    // generate a new candidate
+    address[] memory vot = new address[](0);
+    allCandidates.push(Candidate({
+      candidateAddress: candAddr,
+      votes: 0,
+      voters: vot
+    }));
+    // update candidate list in the group
+    candidatesIds[l] = allCandidates.length-1;
+    daoGroups[_gid].candidatesIds = candidatesIds;
+
+    return true;
+  }
+  
+  function voteCandidate(uint gid, address candAddr, int vote) public returns(bool) {
+    // todo: check if msg.sender eligible to cast vote
+    // find candidate 
+    uint l = daoGroups[gid].candidatesIds.length;
+    Candidate memory candidate;
+    uint candidateId;
+    for (uint i = 0; i < l; i++) {
+      uint c = daoGroups[gid].candidatesIds[i];
+      if (allCandidates[c].candidateAddress == candAddr) {
+        candidate = allCandidates[c];
+        candidateId = c;
+      }
+      break;
+    }
+    // assign vote
+    if (vote > 0) {
+      candidate.votes += 1;
+    }
+    else {
+      candidate.votes -= 1;
+    }
+    // add voter
+    l = candidate.voters.length;
+    address[] memory v = new address[](l+1);
+    for (uint i = 0; i < l; i++) {
+      v[i]=candidate.voters[i];
+    }
+    v[l]=msg.sender;
+    candidate.voters=v;
+    // todo: check if threshold is passed and add move candidate to member
+    // **
+    // write on chain
+    allCandidates[candidateId] = candidate;    
+    return true;
+  }
+
+  function getGroupCandidates(uint gid) public view returns(Candidate[] memory) {
+    // todo: check that group exists and msg.sender is allowed to get this info
+    uint l = daoGroups[gid].candidatesIds.length;
+    Candidate[] memory candidates = new Candidate[](l);
+    for (uint i = 0; i < l; i++) {
+      uint c = daoGroups[gid].candidatesIds[i];
+      candidates[i] = allCandidates[c];
+    }
+    return candidates;
+  }
+
+/*
+*
+*   Group Members
+*/
+
   function addAddresstoMembers(uint _id, address _addr) public returns(bool) {
+    require(!isAddressInGroup(_id, _addr), "member already present!" );
     uint l = daoGroups[_id].members.length;
     address[] memory members = new address[](l+1);
     for (uint i = 0; i < l; i++) {
@@ -164,6 +261,17 @@ contract KuoriciniDao {
     members[l] = _addr;
     daoGroups[_id].members = members;
     return true;
+  }
+
+  function isAddressInGroup(uint gid, address addr) private returns(bool) {
+    bool exists = false;
+    for (uint i = 0; i < daoGroups[gid].members.length; i++) {
+      if( daoGroups[gid].members[i] == addr ) {
+        exists=true;
+        break;
+      }
+    }
+    return exists;
   }
 
   function myGroups() public view returns(uint[] memory) {
@@ -186,9 +294,6 @@ contract KuoriciniDao {
     return myGroups;
   }
 
-  function tellmeNow() public view returns (uint) {
-    return block.timestamp;
-  }
 
   function nameOf(address owner) public view returns(string memory) {
     return names[owner];
@@ -197,6 +302,15 @@ contract KuoriciniDao {
   function nameSet(string calldata name) public returns(bool) {
     names[msg.sender]=name;
     return true;
+  }
+
+/*
+*   Round functions that probably should be removed
+*    
+*/
+
+  function tellmeNow() public view returns (uint) {
+    return block.timestamp;
   }
 
   function resetRound(uint _tokenId, uint _groupId) public returns(bool) {

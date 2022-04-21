@@ -29,7 +29,12 @@
       <div class="col">
         <div class="card p-4 rounded-3 shadow-sm border-primary" id="groupProperties">
           <h5>Proprietà di questo gruppo </h5>
-          <table class="table table-hover" >
+          <div class="row">
+            <div class="col">
+            Soglia di voto: <span id="voteThreshold">-</span>
+          </div>
+        </div>
+        <table class="table table-hover" >
             <thead>          
               <tr><th>Nome</th><th>Supply</th><th>Round</th><th>Timestamp</th><th>Diff</th></tr>
             </thead>
@@ -38,11 +43,11 @@
           <div class="row">
             <div class="col">
               <button id="groupSettingsButton" class="btn btn-primary">settings</button>
+            </div>
+            <div class="col">
+              Time debug: <span id="nowId">-</span> <button id="nowButton" >refresh</button> 
+            </div>
           </div>
-          <div class="col">
-            Time debug: <span id="nowId">-</span> <button id="nowButton" >refresh</button> 
-          </div>
-        </div>
         </div>
       </div>
     </div>
@@ -144,11 +149,24 @@
     </div>
   </div>
   <div class="p-4"></div>
-  <div class="card p-4 rounded-3 shadow-sm border-primary">
+  <div class="card p-4 rounded-3 border-primary">
+    <div class="card-header">Candidati al gruppo (soglia: <span id="candidatesThreshold"></span> voti)</div>
+    <div class="card-body">
+      <table class="table table-hover">
+        <thead>
+          <tr><th>nome</th><th>indirizzo</th><th>voti</th><th>vota</th></tr>
+        </thead>
+        <tbody id="candidatesTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="p-4"></div>
+  <div class="card p-4 rounded-3 border-primary">
     <div class="card-header">Aggiungi un nuovo membro al gruppo</div>
     <div class="card-body">
       Indirizzo: <input type="text" id="addMemberAddress">
       <button class="btn btn-primary" id="addMember">Aggiungi</button>
+      <button class="btn btn-primary" id="addCandidate">Candida</button>
     </div>
   </div>
 </div>

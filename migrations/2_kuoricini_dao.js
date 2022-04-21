@@ -1,7 +1,9 @@
 const KuoriciniDao = artifacts.require("KuoriciniDao");
+const Voting = artifacts.require("Voting");
 
 module.exports = function (deployer) {
-
-  return deployer.deploy(KuoriciniDao)
+  deployer.deploy(KuoriciniDao).then(function() {
+    return deployer.deploy(Voting, KuoriciniDao.address)
+  });
      
 };  
