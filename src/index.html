@@ -10,6 +10,25 @@
     <hr>
     <p>Crea un nuovo gruppo: <input type="text" id="newGroupName"><button id="newGroupButton">crea</button></p>
     <p>Tutti gruppi: <span id="theGroups">-</span></p>
+    <hr>
+    I miei gruppi
+    <table>
+        <thead>
+            <tr><th>ID</th><th>NOME</th><th>NUMERO MEMBRI</th></tr>
+        </thead>
+        <tbody id="myGroupsTable"></tbody>
+    </table>
+    <hr>
+    Gruppo: <span id="theGroup">-</span>
+    <table>
+        <thead>
+            <tr><th>INDIRIZZO</th><th>NOME</th><th>MANDA UN KUORE</th></tr>
+        </thead>
+        <tbody id="theGroupTable"></tbody>
+    </table>
+    Aggiungi l'indirizzo <input type="text" id="addAddress"> al gruppo <span id="theGroup">-</span>
+
+
 
     <script src="jquery.min.js"></script>
     <script src="truffle-contract.min.js"></script>
