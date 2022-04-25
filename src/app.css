@@ -1,0 +1,24 @@
+body {
+    background-color: purple;
+}
+
+#navBar {
+    background-color: #791baa;
+
+}
+
+button {
+    width: 6rem;
+}
+
+tbody {
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-color: purple;
+}
+
+#homeButton {
+    cursor: pointer;
+}

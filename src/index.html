@@ -1,38 +1,74 @@
 <html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="app.css">
+</head>
 <body>
-    <p>Benvenuto a KuoriciniDao !</p>
-    <p>Il tuo indirizzo e': <span id="myAddress"></span></p>
-    <p>Quanti kuoricini hai: <span id="myKuori"></span></p>
-    <p>Manda un kuoricino a <input type="text" id="sendAddress"><button id="sendKuori">manda</button></p>
-    <hr>
-    <p>Il tuo nome e': <span id="myName">-</span></p>
-    <p>Setta il tuo nome a: <input type="text" id="setName"><button id="setNameButton">setta</button></p>
-    <hr>
-    <p>Crea un nuovo gruppo: <input type="text" id="newGroupName"><button id="newGroupButton">crea</button></p>
-    <p>Tutti gruppi: <span id="theGroups">-</span></p>
-    <hr>
-    I miei gruppi
-    <table>
-        <thead>
-            <tr><th>ID</th><th>NOME</th><th>NUMERO MEMBRI</th></tr>
-        </thead>
-        <tbody id="myGroupsTable"></tbody>
-    </table>
-    <hr>
-    Gruppo: <span id="theGroup">-</span>
-    <table>
-        <thead>
-            <tr><th>INDIRIZZO</th><th>NOME</th><th>MANDA UN KUORE</th></tr>
-        </thead>
-        <tbody id="theGroupTable"></tbody>
-    </table>
-    Aggiungi l'indirizzo <input type="text" id="addAddress"> al gruppo <span id="theGroup">-</span>
 
+    <div class="container-fluid p-4 text-white"  id="navBar">
+        <div class="row justify-conter-md-center">
+            <div class="col fs-2 fw-bold text-decoration-underline" id="homeButton">Benvenuto a KuoriciniDao !</div>
+            <div class="col fs-5 text-end align-middle"><span id="myAddress"></span></div>
+        </div>
+    </div>
 
+    <div class="container-fluid p-4"  id="welcomeContainer">
+        <div class="card p-4 rounded-3 shadow-sm border-primary">
+            <div class="row">
+                <div class="col-3">Il tuo nome e':</div> 
+                <div class="col-9"><span id="myName">-</span></div>
+            </div>
+            <div class="row">
+                <div class="col-3">Quanti kuoricini hai:</div>
+                <div class="col-9"><span id="myKuori"></span></div>
+            </div>
+            <div class="row">
+                <div class="col-3">Setta il tuo nome a: </div>
+                <div class="col-5"><input type="text" id="setName"></div>
+                <div class="col-4"><button class="btn btn-primary" id="setNameButton">setta</button></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container-fluid p-4"  id="myGroupsContainer">
+        <div class="card p-4 rounded-3 shadow-sm border-primary">
+            <div class="row">
+                <div class="col-3">Crea un nuovo gruppo:</div>
+                <div class="col-5"><input type="text" id="newGroupName"></div>
+                <div class="col-4"><button  class="btn btn-primary" id="newGroupButton">crea</button></div>
+            </div>
+            <h5>I miei gruppi</h5>
+            <table class="table">
+                <thead>
+                    <tr><th>ID</th><th>NOME</th><th>NUMERO MEMBRI</th></tr>
+                </thead>
+                <tbody id="myGroupsTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="container-fluid p-4" id="singleGroupContainer">
+        <div class="card p-4 rounded-3 shadow-sm border-primary">
+            <h5>Gruppo: <span id="theGroup">-</span></h5>
+            <table  class="table">
+                <thead>
+                    <tr><th>INDIRIZZO</th><th>NOME</th><th>MANDA UN KUORE</th></tr>
+                </thead>
+                <tbody id="theGroupTable"></tbody>
+            </table>
+            <div class="row">
+                <div class="col-3">Aggiungi al gruppo l'indirizzo</div>
+                <div class="col-5"><input type="text" id="addAddress"></div>
+                <div class="col-4"><button  class="btn btn-primary" id="addAddressButton">aggiungi</button></div>
+            </div>
+              
+        </div>
+    </div>
 
     <script src="jquery.min.js"></script>
     <script src="truffle-contract.min.js"></script>
     <script src="web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script src="app.js"></script>
 </body>
 </html>

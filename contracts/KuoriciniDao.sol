@@ -17,7 +17,7 @@ mapping (address => uint[] ) userGroups;
 string public symbol="KUORI";
 event Transfer(address indexed from, address indexed to, uint value);
 
-constructor() {
+constructor() public {
   balances[msg.sender] = 10;
 }
 
