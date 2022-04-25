@@ -56,27 +56,18 @@ contract KuoriciniDao {
   function getGroup(uint _gid) public view returns(DaoGroup memory) {
     return daoGroups[_gid];
   }
-
-  function random(string calldata name) public view returns (uint) {
-    return uint(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender, name))) % 1000;
-  }
-
-  function random() public view returns (uint) {
-    return uint(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender))) % 20;
-}
-
-function test() public payable returns(string memory) {
-  string memory allchars = "abcdefghilmnopqrstuvz";
-  bytes memory byteschars = bytes(allchars);
-//   bytes memory newchars = new bytes(9);
-//   for (uint i=0; i< 10; i++) {
-//     uint r = random();
-//     newchars[i] = byteschars[r];
-//   }
-//   return string(newchars);
-  return string(byteschars);
-  }
-
+  
+  function invitationLink(string memory name) public view returns (string memory) {
+      uint memory invLength = 15;
+      string memory newString = new string(invLength);
+      bytes memory finalString = bytes(newString);
+      bytes memory originString = "abcdefghijklmnopqrstuvxyz1234567890";
+      for (uint i=0; i< invLength-1; i++) {
+          uint r = uint(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender, string(finalString), name))) % originString.length;
+          finalString[i] = originString[r];
+      }
+      return string(finalString);
+  }    
 
 /*
 *   Tokens
