@@ -15,7 +15,7 @@ contract KuoriciniDao {
   
   struct Candidate {
     address candidateAddress;
-    int votes;
+    uint votes;
     address[] voters;
   }
 
@@ -34,6 +34,7 @@ contract KuoriciniDao {
 
   mapping (address => string) names;
   mapping (address => UToken[]) userTokens;
+//  mapping (string )
   DaoGroup[] daoGroups;
   GToken[] allTokens;
   Candidate[] allCandidates;
@@ -54,6 +55,26 @@ contract KuoriciniDao {
 
   function getGroup(uint _gid) public view returns(DaoGroup memory) {
     return daoGroups[_gid];
+  }
+
+  function random(string calldata name) public view returns (uint) {
+    return uint(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender, name))) % 1000;
+  }
+
+  function random() public view returns (uint) {
+    return uint(keccak256(abi.encodePacked(block.timestamp, block.difficulty, msg.sender))) % 20;
+}
+
+function test() public payable returns(string memory) {
+  string memory allchars = "abcdefghilmnopqrstuvz";
+  bytes memory byteschars = bytes(allchars);
+//   bytes memory newchars = new bytes(9);
+//   for (uint i=0; i< 10; i++) {
+//     uint r = random();
+//     newchars[i] = byteschars[r];
+//   }
+//   return string(newchars);
+  return string(byteschars);
   }
 
 
@@ -216,9 +237,6 @@ contract KuoriciniDao {
     // assign vote
     if (vote > 0) {
       candidate.votes += 1;
-    }
-    else {
-      candidate.votes -= 1;
     }
     // add voter
     l = candidate.voters.length;
