@@ -37,15 +37,13 @@ async function readAccount() {
 async function bindEvents(){
   $(document).on('click', "#setNameButton", setName);
   $(document).on('click', "#createGroup", createGroup);
-  $(document).on('click', "#addMember", addGroupMember);
   $(document).on('click', "#homeButton", startAll);  
-  $(document).on('click', "#nowButton", checkNow);  
+//  $(document).on('click', "#nowButton", checkNow);  
   $(document).on('click', "#groupSettingsButton", groupSettings);  
-  $(document).on('click', "#addCandidate", addGroupCandidate);  
 }
 
 async function checkNow() {
-  // this function is only debuigging
+  // to be removed
   $("#nowId").text("-");
   t = parseInt(await instance.tellmeNow({from: user.address}));
   console.log(t);
@@ -79,30 +77,6 @@ async function createGroup() {
   }
 }
 
-async function addGroupMember() {
-  try {
-    groupAddress=$("#addMemberAddress").val();
-    await instance.addCandidate(group.id, groupAddress, {from: user.address});
-    showGroup(group.id);
-  } catch(err) {
-    alert("Error adding member to group!");
-    console.log(err);
-  }
-}
-
-async function addGroupCandidate() {
-  try {
-    groupAddress=$("#addMemberAddress").val();
-    console.log(group.id);
-    console.log(groupAddress);
-    await instance.addCandidate(group.id, groupAddress, {from: user.address});
-    showGroup(group.id);
-  } catch(err) {
-    alert("Error adding candidate to group!");
-    console.log(err);
-  }
-}
-
 
 async function getMyGroups() {
   var table=document.getElementById("myGroupsTable");
@@ -132,6 +106,7 @@ async function showGroup(_gid) {
   $("#groupProperties").show();
   $("#userBalances").show();  
   $("#groupSettingsSection").hide();
+  $("#myGroupBalance").show();    
 
   group = {};
   group.id = _gid;
@@ -186,6 +161,12 @@ async function showGroup(_gid) {
       newCell.innerHTML=voteText;
     });
   });
+  // todo : fix mess btween getGroup and groupname as per videos branch is more clean
+  let _group = await instance.getGroup(_gid, {from: user.address});  
+  $('#voteThreshold').text(parseInt(_group.voteThreshold)*10+"%");
+  $('#invitationLink').text(window.location.origin+"/?invite="+_group.invitationLink);
+  thresh = parseInt(group.members.length * _group.voteThreshold / 10) +1 ;
+  $("#candidatesThreshold").text(thresh);
 };
 
 async function voteCandidate(gid,candidateAddress,vote) {
@@ -209,17 +190,10 @@ async function groupProperties(_gid) {
       newCell = newRow.insertCell(-1);
       newCell.innerHTML=_tok[1]; 
       newCell = newRow.insertCell(-1);
-      //text = "<button onclick='resetToken("+element+","+_gid+")'>reset</button>";
-      newCell.innerHTML=_tok[2];
-      newCell = newRow.insertCell(-1);
-      newCell.id="stamp_"+element;      
-      newCell.innerHTML=_tok[3]; 
-      newCell = newRow.insertCell(-1);
-      newCell.id="tok_"+element;      
+      newCell.innerHTML=_tok[2]/86400+" giorni";
       cTokens.push({id: element, name: _tok[0], roundSuppy: _tok[1], roundDuration: _tok[2]});
     });
   });
-  $('#voteThreshold').text(parseInt(_group.voteThreshold)*10+"%");
 
   return cTokens;
 }
@@ -249,7 +223,7 @@ async function groupSettings() {
 async function createToken() {
   tokName=$("#newTokenName").val();
   tokSupply=parseInt($("#newTokenSupply").val());
-  tokDuration=parseInt($("#newTokenDuration").val());
+  tokDuration=parseInt($("#newTokenDuration").val())*86400;
   console.log(tokName);
   console.log(tokSupply);
   console.log(tokDuration);
@@ -295,20 +269,51 @@ async function setName() {
 }
 
 function clearSections() {
-  $("#setNameSection").hide();
-  $("#myGroupsSection").hide();
+  $(".start-hidden").hide();
+/*  $("#myGroupsSection").hide();
   $("#showGroupSection").hide();
   $("#groupProperties").hide();
   $("#groupSettingsSection").hide();
-  $("#userBalances").hide();  
+  $("#userBalances").hide();
+  */
 }
+
+async function checkInvitation() {
+  invite = new RegExp("[?&]invite=([^&#]*)").exec(window.location.search);
+  if ( invite !== null ){
+    invitation=invite[1]+"\x00";
+    a = await instance.checkInvitationLink(invitation, {from: user.address});
+    invGroup=a.words[0];
+    if ( invGroup != 0 ) {
+      console.log("invited to group:"+invGroup);
+      $("#invitationSection").show();
+      $('#invGroupName').text(await instance.groupNameByInvitation(invGroup, invitation, {from: user.address}));
+      if ( user.name.length == 0 ){
+        txt = "prima devi assegnarti un nickname!";
+      }
+      else {
+        txt = "<button class=\"btn btn-primary\" onclick=\"iCandidate("+invGroup+",'"+invite[1]+"')\">Mi candido</button>";
+      }
+      IcandidateSection.innerHTML=txt;
+    }
+  }
+}
+
+async function iCandidate(gid, inv) {
+  try {
+    await instance.addCandidate(gid, inv+"\x00", {from: user.address});
+    startAll();
+  } catch(err) {
+    alert("Error adding candidate to group!");
+  }  
+}
+
 
 async function startAll() {
   clearSections();
 
   await initWeb3();
   await readAccount();
-
   if(user.name.length==0){
    $("#userPropertiesSection").hide();
    $("#setNameSection").show();
@@ -317,6 +322,8 @@ async function startAll() {
    $("#myGroupsSection").show();
    getMyGroups();
   }
+
+  checkInvitation();
 }
 
 $(window).on('load', async function() {

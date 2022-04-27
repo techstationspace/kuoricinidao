@@ -16,7 +16,8 @@ body {
 }
 
 button {
-    width: 6rem;
+    min-width: 6rem;
+    max-width: 30rem;
 }
 
 .btn-primary {
@@ -25,4 +26,12 @@ button {
 
 .btn-primary:hover {
     background-color: #240653;
+}
+
+.start-hidden {
+    display: none;
+}
+
+#invitationLink {
+    background-color: rgba(172, 255, 47, 0.489);
 }
