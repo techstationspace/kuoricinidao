@@ -19,10 +19,6 @@
                 <div class="col-9"><span id="myName">-</span></div>
             </div>
             <div class="row">
-                <div class="col-3">Quanti kuoricini hai:</div>
-                <div class="col-9"><span id="myKuori"></span></div>
-            </div>
-            <div class="row">
                 <div class="col-3">Setta il tuo nome a: </div>
                 <div class="col-5"><input type="text" id="setName"></div>
                 <div class="col-4"><button class="btn btn-primary" id="setNameButton">setta</button></div>
@@ -47,21 +43,69 @@
         </div>
     </div>
 
-    <div class="container-fluid p-4" id="singleGroupContainer">
-        <div class="card p-4 rounded-3 shadow-sm border-primary">
-            <h5>Gruppo: <span id="theGroup">-</span></h5>
-            <table  class="table">
-                <thead>
-                    <tr><th>INDIRIZZO</th><th>NOME</th><th>MANDA UN KUORE</th></tr>
-                </thead>
-                <tbody id="theGroupTable"></tbody>
-            </table>
-            <div class="row">
-                <div class="col-3">Aggiungi al gruppo l'indirizzo</div>
-                <div class="col-5"><input type="text" id="addAddress"></div>
-                <div class="col-4"><button  class="btn btn-primary" id="addAddressButton">aggiungi</button></div>
+    <div id="singleGroupContainer">
+        <div class="container-fluid p-4">
+            <div class="card p-4 rounded-3 shadow-sm border-primary">
+                <h5>Gruppo: <span id="theGroup">-</span></h5>
+                <div class="row">
+                    <div class="col">
+                        <h5>Il tuo Bilancio</h5>
+                        <table class="table table-hover">
+                        <thead>          
+                            <tr><th>Nome</th><th>Ricevuti</th><th>Da dare via</th></tr>
+                        </thead>
+                        <tbody id="userTokensTable"></tbody>
+                        </table>        
+                    </div>
+                    <div class="col">
+                        <h5>Token del gruppo</h5>
+                        <table class="table table-hover" >
+                            <thead>          
+                            <tr><th>Nome</th><th>Refill Ciclo</th><th>Durata Ciclo</th></tr>
+                            </thead>
+                            <tbody id="groupTokensTable"></tbody>
+                        </table>
+                        <div class="btn btn-primary" id="newTokenButton">crea token</div>
+                    </div>
+                </div>
             </div>
-              
+        </div>
+
+        <div class="container-fluid p-4"  id="newTokenContainer">
+            <div class="card p-4 rounded-3 shadow-sm border-primary">
+                <h5>Crea un nuovo token</h5>
+                <div class="row">
+                    <div class="col-3">nome:</div> 
+                    <div class="col-9"><input type="text" id="newTokenName"></div>
+                </div>
+                <div class="row">
+                    <div class="col-3">Refill Ciclo:</div> 
+                    <div class="col-9"><input type="text" id="newTokenSupply"></div>
+                </div>
+                <div class="row">
+                    <div class="col-3">Durata Ciclo: (giorni)</div> 
+                    <div class="col-9"><input type="text" id="newTokenDuration"></div>
+                </div>
+                <div class="row">
+                    <div class="col-12"><button class="btn btn-primary" id="setNewTokenButton">crea</button></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container-fluid p-4">
+            <div class="card p-4 rounded-3 shadow-sm border-primary">
+                <table  class="table">
+                    <thead>
+                        <tr><th>INDIRIZZO</th><th>NOME</th><th>MANDA</th></tr>
+                    </thead>
+                    <tbody id="theGroupTable"></tbody>
+                </table>
+                <div class="row">
+                    <div class="col-3">Aggiungi al gruppo l'indirizzo</div>
+                    <div class="col-5"><input type="text" id="addAddress"></div>
+                    <div class="col-4"><button  class="btn btn-primary" id="addAddressButton">aggiungi</button></div>
+                </div>
+            </div>
         </div>
     </div>
 
