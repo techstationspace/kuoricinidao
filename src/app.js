@@ -10,7 +10,7 @@ async function init() {
         KuoriciniDao.setProvider(window.ethereum);
     });
 
-    accounts = await web3.eth.getAccounts();
+    accounts = await web3.eth.requestAccounts();
     $("#myAddress").text(accounts[0]);
 
     instance = await KuoriciniDao.deployed();
@@ -79,6 +79,7 @@ async function showGroup(gid) {
 
     table = document.getElementById("theGroupTable")
     table.innerHTML="";
+
     for (i = 0; i < group.members.length; i++) {
         member=group.members[i];
         row=table.insertRow(-1);
@@ -92,8 +93,8 @@ async function showGroup(gid) {
             textCell = "non mandi a te stesso";             
         } 
         else {
-            for (i = 0; i < utokens.length; i++) {            
-                textCell += "<button class=\"btn btn-primary\" onclick=\"sendToken('"+member+"',"+utokens[i].tokenId+")\">"+utokenNames[i]+"</button> ";
+            for (l = 0; l < utokens.length; l++) {            
+                textCell += "<button class=\"btn btn-primary\" onclick=\"sendToken('"+member+"',"+utokens[l].tokenId+")\">"+utokenNames[l]+"</button> ";
             };
         }
         cell.innerHTML=textCell;
