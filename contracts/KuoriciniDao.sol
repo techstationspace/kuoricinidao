@@ -40,7 +40,7 @@ contract KuoriciniDao {
   GToken[] allTokens;
   Candidate[] allCandidates;
 
-  constructor() public {
+  constructor() {
   }
 
   function createGroup(string calldata _name) public returns(bool) {
