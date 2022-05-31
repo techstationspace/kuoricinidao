@@ -1,4 +1,5 @@
 # kuoricinidao
 
-[https://](https://github.com/techstationspace/kuori
-cinidao)
+https://github.com/techstationspace/kuoricinidao
+
+
