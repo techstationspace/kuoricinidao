@@ -1,8 +1,7 @@
 async function init() {
     $("#singleGroupContainer").hide();
     $("#myGroupsContainer").show();
-    $("#newTokenContainer").hide();
-    
+
     web3 = new Web3(window.ethereum);
 
     $.getJSON("KuoriciniDao.json", function(data){
@@ -42,29 +41,16 @@ async function init() {
 async function showGroup(gid) {
     $("#singleGroupContainer").show();
     $("#myGroupsContainer").hide();
-    $("#newTokenContainer").hide();
 
     group = await instance.group(gid, {from: accounts[0]});
     $("#theGroup").text(group.name);
     currentGroupId = gid;
 
-    table = document.getElementById("groupTokensTable")
-    table.innerHTML="";
-    for (i = 0; i < group.tokenIds.length; i++) {
-        gtoken = await instance.getToken(group.tokenIds[i], gid, {from: accounts[0]});
-        row=table.insertRow(-1);
-        cell=row.insertCell(0);
-        cell.innerHTML=gtoken.name;
-        cell=row.insertCell(-1);
-        cell.innerHTML=gtoken.roundSupply;
-        cell=row.insertCell(-1);
-        cell.innerHTML=gtoken.roundDuration/86400+" giorni";
-    }
-
     utokens = await instance.getUserTokens(gid, {from: accounts[0]});
     utokenNames = [];
-    table = document.getElementById("userTokensTable")
+    table = document.getElementById("userTokensTable");
     table.innerHTML="";
+
     for (i = 0; i < utokens.length; i++) {
         row=table.insertRow(-1);
         cell=row.insertCell(0);
@@ -77,9 +63,21 @@ async function showGroup(gid) {
         cell.innerHTML=utokens[i].xbalance;
     }
 
+    table = document.getElementById("groupTokensTable");
+    table.innerHTML="";
+    for (i = 0; i < group.tokenIds.length; i++) {
+        gtoken = await instance.getToken(group.tokenIds[i], gid, {from: accounts[0]});
+        row=table.insertRow(-1);
+        cell=row.insertCell(0);
+        cell.innerHTML=gtoken.name;
+        cell=row.insertCell(-1);
+        cell.innerHTML=gtoken.roundSupply;
+        cell=row.insertCell(-1);
+        cell.innerHTML=gtoken.roundDuration/86400+" giorni";
+    }
+
     table = document.getElementById("theGroupTable")
     table.innerHTML="";
-
     for (i = 0; i < group.members.length; i++) {
         member=group.members[i];
         row=table.insertRow(-1);
@@ -93,36 +91,32 @@ async function showGroup(gid) {
             textCell = "non mandi a te stesso";             
         } 
         else {
-            for (l = 0; l < utokens.length; l++) {            
+            for (l = 0; l < utokens.length; l++) {
                 textCell += "<button class=\"btn btn-primary\" onclick=\"sendToken('"+member+"',"+utokens[l].tokenId+")\">"+utokenNames[l]+"</button> ";
-            };
+            }
         }
-        cell.innerHTML=textCell;
+        cell.innerHTML=textCell;        
     }
-
+ 
 }
 
 async function newToken() {
-    $("#newTokenContainer").toggle();
-}
-
-async function setNewToken() {
     tname = $("#newTokenName").val();
     supply = parseInt($("#newTokenSupply").val());
     duration = parseInt($("#newTokenDuration").val())*86400;
     await instance.createGToken(tname, supply, duration, currentGroupId, {from: accounts[0]});
-    showGroup(currentGroupId); 
+    showGroup(currentGroupId);
 }
 
-async function sendToken(to, tokId) {
-    await instance.transferToken(tokId, to, 1, currentGroupId, {from: accounts[0]});
-    showGroup(currentGroupId); 
+async function sendToken(to, tokid) {
+    await instance.transferToken(to, tokid, 1, currentGroupId, {from: accounts[0]});
+    showGroup(currentGroupId);
 }
 
 async function addAddressToGroup() {
     addr = $("#addAddress").val();
     await instance.addAddresstoGroup(addr, currentGroupId , {from: accounts[0]});
-    init();
+    showGroup(currentGroupId);
 }
 
 async function setName() {
@@ -140,7 +134,7 @@ async function newGroup() {
 async function addMember() {
     addr = $("#addAddress").val();
     await instance.addAddresstoGroup(addr, currentGroupId , {from: accounts[0]});
-    init();
+    showGroup(currentGroupId);
 }
 
 init();
@@ -149,5 +143,5 @@ $(document).on("click", "#newGroupButton", newGroup);
 $(document).on("click", "#addAddressButton", addAddressToGroup);
 $(document).on("click", "#homeButton", init);
 $(document).on("click", "#newTokenButton", newToken);
-$(document).on("click", "#setNewTokenButton", setNewToken);
+
 

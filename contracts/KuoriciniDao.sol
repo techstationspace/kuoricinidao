@@ -29,7 +29,6 @@ mapping (address => string) names;
 mapping (address => uint[] ) userGroups;
 mapping (address => UToken[] ) userTokens;
 
-
 constructor() {
 }
 
@@ -44,8 +43,8 @@ function createGroup(string calldata groupName) public returns(bool){
   address[] memory _members = new address[](1);
   _members[0]=msg.sender;
   newGroup.members=_members;
-  uint[] memory defaultTokens;
-  newGroup.tokenIds = defaultTokens;
+  //uint[] memory defaultTokens;
+  //newGroup.tokenIds = defaultTokens;
   daoGroups.push(newGroup);
   userGroups[msg.sender].push(daoGroups.length-1);
   return true;
@@ -83,23 +82,23 @@ function setName(string calldata name) public returns(bool){
 }
 
 function nameOf(address owner) public view returns(string memory) {
-  return names[owner];
-}
+    return names[owner];
+  }
+  
 
-
-/* 
-*   Tokens
-* 
+/*
+* Tokens
 */
+
 function getToken(uint tokid, uint gid) public view returns(GToken memory) {
   require(isAddressInGroup(msg.sender, gid), "user not authorized");   
   return allTokens[tokid];
 }
 
 function createGToken(string calldata name, uint supply, uint duration, uint gid) public returns(bool){
-  require(isAddressInGroup(msg.sender, gid), "user not authorized");   
+  require(isAddressInGroup(msg.sender, gid), "user not authorized");
 
-  GToken memory newToken = GToken({
+  GToken memory newToken = GToken ({
     name: name,
     roundSupply: supply,
     roundDuration: duration,
@@ -112,99 +111,100 @@ function createGToken(string calldata name, uint supply, uint duration, uint gid
   return true;
 }
 
-function getUserTokens(uint gid) public view returns(UToken[] memory){
-  require(isAddressInGroup(msg.sender, gid), "user not authorized");   
+function getUserTokens(uint gid) public view returns(UToken[] memory) {
+  require(isAddressInGroup(msg.sender, gid), "user not authorized"); 
 
   uint l = daoGroups[gid].tokenIds.length;
   uint m = userTokens[msg.sender].length;
-  UToken[] memory _userTokens = new UToken[](l);
+  UToken[] memory utokens = new UToken[](l);
 
-  for ( uint i = 0 ; i < l ; i++ ) { // scorro i tokens del gruppo
+  for ( uint i = 0; i < l; i++ ) { // scorro i tokens del gruppo
     uint tokid = daoGroups[gid].tokenIds[i];
-    _userTokens[i] = UToken({ tokenId: tokid, balance: 0, xbalance: allTokens[tokid].roundSupply });
-
-    for ( uint j = 0 ; j < m ; j++ ) { // scorro i tokens dell'utente
-      if ( userTokens[msg.sender][j].tokenId == tokid ){
-        _userTokens[i] = userTokens[msg.sender][j];
+    utokens[i] = UToken ({ tokenId: tokid, balance: 0, xbalance: allTokens[tokid].roundSupply });
+    for ( uint k = 0 ; k < m ; k++ ){ // scorro i token dell'utente
+      if ( userTokens[msg.sender][k].tokenId == tokid ) {
+        utokens[i] = userTokens[msg.sender][k];
 
         uint newtime = allTokens[tokid].timestamp + allTokens[tokid].roundDuration;
         if ( block.timestamp > newtime ) {
-          _userTokens[i].xbalance = allTokens[tokid].roundSupply;
+          utokens[i].xbalance = allTokens[tokid].roundSupply;
         }
-
       }
     }
-
   }
-
-  return _userTokens;
-
+  return utokens;
 }
 
-function transferToken(uint tokenId, address receiver, uint value, uint gid) public returns(bool) {
-  require(isAddressInGroup(msg.sender, gid), "sender not authorized");   
-  require(isAddressInGroup(receiver, gid), "receiver not authorized");
-  require(isTokenInGroup(tokenId, gid), "token not authorized");
+function transferToken(address receiver, uint tokid, uint qty, uint gid) public returns(bool) {
+  require(isAddressInGroup(msg.sender, gid), "user not authorized"); 
+  require(isAddressInGroup(receiver, gid), "user not authorized"); 
+  require(isTokenInGroup(tokid, gid), "user not authorized"); 
 
-  bool senderCreate = true;
-  uint senderxbalance = allTokens[tokenId].roundSupply;
+  // retrieve sender usertoken if exists, senderxbalance
+  uint senderxbalance = allTokens[tokid].roundSupply;
   uint senderPos = 0;
-  for (senderPos; senderPos < userTokens[msg.sender].length ; senderPos++) {
-    if (userTokens[msg.sender][senderPos].tokenId == tokenId) {
+  bool senderCreate = true;
+
+  for ( senderPos; senderPos < userTokens[msg.sender].length; senderPos++ ){
+    if ( userTokens[msg.sender][senderPos].tokenId == tokid ) {
       senderxbalance = userTokens[msg.sender][senderPos].xbalance;
       senderCreate = false;
       break;
     }
   }
-  
-  if (block.timestamp > (allTokens[tokenId].timestamp + allTokens[tokenId].roundDuration * 1 seconds) ) {
-    senderxbalance = allTokens[tokenId].roundSupply;
-    uint _newTimestamp = allTokens[tokenId].timestamp;
-    for (uint k = 0; _newTimestamp < block.timestamp ; k++) {
-      _newTimestamp += allTokens[tokenId].roundDuration * k; 
+
+  // check if cycle is renewed and eventually write on chain
+  if ( block.timestamp > (allTokens[tokid].timestamp + allTokens[tokid].roundDuration * 1 seconds) ) {
+    senderxbalance = allTokens[tokid].roundSupply;
+    uint newtimestamp = allTokens[tokid].timestamp;
+    for ( uint k = 0 ; newtimestamp < block.timestamp; k++ ) {
+      newtimestamp += allTokens[tokid].roundDuration;
     }
-    allTokens[tokenId].timestamp=_newTimestamp;
+    allTokens[tokid].timestamp = newtimestamp;
   }
-  
-  require(senderxbalance >= value, "non hai abbastanza token");
 
+  require(senderxbalance >= qty, "non hai abbastanza token");
+
+  // retrieve receiver usertoken if exists, receiverbalance
   uint receiverbalance = 0;
-  bool receiverCreate = true;
   uint receiverPos = 0;
+  bool receiverCreate = true;
 
-  for ( receiverPos; receiverPos < userTokens[receiver].length ; receiverPos++) {
-    if (userTokens[receiver][receiverPos].tokenId == tokenId) {
+  for ( receiverPos; receiverPos < userTokens[receiver].length; receiverPos++ ){
+    if ( userTokens[receiver][receiverPos].tokenId == tokid ) {
       receiverbalance = userTokens[receiver][receiverPos].balance;
       receiverCreate = false;
       break;
     }
   }
 
-  senderxbalance -= value;
-  receiverbalance += value;
+  // transaction
+  senderxbalance -= qty;
+  receiverbalance += qty;
 
+  // write on blockchain
   if ( senderCreate ) {
-    userTokens[msg.sender].push( UToken({ tokenId: tokenId, balance: 0, xbalance: senderxbalance}));
-  }
-  else {
+    userTokens[msg.sender].push( UToken({ tokenId: tokid, balance: 0, xbalance: senderxbalance }));
+  } else {
     userTokens[msg.sender][senderPos].xbalance = senderxbalance;
   }
   if ( receiverCreate ) {
-    userTokens[receiver].push( UToken({ tokenId: tokenId, balance: receiverbalance, xbalance: allTokens[tokenId].roundSupply}));
-  }
-  else {
+    userTokens[receiver].push( UToken({ tokenId: tokid, balance: receiverbalance, xbalance: allTokens[tokid].roundSupply }));
+  } else {
     userTokens[receiver][receiverPos].balance = receiverbalance;
   }
+
   return true;
 }
 
-function isTokenInGroup(uint tokId, uint gid) private view returns(bool) {
+function isTokenInGroup(uint tokid, uint gid) private view returns(bool) {
   for ( uint i = 0; i < daoGroups[gid].tokenIds.length; i++){
-    if ( daoGroups[gid].tokenIds[i] == tokId ){
+    if ( daoGroups[gid].tokenIds[i] == tokid ){
       return true;
     }
   }
   return false;
 }
+
 
 }

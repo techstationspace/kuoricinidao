@@ -41,7 +41,7 @@ contract("KuoriciniDao", async accounts => {
     const account_two = accounts[1];
     gid=0;
 
-    await instance.transferToken(0, account_two, 1, gid, {from: accounts[0]});
+    await instance.transferToken(account_two, 0, 1, gid, {from: accounts[0]});
 
     utokensS = await instance.getUserTokens(gid, {from: accounts[0]});
     console.log("utokensS");
@@ -68,7 +68,7 @@ contract("KuoriciniDao", async accounts => {
     console.log(gtoken);
 
     console.log("first transfer");
-    await instance.transferToken(1, account_two, 1, gid, {from: accounts[0]});    
+    await instance.transferToken(account_two, 1, 1, gid, {from: accounts[0]});    
     utokensS = await instance.getUserTokens(gid, {from: accounts[0]});
     console.log("utokensS");
     console.log(utokensS);
@@ -77,7 +77,7 @@ contract("KuoriciniDao", async accounts => {
     console.log(utokensR);
 
     console.log("second transfer");
-    await instance.transferToken(1, account_two, 1, gid, {from: accounts[0]});    
+    await instance.transferToken(account_two, 1, 1, gid, {from: accounts[0]});    
     utokensS = await instance.getUserTokens(gid, {from: accounts[0]});
     console.log("utokensS");
     console.log(utokensS);
