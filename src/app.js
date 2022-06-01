@@ -195,6 +195,7 @@ async function groupProperties(_gid) {
     });
   });
 
+
   return cTokens;
 }
 
@@ -218,9 +219,35 @@ async function userProperties(_gid) {
 
 async function groupSettings() {  
   $("#groupSettingsSection").toggle();
+
+  let _group = await instance.getGroup(group.id, {from: user.address});  
+  let _tokenids = _group.tokenIds;
+  table=document.getElementById("groupChangeTokensTable");
+  table.innerHTML="";
+  _tokenids.forEach(element => {
+    KuoriciniDao.deployed().then(async function(instance) {
+      let _tok = await instance.getToken(element, {from: user.address});
+      newRow = table.insertRow(-1);
+      newCell = newRow.insertCell(0); 
+      newCell.innerHTML=group.id;
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=_tok[0];
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=_tok[1]; 
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=_tok[2]/86400+" giorni";
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML="<button class=\"btn btn-primary\"onclick='changeToken("+_tok.id+")'>modifica</button> ";
+
+
+//      cTokens.push({id: element, name: _tok[0], roundSuppy: _tok[1], roundDuration: _tok[2]});
+    });
+  });
+
 }
 
 async function createToken() {
+
   tokName=$("#newTokenName").val();
   tokSupply=parseInt($("#newTokenSupply").val());
   tokDuration=parseInt($("#newTokenDuration").val())*86400;
@@ -284,6 +311,7 @@ async function checkInvitation() {
     invitation=invite[1]+"\x00";
     a = await instance.checkInvitationLink(invitation, {from: user.address});
     invGroup=a.words[0];
+    console.log(invGroup);
     if ( invGroup != 0 ) {
       console.log("invited to group:"+invGroup);
       $("#invitationSection").show();
