@@ -1,6 +1,9 @@
 # What is KuoriciniDAO?
 
-Our project intends to become a new tool for fair peer to peer rating, helping communities achieve shared goals. Rather than focusing on feedback on a specific task, we propose a system where each member is recurrently granted a predefined amount of Custom Community Tokens (CCT) each representing a dimension of the core values/objectives of the community.
+Our project intends to become a new tool for fair peer to peer rating, helping communities achieve shared goals. 
+
+Rather than focusing on feedback on a specific task, we propose a system where each member is recurrently granted a predefined amount of Custom Community Tokens (CCT) each representing a dimension of the core values/objectives of the community.
+
 These CCT tokens don’t hold any value in themselves, however when donated to other team members they become Custom Reward Tokens (CRT), which are non-transferrable and linked indefinitely to the receiving wallet (“[soulbound](https://vitalik.ca/general/2022/01/26/soulbound.html)” like mechanism).
 The team controls who can join and the properties of the CCT tokens via an internal voting system.
 
@@ -69,6 +72,7 @@ We believe in the importance of having a working Pilot to verify the idea with o
 # Future Developments
 
 Looking further after the Pilot, there are still many open challenges we have to face to reach a working solution.
+
 The most important development must be on how to make the feedback mechanism truly anonymous. Right now we are studying solutions implemented in blockchain anonymous voting systems, and we are open to reach out to experts in the community.
 Is important that this is done the right way as it is essential to build trust in the system.
 
@@ -83,7 +87,9 @@ Techstation is a non profit organization based in Padua, Italy, dedicated to giv
 
 KuoriciniDAO started as a toy project for the “intro to web3” Techstation class.
 
-It started as an educational project, including a 10 lessons [youtube course](https://youtube.com/playlist?list=PLnXJMUkYVb0myw6R_WcGn1uUC2MPvY2H-) (in italian: “watch me while I learn Solidity”) that explains the making itself of KuoriciniDAO software from scratch, with the idea to challenge students on creating something original rather than the standard courses on NFTs and ERC-20 tokens. We also conduct a weekly [youtube live](https://youtube.com/playlist?list=PLnXJMUkYVb0kHCWJucutfc4dHeynCwis_) on educating about basic Blockchain concepts and updating on the project status. 
+It started as an educational project, including a 10 lessons [youtube course](https://youtube.com/playlist?list=PLnXJMUkYVb0myw6R_WcGn1uUC2MPvY2H-) (in italian: “watch me while I learn Solidity”) that explains the making itself of KuoriciniDAO software from scratch, with the idea to challenge students on creating something original rather than the standard courses on NFTs and ERC-20 tokens. 
+
+We also conduct a weekly [youtube live](https://youtube.com/playlist?list=PLnXJMUkYVb0kHCWJucutfc4dHeynCwis_) on educating about basic Blockchain concepts and updating on the project status. 
 
 Besides the very important educational aspects, we realized the potential of the idea and after some time decided to make it a standalone project to implement a fair feedback system based on blockchain technology.
 
