@@ -19,7 +19,7 @@ KuoriciniDAO aims to build that mechanism of positive reinforcement of collectiv
 
 In order to work, this system needs to be easy to use as a game, but definitely not gamable by its members as it has trust management as its core functionality. 
 
-On top of it, based on our experience, we think the feedback should be not instantaneous not transparent:
+On top of it, based on our experience, we think the feedback should be not instantaneous nor transparent:
 
 Instant feedback is frequently linked to instant emotions, while proper value recognition resists over time;
 retro-feedback effects (e.i. I give you a like because you liked me) are very common and detrimental. 
