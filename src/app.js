@@ -40,6 +40,7 @@ async function bindEvents(){
   $(document).on('click', "#homeButton", startAll);  
 //  $(document).on('click', "#nowButton", checkNow);  
   $(document).on('click', "#groupSettingsButton", groupSettings);  
+  $(document).on('click', "#personalSettingsButton", personalSettings);  
 }
 
 async function checkNow() {
@@ -105,13 +106,13 @@ async function showGroup(_gid) {
   $("#showGroupSection").show();
   $("#groupProperties").show();
   $("#userBalances").show();  
-  $("#groupSettingsSection").hide();
+  $("#DAOSection").hide();
   $("#myGroupBalance").show();    
 
   group = {};
   group.id = _gid;
   group.name = await instance.getGroupNamefromId(_gid, {from: user.address});
-  $('#groupName').text(group.name);
+  $('.currentGroupName').text(group.name);
   currentTokens = await groupProperties(_gid);
   userProperties(_gid);
 
@@ -136,15 +137,19 @@ async function showGroup(_gid) {
       }
     });
   });
-
+  // todo : fix mess btween getGroup and groupname as per videos branch is more clean
+  let _group = await instance.getGroup(_gid, {from: user.address});  
+/*
   candidates = await instance.getGroupCandidates(_gid, {from: user.address});
   let ctable=document.getElementById("candidatesTableBody");
   ctable.innerHTML="";
-  candidates.forEach(element => {
-    KuoriciniDao.deployed().then(async function(instance) {
+  for ( i = 0 ; i < candidates.length; i++ ) {
+      element = candidates[i];
       _name = await instance.nameOf(element.candidateAddress, {from: user.address});
       newRow = ctable.insertRow(-1);
       newCell = newRow.insertCell(0); 
+      newCell.innerHTML=_group.candidatesIds[i]; 
+      newCell = newRow.insertCell(-1);
       newCell.innerHTML=_name; 
       newCell = newRow.insertCell(-1);
       newCell.innerHTML=element.candidateAddress; 
@@ -155,25 +160,162 @@ async function showGroup(_gid) {
         voteText="hai gia' votato";
       }
       else {
-        voteText="<button class=\"btn btn-primary\" onclick='voteCandidate("+group.id+",\""+element.candidateAddress+"\",1)'>yay</button> ";
-        voteText+="<button class=\"btn btn-primary\" onclick='voteCandidate("+group.id+",\""+element.candidateAddress+"\",-1)'>ney</button> ";
+        voteText="<button class=\"btn btn-primary\" onclick='voteCandidateToken("+group.id+",\""+_group.candidatesIds[i]+"\",1)'>yay</button> ";
+        voteText+="<button class=\"btn btn-primary\" onclick='voteCandidateToken("+group.id+",\""+_group.candidatesIds[i]+"\",0)'>ney</button> ";
       }
       newCell.innerHTML=voteText;
+  }
+*/  
+  candidatetokens = await instance.getGroupCandidateTokens(_gid, {from: user.address});
+
+  let ctable=document.getElementById("candidatesTableBody");
+  ctable.innerHTML="";
+
+  for ( i = 0 ; i < candidatetokens.length; i++ ) {
+      element = candidatetokens[i];
+      if (element.candType == 0) {
+        _name = await instance.nameOf(element.candidateAddress, {from: user.address});
+        newRow = ctable.insertRow(-1);
+        newCell = newRow.insertCell(0); 
+        newCell.innerHTML=_group.candidateTokenIds[i]; 
+        newCell = newRow.insertCell(-1);
+        newCell.innerHTML=_name; 
+        newCell = newRow.insertCell(-1);
+        newCell.innerHTML=element.candidateAddress; 
+        newCell = newRow.insertCell(-1);
+        newCell.innerHTML=element.votes;
+        newCell = newRow.insertCell(-1);
+        if (element.voters.includes(user.address)) {
+          voteText="hai gia' votato";
+        }
+        else {
+          voteText="<button class=\"btn btn-primary\" onclick='voteCandidateToken("+group.id+",\""+_group.candidateTokenIds[i]+"\",1)'>YES</button> ";
+          voteText+="<button class=\"btn btn-primary\" onclick='voteCandidateToken("+group.id+",\""+_group.candidateTokenIds[i]+"\",0)'>NO</button> ";
+        }
+        newCell.innerHTML=voteText;
+      }
+  }
+
+
+  ttable=document.getElementById("candidateTokensTableBody");
+  ttable.innerHTML="";
+
+  for ( i = 0 ; i < candidatetokens.length; i++ ) {
+    element = candidatetokens[i];
+    if (element.candType == 2 || element.candType == 1) {
+      newRow = ttable.insertRow(-1);
+      newCell = newRow.insertCell(0); 
+      newCell.innerHTML=_group.candidateTokenIds[i] +" - "+element.id; 
+      newCell = newRow.insertCell(-1); 
+      newCell.innerHTML=(element.candType == 2); 
+//      oldtok = await instance.getToken(element.id, {from: user.address});
+//      if (element.present) {
+//        tname = oldtok.name +" > "+  element.name;
+//        tsupply = oldtok.roundSupply +" > "+  element.roundSupply;
+//        tduration = oldtok.roundDuration/86400 +" > "+ element.roundDuration/86400;
+//      } else {
+        tname = element.name;
+        tsupply = element.roundSupply;
+        tduration = element.roundDuration/86400;
+//      }
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML= tname; 
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=tsupply; 
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=tduration;
+
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=element.votes;
+      newCell = newRow.insertCell(-1);
+      if (element.voters.includes(user.address)) {
+        voteText="hai gia' votato";
+      }
+      else {
+        voteText="<button class=\"btn btn-primary\" onclick='voteCandidateToken("+group.id+",\""+_group.candidateTokenIds[i]+"\",1)'>YES</button> ";
+        voteText+="<button class=\"btn btn-primary\" onclick='voteCandidateToken("+group.id+",\""+_group.candidateTokenIds[i]+"\",0)'>NO</button> ";
+      }
+      newCell.innerHTML=voteText;
+    }
+  }
+
+  ttable=document.getElementById("candidatesThresholdBody");
+  ttable.innerHTML="";
+
+  for ( i = 0 ; i < candidatetokens.length; i++ ) {
+    element = candidatetokens[i];
+    if (element.candType == 3) {
+      newRow = ttable.insertRow(-1);
+      newCell = newRow.insertCell(0); 
+      newCell.innerHTML=element.id+"0%";
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=element.votes;
+      newCell = newRow.insertCell(-1);
+      if (element.voters.includes(user.address)) {
+        voteText="hai gia' votato";
+      }
+      else {
+        voteText="<button class=\"btn btn-primary\" onclick='voteCandidateToken("+group.id+",\""+_group.candidateTokenIds[i]+"\",1)'>YES</button> ";
+        voteText+="<button class=\"btn btn-primary\" onclick='voteCandidateToken("+group.id+",\""+_group.candidateTokenIds[i]+"\",0)'>NO</button> ";
+      }
+      newCell.innerHTML=voteText;
+    }
+  }
+
+
+
+
+    let _tokenids = _group.tokenIds;
+    table=document.getElementById("groupChangeTokensTable");
+    table.innerHTML="";
+    _tokenids.forEach(element => {
+      KuoriciniDao.deployed().then(async function(instance) {
+        let _tok = await instance.getToken(element, {from: user.address});
+        newRow = table.insertRow(-1);
+        newCell = newRow.insertCell(0); 
+        newCell.innerHTML=element;
+        newCell = newRow.insertCell(-1);
+        newCell.innerHTML=_tok[0];
+        newCell = newRow.insertCell(-1);
+        newCell.innerHTML=_tok[1]; 
+        newCell = newRow.insertCell(-1);
+        newCell.innerHTML=_tok[2]/86400+" giorni";
+        $(newRow).click(function() {
+          $("#changeTokenButton").removeClass('disabled');
+          $("#changeTokenName").val(_tok[0]);
+          $("#changeTokenSupply").val(_tok[1]);
+          $("#changeTokenDuration").val(_tok[2]/86400);
+          $("#changeTokenId").text(element);
+        });
+      });
     });
-  });
-  // todo : fix mess btween getGroup and groupname as per videos branch is more clean
-  let _group = await instance.getGroup(_gid, {from: user.address});  
+
+  $("#thresholdVote").val(parseInt(_group.voteThreshold));
+  document.getElementById('thresholdValue').innerHTML=_group.voteThreshold;
   $('#voteThreshold').text(parseInt(_group.voteThreshold)*10+"%");
   $('#invitationLink').text(window.location.origin+"/?invite="+_group.invitationLink);
   thresh = parseInt(group.members.length * _group.voteThreshold / 10) +1 ;
-  $("#candidatesThreshold").text(thresh);
+  $(".votersThreshold").text(thresh);
+  $("#changeMyName").val(user.name);
 };
 
-async function voteCandidate(gid,candidateAddress,vote) {
-  await instance.voteCandidate(gid, candidateAddress, vote, {from: user.address});
+async function voteCandidate(gid,candidatePos,vote) {
+  await instance.voteCandidateToken(gid, parseInt(candidatePos), vote, {from: user.address});
   await readAccount();    
   showGroup(group.id);
+  $("#DAOSection").show();
 }
+
+async function voteCandidateToken(gid,candidateTokenId,vote) {
+  console.log(gid,candidateTokenId,vote);
+  console.log(candidateTokenId);
+  console.log(vote);
+  await instance.voteCandidateToken(gid, parseInt(candidateTokenId), vote, {from: user.address});
+  await readAccount();    
+  showGroup(group.id);
+  $("#DAOSection").show();
+}
+
 
 async function groupProperties(_gid) {
   let _group = await instance.getGroup(_gid, {from: user.address});
@@ -218,47 +360,43 @@ async function userProperties(_gid) {
 }
 
 async function groupSettings() {  
-  $("#groupSettingsSection").toggle();
-
-  let _group = await instance.getGroup(group.id, {from: user.address});  
-  let _tokenids = _group.tokenIds;
-  table=document.getElementById("groupChangeTokensTable");
-  table.innerHTML="";
-  _tokenids.forEach(element => {
-    KuoriciniDao.deployed().then(async function(instance) {
-      let _tok = await instance.getToken(element, {from: user.address});
-      newRow = table.insertRow(-1);
-      newCell = newRow.insertCell(0); 
-      newCell.innerHTML=group.id;
-      newCell = newRow.insertCell(-1);
-      newCell.innerHTML=_tok[0];
-      newCell = newRow.insertCell(-1);
-      newCell.innerHTML=_tok[1]; 
-      newCell = newRow.insertCell(-1);
-      newCell.innerHTML=_tok[2]/86400+" giorni";
-      newCell = newRow.insertCell(-1);
-      newCell.innerHTML="<button class=\"btn btn-primary\"onclick='changeToken("+_tok.id+")'>modifica</button> ";
-
-
-//      cTokens.push({id: element, name: _tok[0], roundSuppy: _tok[1], roundDuration: _tok[2]});
-    });
-  });
+  $("#DAOSection").toggle();
 
 }
 
-async function createToken() {
+async function personalSettings() {  
+  $("#settingsSection").toggle();
+}
 
+
+async function createToken() {
   tokName=$("#newTokenName").val();
   tokSupply=parseInt($("#newTokenSupply").val());
   tokDuration=parseInt($("#newTokenDuration").val())*86400;
-  console.log(tokName);
-  console.log(tokSupply);
-  console.log(tokDuration);
-  console.log(group.id);
-  await instance.createGToken(tokName,tokSupply,tokDuration,parseInt(group.id), {from: accounts[0]});
-  $("#groupSettingsSection").hide();
+  await instance.changeToken(0,tokName,tokSupply,tokDuration,parseInt(group.id),1,{from: accounts[0]});
   await readAccount();    
   showGroup(group.id);
+  $("#DAOSection").show();
+}
+
+async function changeToken() {
+  tokId=parseInt($("#changeTokenId").text());
+  tokName=$("#changeTokenName").val();
+  tokSupply=parseInt($("#changeTokenSupply").val());
+  tokDuration=parseInt($("#changeTokenDuration").val())*86400;
+  await instance.changeToken(tokId,tokName,tokSupply,tokDuration,parseInt(group.id),2,{from: accounts[0]});
+  await readAccount();    
+  showGroup(group.id);
+  $("#DAOSection").show();
+}
+
+async function changeThreshold() {
+  th = parseInt($("#thresholdVote").val());
+  console.log(th);
+  await instance.changeToken(th,"",0,0,parseInt(group.id),3,{from: accounts[0]});
+  await readAccount();    
+  showGroup(group.id);
+  $("#DAOSection").show();
 }
 
 
@@ -273,6 +411,12 @@ async function sendToken(tokenId, sendAddress){
   };
 }
 
+async function leaveGroup(){
+    await instance.removeMeFromGroup(group.id, {from: accounts[0]});
+    startAll();
+}
+
+/*
 async function resetToken(tokenId, groupId){
   try {
     await instance.resetRound(tokenId, groupId, {from: accounts[0]});
@@ -283,7 +427,7 @@ async function resetToken(tokenId, groupId){
     console.log(err);
   };
 }
-
+*/
 async function setName() {
   try {
     _name=$("#setName").val();
@@ -295,12 +439,23 @@ async function setName() {
   }  
 }
 
+async function changeName() {
+  try {
+    _name=$("#changeMyName").val();
+    await instance.nameSet(_name, {from: user.address});
+    startAll();
+  } catch(err) {
+    alert("Error setting name!");
+    console.log(err);
+  }  
+}
+
+
 function clearSections() {
   $(".start-hidden").hide();
 /*  $("#myGroupsSection").hide();
   $("#showGroupSection").hide();
   $("#groupProperties").hide();
-  $("#groupSettingsSection").hide();
   $("#userBalances").hide();
   */
 }
@@ -329,7 +484,10 @@ async function checkInvitation() {
 
 async function iCandidate(gid, inv) {
   try {
-    await instance.addCandidate(gid, inv+"\x00", {from: user.address});
+//    await instance.addCandidate(gid, inv+"\x00", {from: user.address});
+//    await instance.changeToken(gid, inv+"\x00", {from: user.address});
+    await instance.changeToken(0,inv+"\x00",0,0,parseInt(gid),0,{from: accounts[0]});
+
     startAll();
   } catch(err) {
     alert("Error adding candidate to group!");
