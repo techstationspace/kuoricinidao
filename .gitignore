@@ -1,3 +1,5 @@
 build/contracts/*
 metamask.dev
 node_modules
+secret*
+.secret*

@@ -21,7 +21,7 @@ contract KuoriciniDao {
   }
 
     /* CandType
-    0 : new address (todo: not implemented yet)
+    0 : new address
     1 : new token
     2 : change existing token
     3 : new quorum
