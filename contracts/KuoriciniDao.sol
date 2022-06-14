@@ -32,12 +32,22 @@ mapping (address => UToken[] ) userTokens;
 constructor() {
 }
 
+/*
+* Users and Groups
+*
+*/
+
 function createGroup(string calldata groupName) public returns(bool){
   DaoGroup memory newGroup;
   newGroup.name=groupName;
   address[] memory _members = new address[](1);
   _members[0]=msg.sender;
   newGroup.members=_members;
+<<<<<<< HEAD
+=======
+  //uint[] memory defaultTokens;
+  //newGroup.tokenIds = defaultTokens;
+>>>>>>> bd18166529dabba5fd9a647799f566b81b26a86f
   daoGroups.push(newGroup);
   userGroups[msg.sender].push(daoGroups.length-1);
   return true;
@@ -75,10 +85,11 @@ function setName(string calldata name) public returns(bool){
 }
 
 function nameOf(address owner) public view returns(string memory) {
-  return names[owner];
-}
+    return names[owner];
+  }
+  
 
-
+<<<<<<< HEAD
 
 /*
 * Tokens
@@ -86,6 +97,20 @@ function nameOf(address owner) public view returns(string memory) {
 
 function createGToken(string calldata name, uint supply, uint duration, uint gid) public returns(bool){
   require(isAddressInGroup(msg.sender, gid), "user not authorized"); 
+=======
+/*
+* Tokens
+*/
+
+function getToken(uint tokid, uint gid) public view returns(GToken memory) {
+  require(isAddressInGroup(msg.sender, gid), "user not authorized");   
+  return allTokens[tokid];
+}
+
+function createGToken(string calldata name, uint supply, uint duration, uint gid) public returns(bool){
+  require(isAddressInGroup(msg.sender, gid), "user not authorized");
+
+>>>>>>> bd18166529dabba5fd9a647799f566b81b26a86f
   GToken memory newToken = GToken ({
     name: name,
     roundSupply: supply,
@@ -105,6 +130,7 @@ function getUserTokens(uint gid) public view returns(UToken[] memory) {
   uint m = userTokens[msg.sender].length;
   UToken[] memory utokens = new UToken[](l);
 
+<<<<<<< HEAD
   for ( uint i=0; i < l; i++ ) {  //ciclo tutti i token del gruppo
     uint tokId = daoGroups[gid].tokenIds[i];
     utokens[i] = UToken ({ tokenId: tokId, balance: 0, xbalance: allTokens[tokId].roundSupply });
@@ -115,6 +141,18 @@ function getUserTokens(uint gid) public view returns(UToken[] memory) {
         uint newtime = allTokens[tokId].timestamp + allTokens[tokId].roundDuration;
         if ( block.timestamp > newtime ) {
           utokens[i].xbalance = allTokens[tokId].roundSupply;
+=======
+  for ( uint i = 0; i < l; i++ ) { // scorro i tokens del gruppo
+    uint tokid = daoGroups[gid].tokenIds[i];
+    utokens[i] = UToken ({ tokenId: tokid, balance: 0, xbalance: allTokens[tokid].roundSupply });
+    for ( uint k = 0 ; k < m ; k++ ){ // scorro i token dell'utente
+      if ( userTokens[msg.sender][k].tokenId == tokid ) {
+        utokens[i] = userTokens[msg.sender][k];
+
+        uint newtime = allTokens[tokid].timestamp + allTokens[tokid].roundDuration;
+        if ( block.timestamp > newtime ) {
+          utokens[i].xbalance = allTokens[tokid].roundSupply;
+>>>>>>> bd18166529dabba5fd9a647799f566b81b26a86f
         }
       }
     }
@@ -122,11 +160,14 @@ function getUserTokens(uint gid) public view returns(UToken[] memory) {
   return utokens;
 }
 
+<<<<<<< HEAD
 function getToken(uint tokId, uint gid) public view returns(GToken memory) {
   require(isAddressInGroup(msg.sender, gid), "user not authorized"); 
   return allTokens[tokId];
 }
 
+=======
+>>>>>>> bd18166529dabba5fd9a647799f566b81b26a86f
 function transferToken(address receiver, uint tokid, uint qty, uint gid) public returns(bool) {
   require(isAddressInGroup(msg.sender, gid), "user not authorized"); 
   require(isAddressInGroup(receiver, gid), "user not authorized"); 
@@ -155,6 +196,7 @@ function transferToken(address receiver, uint tokid, uint qty, uint gid) public 
     allTokens[tokid].timestamp = newtimestamp;
   }
 
+<<<<<<< HEAD
   require(senderxbalance > qty, "non hai abbastanza token");
 
   // retrieve receiver usertoken if exists, receiverbalance
@@ -162,6 +204,15 @@ function transferToken(address receiver, uint tokid, uint qty, uint gid) public 
   uint receiverPos = 0;
   bool receiverCreate = true;
 
+=======
+  require(senderxbalance >= qty, "non hai abbastanza token");
+
+  // retrieve receiver usertoken if exists, receiverbalance
+  uint receiverbalance = 0;
+  uint receiverPos = 0;
+  bool receiverCreate = true;
+
+>>>>>>> bd18166529dabba5fd9a647799f566b81b26a86f
   for ( receiverPos; receiverPos < userTokens[receiver].length; receiverPos++ ){
     if ( userTokens[receiver][receiverPos].tokenId == tokid ) {
       receiverbalance = userTokens[receiver][receiverPos].balance;
@@ -169,11 +220,19 @@ function transferToken(address receiver, uint tokid, uint qty, uint gid) public 
       break;
     }
   }
+<<<<<<< HEAD
 
   // transaction
   senderxbalance -= qty;
   receiverbalance += qty;
 
+=======
+
+  // transaction
+  senderxbalance -= qty;
+  receiverbalance += qty;
+
+>>>>>>> bd18166529dabba5fd9a647799f566b81b26a86f
   // write on blockchain
   if ( senderCreate ) {
     userTokens[msg.sender].push( UToken({ tokenId: tokid, balance: 0, xbalance: senderxbalance }));

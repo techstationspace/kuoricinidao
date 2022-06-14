@@ -68,7 +68,11 @@ contract("KuoriciniDao", async accounts => {
     console.log(gtoken);
 
     console.log("first transfer");
+<<<<<<< HEAD
     await instance.transferToken(account_two, 1,  1, gid, {from: accounts[0]});    
+=======
+    await instance.transferToken(account_two, 1, 1, gid, {from: accounts[0]});    
+>>>>>>> bd18166529dabba5fd9a647799f566b81b26a86f
     utokensS = await instance.getUserTokens(gid, {from: accounts[0]});
     console.log("utokensS");
     console.log(utokensS);

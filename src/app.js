@@ -1,5 +1,9 @@
 async function init() {
     $("#singleGroupContainer").hide();
+<<<<<<< HEAD
+=======
+    $("#myGroupsContainer").show();
+>>>>>>> bd18166529dabba5fd9a647799f566b81b26a86f
 
     web3 = new Web3(window.ethereum);
 
@@ -8,7 +12,7 @@ async function init() {
         KuoriciniDao.setProvider(window.ethereum);
     });
 
-    accounts = await web3.eth.getAccounts();
+    accounts = await web3.eth.requestAccounts();
     $("#myAddress").text(accounts[0]);
 
     instance = await KuoriciniDao.deployed();
@@ -40,12 +44,17 @@ async function init() {
 
 async function showGroup(gid) {
     $("#singleGroupContainer").show();
+<<<<<<< HEAD
+=======
+    $("#myGroupsContainer").hide();
+>>>>>>> bd18166529dabba5fd9a647799f566b81b26a86f
 
     group = await instance.group(gid, {from: accounts[0]});
     $("#theGroup").text(group.name);
     currentGroupId = gid;
 
     utokens = await instance.getUserTokens(gid, {from: accounts[0]});
+<<<<<<< HEAD
     utokensNames = [];
     table = document.getElementById("userTokensTable");
     table.innerHTML="";
@@ -64,6 +73,13 @@ async function showGroup(gid) {
     table = document.getElementById("groupTokensTable");
     table.innerHTML="";
     for (i = 0; i < group.tokenIds.length; i++) {
+=======
+    utokenNames = [];
+    table = document.getElementById("userTokensTable");
+    table.innerHTML="";
+
+    for (i = 0; i < utokens.length; i++) {
+>>>>>>> bd18166529dabba5fd9a647799f566b81b26a86f
         row=table.insertRow(-1);
         cell=row.insertCell(0);
         gtoken = await instance.getToken(group.tokenIds[i], gid, {from: accounts[0]});
@@ -74,6 +90,21 @@ async function showGroup(gid) {
         cell.innerHTML=gtoken.roundDuration/86400;
     }
 
+<<<<<<< HEAD
+=======
+    table = document.getElementById("groupTokensTable");
+    table.innerHTML="";
+    for (i = 0; i < group.tokenIds.length; i++) {
+        gtoken = await instance.getToken(group.tokenIds[i], gid, {from: accounts[0]});
+        row=table.insertRow(-1);
+        cell=row.insertCell(0);
+        cell.innerHTML=gtoken.name;
+        cell=row.insertCell(-1);
+        cell.innerHTML=gtoken.roundSupply;
+        cell=row.insertCell(-1);
+        cell.innerHTML=gtoken.roundDuration/86400+" giorni";
+    }
+>>>>>>> bd18166529dabba5fd9a647799f566b81b26a86f
 
     table = document.getElementById("theGroupTable")
     table.innerHTML="";
@@ -90,13 +121,29 @@ async function showGroup(gid) {
             textCell="you can't send to yourself";             
         } 
         else {
+<<<<<<< HEAD
             for (l=0; l < utokens.length; l++) {
                 textCell += "<button class=\"btn btn-primary\" onclick=\"sendToken('"+member+"',"+utokens[l].tokenId+")\">"+utokensNames[l]+"</button> ";
+=======
+            for (l = 0; l < utokens.length; l++) {
+                textCell += "<button class=\"btn btn-primary\" onclick=\"sendToken('"+member+"',"+utokens[l].tokenId+")\">"+utokenNames[l]+"</button> ";
+>>>>>>> bd18166529dabba5fd9a647799f566b81b26a86f
             }
         }
         cell.innerHTML=textCell;        
     }
  
+<<<<<<< HEAD
+=======
+}
+
+async function newToken() {
+    tname = $("#newTokenName").val();
+    supply = parseInt($("#newTokenSupply").val());
+    duration = parseInt($("#newTokenDuration").val())*86400;
+    await instance.createGToken(tname, supply, duration, currentGroupId, {from: accounts[0]});
+    showGroup(currentGroupId);
+>>>>>>> bd18166529dabba5fd9a647799f566b81b26a86f
 }
 
 async function sendToken(to, tokid) {
@@ -107,7 +154,7 @@ async function sendToken(to, tokid) {
 async function addAddressToGroup() {
     addr = $("#addAddress").val();
     await instance.addAddresstoGroup(addr, currentGroupId , {from: accounts[0]});
-    init();
+    showGroup(currentGroupId);
 }
 
 async function setName() {
@@ -125,7 +172,7 @@ async function newGroup() {
 async function addMember() {
     addr = $("#addAddress").val();
     await instance.addAddresstoGroup(addr, currentGroupId , {from: accounts[0]});
-    init();
+    showGroup(currentGroupId);
 }
 
 async function setNewToken() {
@@ -142,5 +189,10 @@ $(document).on("click", "#setNameButton", setName);
 $(document).on("click", "#newGroupButton", newGroup);
 $(document).on("click", "#addAddressButton", addAddressToGroup);
 $(document).on("click", "#homeButton", init);
+<<<<<<< HEAD
 $(document).on("click", "#setNewTokenButton", setNewToken);
+=======
+$(document).on("click", "#newTokenButton", newToken);
+
+>>>>>>> bd18166529dabba5fd9a647799f566b81b26a86f
 
