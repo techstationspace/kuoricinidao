@@ -41,12 +41,54 @@ contract("KuoriciniDao", async accounts => {
     const account_two = accounts[1];
     gid=0;
 
-    await instance.transferToken(0, account_two, 1, gid, {from: accounts[0]});
+    await instance.transferToken(account_two, 0, 1, gid, {from: accounts[0]});
+
     utokensS = await instance.getUserTokens(gid, {from: accounts[0]});
+    console.log("utokensS");
+    console.log(utokensS);
+
     utokensR = await instance.getUserTokens(gid, {from: accounts[1]});
+    console.log("utokensR");
+    console.log(utokensR);
 
     assert.equal(utokensS[0].xbalance, 9); 
     assert.equal(utokensR[0].balance, 1); 
+  });
+
+  it("create another token and transfer more", async () => {
+    const instance = await KuoriciniDao.deployed();
+    const account_one = accounts[0];
+    const account_two = accounts[1];
+    gid=0;
+
+    await instance.createGToken("matite", 2, 86400, 0, {from: accounts[0]});
+    utokens = await instance.getUserTokens(gid, {from: accounts[0]});
+    console.log(utokens);
+    gtoken = await instance.getToken(utokens[1].tokenId, gid, {from: accounts[0]});
+    console.log(gtoken);
+
+    console.log("first transfer");
+    await instance.transferToken(account_two, 1,  1, gid, {from: accounts[0]});    
+    utokensS = await instance.getUserTokens(gid, {from: accounts[0]});
+    console.log("utokensS");
+    console.log(utokensS);
+    utokensR = await instance.getUserTokens(gid, {from: accounts[1]});
+    console.log("utokensR");
+    console.log(utokensR);
+
+    console.log("second transfer");
+    await instance.transferToken(account_two, 1, 1, gid, {from: accounts[0]});    
+    utokensS = await instance.getUserTokens(gid, {from: accounts[0]});
+    console.log("utokensS");
+    console.log(utokensS);
+    utokensR = await instance.getUserTokens(gid, {from: accounts[1]});
+    console.log("utokensR");
+    console.log(utokensR);
+
+    assert.equal(utokensS[1].xbalance, 0); 
+    assert.equal(utokensR[1].balance, 2);
+
+   
   });
 
 });

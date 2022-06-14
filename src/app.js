@@ -1,8 +1,6 @@
 async function init() {
     $("#singleGroupContainer").hide();
-    $("#myGroupsContainer").show();
-    $("#newTokenContainer").hide();
-    
+
     web3 = new Web3(window.ethereum);
 
     $.getJSON("KuoriciniDao.json", function(data){
@@ -33,6 +31,7 @@ async function init() {
         cell=row.insertCell(-1);
         cell.innerHTML=group.members.length;
     }
+    
     $("#myGroupsTable").on("click", "tr", function() {
         showGroup(this.id.replace("group_",""));
     });
@@ -41,41 +40,40 @@ async function init() {
 
 async function showGroup(gid) {
     $("#singleGroupContainer").show();
-    $("#myGroupsContainer").hide();
-    $("#newTokenContainer").hide();
 
     group = await instance.group(gid, {from: accounts[0]});
     $("#theGroup").text(group.name);
     currentGroupId = gid;
 
-    table = document.getElementById("groupTokensTable")
-    table.innerHTML="";
-    for (i = 0; i < group.tokenIds.length; i++) {
-        gtoken = await instance.getToken(group.tokenIds[i], gid, {from: accounts[0]});
-        row=table.insertRow(-1);
-        cell=row.insertCell(0);
-        cell.innerHTML=gtoken.name;
-        cell=row.insertCell(-1);
-        cell.innerHTML=gtoken.roundSupply;
-        cell=row.insertCell(-1);
-        cell.innerHTML=gtoken.roundDuration/86400+" giorni";
-    }
-
     utokens = await instance.getUserTokens(gid, {from: accounts[0]});
-    utokenNames = [];
-    table = document.getElementById("userTokensTable")
+    utokensNames = [];
+    table = document.getElementById("userTokensTable");
     table.innerHTML="";
     for (i = 0; i < utokens.length; i++) {
         row=table.insertRow(-1);
         cell=row.insertCell(0);
         gtoken = await instance.getToken(utokens[i].tokenId, gid, {from: accounts[0]});
-        utokenNames[i] = gtoken.name;
-        cell.innerHTML = gtoken.name;
+        utokensNames[i] = gtoken.name;
+        cell.innerHTML=gtoken.name;
         cell=row.insertCell(-1);
         cell.innerHTML=utokens[i].balance;
         cell=row.insertCell(-1);
         cell.innerHTML=utokens[i].xbalance;
     }
+
+    table = document.getElementById("groupTokensTable");
+    table.innerHTML="";
+    for (i = 0; i < group.tokenIds.length; i++) {
+        row=table.insertRow(-1);
+        cell=row.insertCell(0);
+        gtoken = await instance.getToken(group.tokenIds[i], gid, {from: accounts[0]});
+        cell.innerHTML=gtoken.name;
+        cell=row.insertCell(-1);
+        cell.innerHTML=gtoken.roundSupply;
+        cell=row.insertCell(-1);
+        cell.innerHTML=gtoken.roundDuration/86400;
+    }
+
 
     table = document.getElementById("theGroupTable")
     table.innerHTML="";
@@ -87,35 +85,23 @@ async function showGroup(gid) {
         cell=row.insertCell(-1);
         cell.innerHTML=await instance.nameOf(member, {from: accounts[0]});
         cell=row.insertCell(-1);
-        textCell = "";
+        textCell=""
         if (member == accounts[0]) {
-            textCell = "non mandi a te stesso";             
+            textCell="you can't send to yourself";             
         } 
         else {
-            for (i = 0; i < utokens.length; i++) {            
-                textCell += "<button class=\"btn btn-primary\" onclick=\"sendToken('"+member+"',"+utokens[i].tokenId+")\">"+utokenNames[i]+"</button> ";
-            };
+            for (l=0; l < utokens.length; l++) {
+                textCell += "<button class=\"btn btn-primary\" onclick=\"sendToken('"+member+"',"+utokens[l].tokenId+")\">"+utokensNames[l]+"</button> ";
+            }
         }
-        cell.innerHTML=textCell;
+        cell.innerHTML=textCell;        
     }
-
+ 
 }
 
-async function newToken() {
-    $("#newTokenContainer").toggle();
-}
-
-async function setNewToken() {
-    tname = $("#newTokenName").val();
-    supply = parseInt($("#newTokenSupply").val());
-    duration = parseInt($("#newTokenDuration").val())*86400;
-    await instance.createGToken(tname, supply, duration, currentGroupId, {from: accounts[0]});
-    showGroup(currentGroupId); 
-}
-
-async function sendToken(to, tokId) {
-    await instance.transferToken(tokId, to, 1, currentGroupId, {from: accounts[0]});
-    showGroup(currentGroupId); 
+async function sendToken(to, tokid) {
+    await instance.transferToken(to, tokid, 1, currentGroupId, {from: accounts[0]});
+    showGroup(currentGroupId);
 }
 
 async function addAddressToGroup() {
@@ -142,11 +128,19 @@ async function addMember() {
     init();
 }
 
+async function setNewToken() {
+    tname= $("#newTokenName").val();
+    supply= parseInt($("#newTokenSupply").val());
+    duration= parseInt($("#newTokenDuration").val())*86400;
+    await instance.createGToken(tname, supply, duration, currentGroupId, {from: accounts[0]});
+    showGroup(currentGroupId);
+}
+
+
 init();
 $(document).on("click", "#setNameButton", setName);
 $(document).on("click", "#newGroupButton", newGroup);
 $(document).on("click", "#addAddressButton", addAddressToGroup);
 $(document).on("click", "#homeButton", init);
-$(document).on("click", "#newTokenButton", newToken);
 $(document).on("click", "#setNewTokenButton", setNewToken);
 
