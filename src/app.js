@@ -12,6 +12,11 @@ async function initWeb3 () {
   }
   web3 = new Web3(web3Provider);
 
+
+  // temporary solution to wrong metamask gas suggestions
+  // https://stackoverflow.com/questions/68926306/avoid-this-gas-fee-has-been-suggested-by-message-in-metamask-using-web3
+  userGas = 300000;
+
   await $.getJSON('KuoriciniDao.json', function(data) {
     KuoriciniDao = TruffleContract(data);
     KuoriciniDao.setProvider(web3Provider);
@@ -24,11 +29,23 @@ async function readAccount() {
     accounts = await web3.eth.getAccounts();
     user.address=accounts[0];      
     instance = await KuoriciniDao.deployed();
+
     user.name = await instance.nameOf(user.address, {from: user.address});
   } catch(err) {
     alert("Error reading account info!");
     console.log(err);
   };
+/*
+  await KuoriciniDao.methods
+  .deposit(recepient, amount)
+  .send({ 
+    from: account, 
+    value, 
+    maxPriorityFeePerGas: null,
+    maxFeePerGas: null, 
+  });
+*/
+//  resp = await KuoriciniDao.methods.nameOf().send({ user.address, from: accounts[0], gas: 300000, gasPrice: null, }) 
 
   $('#myAddress').text(user.address);
   $('#myName').text(user.name);
@@ -70,7 +87,7 @@ async function checkNow() {
 async function createGroup() {
   try {
     groupName=$("#setGroupName").val();
-    await instance.createGroup(groupName, {from: user.address});
+    await instance.createGroup(groupName, {from: user.address, gas: userGas, gasPrice: null});
     startAll();
   } catch(err) {
     alert("Error creating Group!");
@@ -300,7 +317,7 @@ async function showGroup(_gid) {
 };
 
 async function voteCandidate(gid,candidatePos,vote) {
-  await instance.voteCandidateToken(gid, parseInt(candidatePos), vote, {from: user.address});
+  await instance.voteCandidateToken(gid, parseInt(candidatePos), vote, {from: user.address, gas: userGas, gasPrice: null});
   await readAccount();    
   showGroup(group.id);
   $("#DAOSection").show();
@@ -310,7 +327,7 @@ async function voteCandidateToken(gid,candidateTokenId,vote) {
   console.log(gid,candidateTokenId,vote);
   console.log(candidateTokenId);
   console.log(vote);
-  await instance.voteCandidateToken(gid, parseInt(candidateTokenId), vote, {from: user.address});
+  await instance.voteCandidateToken(gid, parseInt(candidateTokenId), vote, {from: user.address, gas: userGas, gasPrice: null});
   await readAccount();    
   showGroup(group.id);
   $("#DAOSection").show();
@@ -373,7 +390,7 @@ async function createToken() {
   tokName=$("#newTokenName").val();
   tokSupply=parseInt($("#newTokenSupply").val());
   tokDuration=parseInt($("#newTokenDuration").val())*86400;
-  await instance.changeToken(0,tokName,tokSupply,tokDuration,parseInt(group.id),1,{from: accounts[0]});
+  await instance.changeToken(0,tokName,tokSupply,tokDuration,parseInt(group.id),1,{from: user.address, gas: userGas, gasPrice: null});
   await readAccount();    
   showGroup(group.id);
   $("#DAOSection").show();
@@ -384,7 +401,7 @@ async function changeToken() {
   tokName=$("#changeTokenName").val();
   tokSupply=parseInt($("#changeTokenSupply").val());
   tokDuration=parseInt($("#changeTokenDuration").val())*86400;
-  await instance.changeToken(tokId,tokName,tokSupply,tokDuration,parseInt(group.id),2,{from: accounts[0]});
+  await instance.changeToken(tokId,tokName,tokSupply,tokDuration,parseInt(group.id),2,{from: user.address, gas: userGas, gasPrice: null});
   await readAccount();    
   showGroup(group.id);
   $("#DAOSection").show();
@@ -393,7 +410,7 @@ async function changeToken() {
 async function changeThreshold() {
   th = parseInt($("#thresholdVote").val());
   console.log(th);
-  await instance.changeToken(th,"",0,0,parseInt(group.id),3,{from: accounts[0]});
+  await instance.changeToken(th,"",0,0,parseInt(group.id),3,{from: user.address, gas: userGas, gasPrice: null});
   await readAccount();    
   showGroup(group.id);
   $("#DAOSection").show();
@@ -402,7 +419,7 @@ async function changeThreshold() {
 
 async function sendToken(tokenId, sendAddress){
   try {
-    await instance.transferToken(tokenId, sendAddress, 1, {from: accounts[0]});
+    await instance.transferToken(tokenId, sendAddress, 1, {from: user.address, gas: userGas, gasPrice: null});
     await readAccount();    
     showGroup(group.id);
   } catch(err) {
@@ -412,14 +429,14 @@ async function sendToken(tokenId, sendAddress){
 }
 
 async function leaveGroup(){
-    await instance.removeMeFromGroup(group.id, {from: accounts[0]});
+    await instance.removeMeFromGroup(group.id, {from: user.address, gas: userGas, gasPrice: null});
     startAll();
 }
 
 /*
 async function resetToken(tokenId, groupId){
   try {
-    await instance.resetRound(tokenId, groupId, {from: accounts[0]});
+    await instance.resetRound(tokenId, groupId, {from: user.address, gas: userGas, gasPrice: null});
     await readAccount();    
     showGroup(group.id);
   } catch(err) {
@@ -431,7 +448,7 @@ async function resetToken(tokenId, groupId){
 async function setName() {
   try {
     _name=$("#setName").val();
-    await instance.nameSet(_name, {from: user.address});
+    await instance.nameSet(_name, {from: user.address, gas: userGas, gasPrice: null});
     startAll();
   } catch(err) {
     alert("Error setting name!");
@@ -442,7 +459,7 @@ async function setName() {
 async function changeName() {
   try {
     _name=$("#changeMyName").val();
-    await instance.nameSet(_name, {from: user.address});
+    await instance.nameSet(_name, {from: user.address, gas: userGas, gasPrice: null});
     startAll();
   } catch(err) {
     alert("Error setting name!");
@@ -486,7 +503,7 @@ async function iCandidate(gid, inv) {
   try {
 //    await instance.addCandidate(gid, inv+"\x00", {from: user.address});
 //    await instance.changeToken(gid, inv+"\x00", {from: user.address});
-    await instance.changeToken(0,inv+"\x00",0,0,parseInt(gid),0,{from: accounts[0]});
+    await instance.changeToken(0,inv+"\x00",0,0,parseInt(gid),0,{from: user.address, gas: userGas, gasPrice: null});
 
     startAll();
   } catch(err) {
