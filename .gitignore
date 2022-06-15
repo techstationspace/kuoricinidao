@@ -1,6 +1,5 @@
 .env
 .env.test
-build
 metamask.dev
 node_modules
 secret*
