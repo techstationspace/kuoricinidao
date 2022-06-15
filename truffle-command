@@ -1,0 +1,2 @@
+truffle migrate --config truffle-config.polygon.js --network=polygon_infura_mainnet
+
