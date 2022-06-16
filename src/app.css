@@ -35,3 +35,10 @@ button {
 #invitationLink {
     background-color: rgba(172, 255, 47, 0.489);
 }
+
+iframe {
+    display: block;
+    margin-left: auto;
+    margin-right: auto 
+    
+}

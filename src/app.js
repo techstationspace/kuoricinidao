@@ -4,11 +4,11 @@ async function initWeb3 () {
     web3Provider = window.ethereum;
     try {
       await window.ethereum.request({ method: "eth_requestAccounts" });;
-    } catch (error) {
-      console.error("User denied account access")
+    } catch (err) {
+      walletError("User denied account access", err);
     }
   } else {
-    alert("Non trovo il provider Ethereum. Hai installato Metamask?");
+    walletError("I cannot connect to your wallet. Make sure you have a Polygon MATIC wallet connected.");
   }
   web3 = new Web3(web3Provider);
 
@@ -29,11 +29,9 @@ async function readAccount() {
     accounts = await web3.eth.getAccounts();
     user.address=accounts[0];      
     instance = await KuoriciniDao.deployed();
-
     user.name = await instance.nameOf(user.address, {from: user.address});
   } catch(err) {
-    alert("Error reading account info!");
-    console.log(err);
+    walletError("Error reading account info!", err);
   };
 /*
   await KuoriciniDao.methods
@@ -456,6 +454,10 @@ async function setName() {
   }  
 }
 
+async function walletError(msg, error) {
+  $("#noWalletSection").show();
+}
+
 async function changeName() {
   try {
     _name=$("#changeMyName").val();
@@ -470,11 +472,6 @@ async function changeName() {
 
 function clearSections() {
   $(".start-hidden").hide();
-/*  $("#myGroupsSection").hide();
-  $("#showGroupSection").hide();
-  $("#groupProperties").hide();
-  $("#userBalances").hide();
-  */
 }
 
 async function checkInvitation() {
@@ -501,27 +498,31 @@ async function checkInvitation() {
 
 async function iCandidate(gid, inv) {
   try {
-//    await instance.addCandidate(gid, inv+"\x00", {from: user.address});
-//    await instance.changeToken(gid, inv+"\x00", {from: user.address});
     await instance.changeToken(0,inv+"\x00",0,0,parseInt(gid),0,{from: user.address, gas: userGas, gasPrice: null});
-
     startAll();
   } catch(err) {
     alert("Error adding candidate to group!");
   }  
 }
 
+async function welcome() {
+
+  $("#welcomeSection").show();
+
+}
+
 
 async function startAll() {
   clearSections();
-
+welcome();
   await initWeb3();
   await readAccount();
   if(user.name.length==0){
    $("#userPropertiesSection").hide();
    $("#setNameSection").show();
   } else {
-   $("#userPropertiesSection").show();
+    $("#welcomeSection").hide();
+    $("#userPropertiesSection").show();
    $("#myGroupsSection").show();
    getMyGroups();
   }
