@@ -10,6 +10,7 @@
   <div class="container-fluid p-4 text-white" id="navbar">
     <div class="row justify-content-md-center">    
       <div class="col fs-2 fw-bold cursor-pointer text-decoration-underline" id="homeButton">Kuoricini Dao</div>
+      <div class="col-4" ><a href='javascript: $("#helpSection").toggle()''>[HELP]</a><br></div>
       <div class="col fs-6 fw-lighter text-end align-text-bottom fw-lighter" id="myAddress"></div>      
     </div>
   </div>
@@ -19,21 +20,43 @@
       <h5>Hello friend! It looks like you don't have a wallet properly configured</h5>
       <h5>Make sure you have a Wallet connected on POLYGON Network!</h5>
       <hr>
-      <h5>KuoriciniDAO Pilot has currently been tested on</h5>
+      <h5>KuoriciniDAO Pilot currently has been tested on</h5>
       <ul>
-        <li>Metamask Wallet plugin on desktop</li>
+        <li>Metamask Wallet plugin on Desktop</li>
         <li>TrustWallet DAPP on mobile </li>
       </ul>      
-      <hr>
-      <a href="instructions-metamask.html">I am on a Desktop computer and I don't know what to do</a>
-      </div>
+    </div>
   </div>
-
+  
+  <div class="container-fluid p-4 start-hidden" id="helpSection">
+    <div class="card p-4 rounded-3 shadow-sm border-primary">
+      <div class="card-header">
+        <h5>Help! What is this? - Aiuto? Cos'e' sta roba</h5>                
+      </div>
+      <div class="card-body">
+        KuoriciniDAO works on PC and mobile, however at this moment setup on mobile is for more advanced users. Also we didn't find any way to donate to Gitcoin grants from mobile phone.
+        <hr>      
+        KuoriciniDAO funziona sia su PC che mobile, pero' al momento il setup per cellulare e' per utenti avanzati. Inoltre non abbiamo trovato un modo per fare la donazione su Gitcoin grants dal cellulare.
+        <hr>      
+        <strong>
+          [IT] - <a href="instructions-metamask-it.html">Sto usando un PC e non so cosa fare</a><br>
+          [IT] - <a href="instructions-gitcoin-it.html">Supportaci con un 1 euro su GITCOIN prima del 23 Giugno</a><br>
+          [EN] - <a href="instructions-metamask.html">I am on a Desktop computer and I don't know what to do</a><br>
+          [EN] - <a href="instructions-gitcoin.html">Support us 1 dollar on GITCOIN Crowdfunding before 23 June</a><br>
+        </strong>
+      </div>
+    </div>
+  </div>
 
   <div class="container-fluid p-4 start-hidden" id="welcomeSection">
     <div class="card p-4 rounded-3 shadow-sm border-primary">
       <h3>Welcome to KuoriciniDAO!</h3>
-      <h5>KuoriciniDAO is in Pilot Stage! You are free to play with it. Please <a href="https://discord.gg/2a4sqEj6US">join our Discord</a> and give us your feedback.</h5>
+      <h5>KuoriciniDAO is in Pilot Stage! You are free to play with it and tell us what you think about it</h5> 
+      <h5><a href="https://discord.gg/2a4sqEj6US">[Discord]</a>
+          <a href="https://twitter.com/kuoricinidao">[Twitter]</a>
+          <a href="https://github.com/techstationspace/kuoricinidao">[Github]</a>
+          <a href="https://t.me/+nuN-D3FgWKE4Mzg8">[Telegram]</a>
+      </h5> 
     </div>
     <div class="p-4"></div>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/alaPbniLEx0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

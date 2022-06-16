@@ -42,3 +42,14 @@ iframe {
     margin-right: auto 
     
 }
+
+img {
+    margin: 5px;
+    border: medium solid #240653;
+    border-radius: 5px;
+    max-height: 500px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+
+}

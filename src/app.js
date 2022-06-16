@@ -456,6 +456,7 @@ async function setName() {
 
 async function walletError(msg, error) {
   $("#noWalletSection").show();
+  $("#helpSection").show();
 }
 
 async function changeName() {
