@@ -12,7 +12,6 @@ async function initWeb3 () {
   }
   web3 = new Web3(web3Provider);
 
-
   // temporary solution to wrong metamask gas suggestions
   // https://stackoverflow.com/questions/68926306/avoid-this-gas-fee-has-been-suggested-by-message-in-metamask-using-web3
   userGas = 300000;
@@ -81,7 +80,6 @@ async function checkNow() {
 //  $('#tok_6').text(ts-s6);
 }
 
-
 async function createGroup() {
   try {
     groupName=$("#setGroupName").val();
@@ -92,7 +90,6 @@ async function createGroup() {
     console.log(err);
   }
 }
-
 
 async function getMyGroups() {
   var table=document.getElementById("myGroupsTable");
@@ -132,55 +129,29 @@ async function showGroup(_gid) {
   userProperties(_gid);
 
   group.members = await instance.getGroupAddressfromId(_gid, {from: user.address});
-  let table=document.getElementById("groupTableBody");
-  table.innerHTML="";
-  group.members.forEach(element => {
-    KuoriciniDao.deployed().then(async function(instance) {
-      _name = await instance.nameOf(element, {from: user.address});
-      newRow = table.insertRow(-1);
-      newCell = newRow.insertCell(0); 
-      newCell.innerHTML=_name; 
-      newCell = newRow.insertCell(-1);
-      if (element != user.address) {
-        tokenText="";
-        currentTokens.forEach(tok => {
-          tokenText+="<button class=\"btn btn-primary\"onclick='sendToken("+tok.id+",\""+element+"\")'>"+tok.name+"</button> ";
-        });
-        newCell.innerHTML=tokenText;
-      } else {
-        newCell.innerHTML="non puoi mandare token a te stesso";
+  let stable=document.getElementById("groupTableBody");
+  stable.innerHTML="";
+  for ( i = 0 ; i < group.members.length; i++ ) {
+    element = group.members[i];
+    _name = await instance.nameOf(element, {from: user.address});
+    newRow = stable.insertRow(-1);
+    newCell = newRow.insertCell(0); 
+    newCell.innerHTML=_name; 
+    newCell = newRow.insertCell(-1);
+    if (element != user.address) {
+      tokenText="";
+      for ( y = 0 ; y < currentTokens.length; y++ ) {
+        tokenText+="<button class=\"btn btn-primary\"onclick='sendToken("+currentTokens[y].id+",\""+element+"\")'>"+currentTokens[y].name+"</button> ";
       }
-    });
-  });
-  // todo : fix mess btween getGroup and groupname as per videos branch is more clean
-  let _group = await instance.getGroup(_gid, {from: user.address});  
-/*
-  candidates = await instance.getGroupCandidates(_gid, {from: user.address});
-  let ctable=document.getElementById("candidatesTableBody");
-  ctable.innerHTML="";
-  for ( i = 0 ; i < candidates.length; i++ ) {
-      element = candidates[i];
-      _name = await instance.nameOf(element.candidateAddress, {from: user.address});
-      newRow = ctable.insertRow(-1);
-      newCell = newRow.insertCell(0); 
-      newCell.innerHTML=_group.candidatesIds[i]; 
-      newCell = newRow.insertCell(-1);
-      newCell.innerHTML=_name; 
-      newCell = newRow.insertCell(-1);
-      newCell.innerHTML=element.candidateAddress; 
-      newCell = newRow.insertCell(-1);
-      newCell.innerHTML=element.votes;
-      newCell = newRow.insertCell(-1);
-      if (element.voters.includes(user.address)) {
-        voteText="hai gia' votato";
-      }
-      else {
-        voteText="<button class=\"btn btn-primary\" onclick='voteCandidateToken("+group.id+",\""+_group.candidatesIds[i]+"\",1)'>yay</button> ";
-        voteText+="<button class=\"btn btn-primary\" onclick='voteCandidateToken("+group.id+",\""+_group.candidatesIds[i]+"\",0)'>ney</button> ";
-      }
-      newCell.innerHTML=voteText;
+      newCell.innerHTML=tokenText;
+    } else {
+      newCell.innerHTML="non puoi mandare token a te stesso";
+    }
   }
-*/  
+
+  // todo : fix mess btween getGroup and groupname as per videos branch is more clean
+  let _group = await instance.getGroup(_gid, {from: user.address});
+
   candidatetokens = await instance.getGroupCandidateTokens(_gid, {from: user.address});
 
   let ctable=document.getElementById("candidatesTableBody");
@@ -254,13 +225,13 @@ async function showGroup(_gid) {
     }
   }
 
-  ttable=document.getElementById("candidatesThresholdBody");
-  ttable.innerHTML="";
+  thtable=document.getElementById("candidatesThresholdBody");
+  thtable.innerHTML="";
 
   for ( i = 0 ; i < candidatetokens.length; i++ ) {
     element = candidatetokens[i];
     if (element.candType == 3) {
-      newRow = ttable.insertRow(-1);
+      newRow = thtable.insertRow(-1);
       newCell = newRow.insertCell(0); 
       newCell.innerHTML=element.id+"0%";
       newCell = newRow.insertCell(-1);
@@ -277,33 +248,29 @@ async function showGroup(_gid) {
     }
   }
 
-
-
-
-    let _tokenids = _group.tokenIds;
-    table=document.getElementById("groupChangeTokensTable");
-    table.innerHTML="";
-    _tokenids.forEach(element => {
-      KuoriciniDao.deployed().then(async function(instance) {
-        let _tok = await instance.getToken(element, {from: user.address});
-        newRow = table.insertRow(-1);
-        newCell = newRow.insertCell(0); 
-        newCell.innerHTML=element;
-        newCell = newRow.insertCell(-1);
-        newCell.innerHTML=_tok[0];
-        newCell = newRow.insertCell(-1);
-        newCell.innerHTML=_tok[1]; 
-        newCell = newRow.insertCell(-1);
-        newCell.innerHTML=_tok[2]/86400+" giorni";
-        $(newRow).click(function() {
-          $("#changeTokenButton").removeClass('disabled');
-          $("#changeTokenName").val(_tok[0]);
-          $("#changeTokenSupply").val(_tok[1]);
-          $("#changeTokenDuration").val(_tok[2]/86400);
-          $("#changeTokenId").text(element);
-        });
+  let _tokenids = _group.tokenIds;
+  cttable=document.getElementById("groupChangeTokensTable");
+  cttable.innerHTML="";
+  for ( i = 0 ; i < _group.tokenIds.length; i++ ) {
+      element = _group.tokenIds[i];
+      let _tok = await instance.getToken(element, {from: user.address});
+      newRow = cttable.insertRow(-1);
+      newCell = newRow.insertCell(0); 
+      newCell.innerHTML=element;
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=_tok[0];
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=_tok[1]; 
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=_tok[2]/86400+" giorni";
+      $(newRow).click(function() {
+        $("#changeTokenButton").removeClass('disabled');
+        $("#changeTokenName").val(_tok[0]);
+        $("#changeTokenSupply").val(_tok[1]);
+        $("#changeTokenDuration").val(_tok[2]/86400);
+        $("#changeTokenId").text(element);
       });
-    });
+  }
 
   $("#thresholdVote").val(parseInt(_group.voteThreshold));
   document.getElementById('thresholdValue').innerHTML=_group.voteThreshold;
@@ -335,13 +302,13 @@ async function voteCandidateToken(gid,candidateTokenId,vote) {
 async function groupProperties(_gid) {
   let _group = await instance.getGroup(_gid, {from: user.address});
   let _tokenids = _group.tokenIds;
-  let table=document.getElementById("groupTokensTable");
+  let gtable=document.getElementById("groupTokensTable");
   cTokens = [];
-  table.innerHTML="";
+  gtable.innerHTML="";
   _tokenids.forEach(element => {
     KuoriciniDao.deployed().then(async function(instance) {
       let _tok = await instance.getToken(element, {from: user.address});
-      newRow = table.insertRow(-1);
+      newRow = gtable.insertRow(-1);
       newCell = newRow.insertCell(0); 
       newCell.innerHTML=_tok[0];
       newCell = newRow.insertCell(-1);
@@ -358,12 +325,12 @@ async function groupProperties(_gid) {
 
 async function userProperties(_gid) {
   let _utokens = await instance.getUserTokens(_gid, {from: user.address});
-  let table=document.getElementById("userTokensTable");
-  table.innerHTML="";
+  let utable=document.getElementById("userTokensTable");
+  utable.innerHTML="";
   _utokens.forEach(element => {
     KuoriciniDao.deployed().then(async function(instance) {
       let _tok = await instance.getToken(element.tokenId, {from: user.address});
-      newRow = table.insertRow(-1);
+      newRow = utable.insertRow(-1);
       newCell = newRow.insertCell(0); 
       newCell.innerHTML=_tok.name; 
       newCell = newRow.insertCell(-1);
