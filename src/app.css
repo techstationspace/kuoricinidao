@@ -11,8 +11,12 @@ tbody {
 }
 
 body {
-    background-color: #791baa;
+    background-color: #240653;
 /*    background-image: linear-gradient(red, yellow);*/
+}
+
+.thebody {
+    background-color: #791baa;
 }
 
 button {
@@ -55,11 +59,13 @@ img {
 }
 
 .footer {
-  position: fixed;
+  position: relative;
   left: 0;
   bottom: 0;
+  margin-top: 2em;
   width: 100%;
   background-color: #240653;
   color: white;
   text-align: center;
+  height: 4em;
 }
