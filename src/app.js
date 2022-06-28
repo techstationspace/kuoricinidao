@@ -217,6 +217,7 @@ async function showGroup(gid) {
       element = group.tokenIds[i];
       _tok = await instance.getToken(element, {from: user.address});
       newRow = cttable.insertRow(-1);
+      newRow.id="group_"+element;
       newCell = newRow.insertCell(0); 
       newCell.innerHTML=element;
       newCell = newRow.insertCell(-1);
@@ -225,14 +226,13 @@ async function showGroup(gid) {
       newCell.innerHTML=_tok[1]; 
       newCell = newRow.insertCell(-1);
       newCell.innerHTML=_tok[2]/86400+" giorni";
-      $(newRow).click(function() {
-        $("#changeTokenButton").removeClass('disabled');
-        $("#changeTokenName").val(_tok[0]);
-        $("#changeTokenSupply").val(_tok[1]);
-        $("#changeTokenDuration").val(_tok[2]/86400);
-        $("#changeTokenId").text(element);
-      });
+//      $(newRow).click(function() {
+//      });
   }
+
+  $("#groupChangeTokensTable").on("click", "tr", function() {
+    proposeChangeToken(this.id.replace("group_",""));
+  });
 
   $("#thresholdVote").val(parseInt(group.voteThreshold));
   document.getElementById('thresholdValue').innerHTML=group.voteThreshold;
@@ -242,6 +242,16 @@ async function showGroup(gid) {
   $(".votersThreshold").text(thresh);
   $("#changeMyName").val(user.name);
 };
+
+async function proposeChangeToken(tokid) { 
+  console.log(tokid);
+  let tok = await instance.getToken(tokid, {from: user.address});
+  $("#changeTokenButton").removeClass('disabled');
+  $("#changeTokenName").val(tok[0]);
+  $("#changeTokenSupply").val(tok[1]);
+  $("#changeTokenDuration").val(tok[2]/86400);
+  $("#changeTokenId").text(tokid);
+}
 
 async function voteCandidate(gid,candidatePos,vote) {
   await instance.voteCandidateToken(gid, parseInt(candidatePos), vote, {from: user.address, gas: userGas, gasPrice: null});
@@ -256,7 +266,6 @@ async function voteCandidateToken(gid,candidateTokenId,vote) {
   showGroup(gid);
   $("#DAOSection").show();
 }
-
 
 async function groupProperties(gid) {
   group = await instance.getGroup(gid, {from: user.address});
