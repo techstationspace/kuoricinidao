@@ -232,13 +232,6 @@ contract KuoriciniDao {
     return true;
   }
 
-  function getGroupNamefromId(uint _id) public view returns(string memory) {
-    return daoGroups[_id].name;
-  }
-
-  function getGroupAddressfromId(uint _id) public view returns(address[] memory) {
-    return daoGroups[_id].members;
-  }
 
 
   function isTokenInGroup(uint tokid, uint gid) private view returns(bool) {
@@ -249,7 +242,19 @@ contract KuoriciniDao {
     }
     return false;
   }
+
   
+ // obsolete, to be removed. replaced by getToken. Remove it from one call from js  
+  function getGroupNamefromId(uint _id) public view returns(string memory) {
+    return daoGroups[_id].name;
+  }
+
+ // obsolete, to be removed. replaced by getToken. Remove it from one call from js  
+  function getGroupAddressfromId(uint _id) public view returns(address[] memory) {
+    return daoGroups[_id].members;
+  }
+
+
 /*  
 *   Tokens Candidates
 *
