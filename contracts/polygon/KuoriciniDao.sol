@@ -152,6 +152,8 @@ contract KuoriciniDao {
   }
 
   event Timeupdate(uint tokenId, uint newTime, uint stamp);
+  event BalanceUpdated(uint tokenId, uint xbalance, uint stamp);
+
   function getUserTokens(uint _gid) public view returns(UToken[] memory) {
     uint l = daoGroups[_gid].tokenIds.length;
     UToken[] memory _userTokens = new UToken[](l);
@@ -163,8 +165,10 @@ contract KuoriciniDao {
         if (userTokens[msg.sender][j].tokenId == q) {
           _userTokens[w]=userTokens[msg.sender][j];
           uint newtime = allTokens[q].timestamp + allTokens[q].roundDuration;
+          emit Timeupdate(q, newtime, block.timestamp);
           if (block.timestamp > newtime ) {
             _userTokens[w].xBalance = allTokens[q].roundSupply;
+            emit BalanceUpdated(q, _userTokens[w].xBalance, block.timestamp);
           }      
           matchFound = true;
           break;
