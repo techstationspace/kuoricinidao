@@ -151,6 +151,7 @@ contract KuoriciniDao {
     return true;
   }
 
+  event Timeupdate(uint tokenId, uint newTime, uint stamp);
   function getUserTokens(uint _gid) public view returns(UToken[] memory) {
     uint l = daoGroups[_gid].tokenIds.length;
     UToken[] memory _userTokens = new UToken[](l);
