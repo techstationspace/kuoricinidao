@@ -1,0 +1,22 @@
+.user-information{
+    width: 80%;
+    margin-left: 10%;
+    font-size: 1.2rem;
+}
+
+.title-table{
+    font-size: 2.5rem;
+    text-align: center;
+}
+
+.user-information table{
+    width: 100%;
+}
+
+.user-information thead tr td{
+    padding: 1em 0em;
+}
+
+.user-information tbody tr td{
+    padding: 0.5em 0em;
+}

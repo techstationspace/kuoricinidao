@@ -1,387 +1,68 @@
-<!DOCTYPE html>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<html>
-  <head>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-  <link rel="stylesheet" href="app.css">
-</head>  
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <title>KuoriciniDAO</title>
+</head>
+
 <body>
-  
-  <div class="container-fluid p-4 text-white" id="navbar">
-    <div class="row justify-content-md-center">    
-      <div class="col fs-2 fw-bold cursor-pointer text-decoration-underline" id="homeButton">Kuoricini Dao</div>
-      <div class="col-4 fs-4 fw-bold cursor-pointer text-decoration-underline" ><a href='javascript: $("#helpSection").toggle()''>[HELP]</a><br></div>
-      <div class="col fs-6 fw-lighter text-end align-text-bottom fw-lighter" id="myAddress"></div>      
+    <header>
+        <img src="img/logo.png" width="260" height="70">
+        <nav>
+            <ul type="none">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Home</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="container">
+            <p class="title-container">KuoriciniDAO</p>
+            <p>aaaaaaaa aaaaaaaaaa aaaaaaaaaa aaaaaaaa aaaaaaaaaa aaaaaaaaaaa aaaaaaaaa aaaaa aaaaaaaaa aaaaaaa aaaaaa
+                aaaaaaaa
+                aaaaaa aaaa</p>
+            <button class="start-button">Start now</button>
+        </div>
+    </main>
+    <footer>
+        <ul type="none">
+            <li><a href="#">H</a></li>
+            <li><a href="#">H</a></li>
+            <li><a href="#">H</a></li>
+            <li><a href="#">H</a></li>
+            <li><a href="#">H</a></li>
+        </ul>
+    </footer>
+    <div class="transition-page">
+        <a href="home.html">home</a>
+        <div class="transition-components"><span></span></div>
+        <div class="transition-components"><span></span></div>
+        <div class="transition-components"><span></span></div>
+        <div class="transition-components"><span></span></div>
+        <div class="transition-components"><span></span></div>
     </div>
-  </div>
-
-  <div class="container-fluid p-4 start-hidden" id="noWalletSection">
-    <div class="card p-4 rounded-3 shadow-sm border-primary">
-      <h5>Hello friend! It looks like you don't have a wallet properly configured</h5>
-      <h5>Make sure you have a Wallet connected on POLYGON Network!</h5>
-      <hr>
-      <h5>KuoriciniDAO Pilot currently has been tested on</h5>
-      <ul>
-        <li>Metamask Wallet plugin on Desktop</li>
-        <li>TrustWallet DAPP on mobile </li>
-      </ul>      
-    </div>
-  </div>
-  
-  <div class="container-fluid p-4 start-hidden" id="helpSection">
-    <div class="card p-4 rounded-3 shadow-sm border-primary">
-      <div class="card-header">
-        <h5>Help! What is this? - Aiuto? Cos'e' sta roba</h5>                
-      </div>
-      <div class="card-body">
-        KuoriciniDAO works on PC and mobile, however at this moment setup on mobile is for more advanced users. Also we didn't find any way to donate to Gitcoin grants from mobile phone.
-        <hr>      
-        KuoriciniDAO funziona sia su PC che mobile, pero' al momento il setup per cellulare e' per utenti avanzati. Inoltre non abbiamo trovato un modo per fare la donazione su Gitcoin grants dal cellulare.
-        <hr>      
-        <strong>
-          [IT] - <a href="instructions-metamask-it.html">Sto usando un PC e non so cosa fare</a><br>
-          [IT] - <a href="instructions-gitcoin-it.html">Supportaci con un 1 euro su GITCOIN prima del 23 Giugno</a><br>
-          [EN] - <a href="instructions-metamask.html">I am on a Desktop computer and I don't know what to do</a><br>
-          [EN] - <a href="instructions-gitcoin.html">Support us 1 dollar on GITCOIN Crowdfunding before 23 June</a><br>
-        </strong>
-      </div>
-    </div>
-  </div>
-
-  <div class="container-fluid p-4 start-hidden" id="welcomeSection">
-    <div class="card p-4 rounded-3 shadow-sm border-primary">
-      <h3>Welcome to KuoriciniDAO!</h3>
-      <h5>KuoriciniDAO is in Pilot Stage! You are free to play with it and tell us what you think about it</h5> 
-      <h5><a href="https://discord.gg/2a4sqEj6US"  target="_blank" rel="noopener noreferrer">[Discord]</a>
-          <a href="https://twitter.com/kuoricinidao"  target="_blank" rel="noopener noreferrer">[Twitter]</a>
-          <a href="https://github.com/techstationspace/kuoricinidao"  target="_blank" rel="noopener noreferrer">[Github]</a>
-          <a href="https://t.me/+nuN-D3FgWKE4Mzg8"  target="_blank" rel="noopener noreferrer">[Telegram]</a>
-      </h5> 
-    </div>
-    <div class="p-4"></div>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/alaPbniLEx0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-  </div>
-
-  <div class="container-fluid p-4" id="userPropertiesSection">
-    <div class="row">
-      <div class="col">
-        <div class="card p-4 rounded-3 shadow-sm border-primary">
-          <h5>Ciao, <span id="myName"></span>!</h5>
-          <div id="myGroupBalance" class="start-hidden">
-            <h5>Il tuo Bilancio</h5>
-            <table id="userBalances" class="table table-hover">
-              <thead>          
-                <tr><th>Nome</th><th>Ricevuti</th><th>Da dare via</th></tr>
-              </thead>
-              <tbody id="userTokensTable"></tbody>
-            </table>
-            <div class="row">
-              <div class="col text-end">
-                <button id="personalSettingsButton" class="btn btn-primary">My Settings</button>
-              </div>
-            </div>    
-        </div>
-        </div>    
-      </div>
-      <div class="col">
-        <div class="card p-4 rounded-3 shadow-sm border-primary start-hidden" id="groupProperties">
-          <h5>Proprietà di questo gruppo </h5>
-          <div class="row">
-            <div class="col">
-            </div>
-          </div>
-          <table class="table table-hover" >
-            <thead>          
-              <tr><th>Nome</th><th>Refill Ciclo</th><th>Durata Ciclo</th></tr>
-            </thead>
-            <tbody id="groupTokensTable"></tbody>
-          </table>
-          <div class="row">
-            <div class="col text-end">
-              <button id="groupSettingsButton" class="btn btn-primary">Group DAO</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-<div class="container-fluid p-4 start-hidden" id="setNameSection" >
-  <div class="card p-4 rounded-3 shadow-sm border-primary">
-    <h5>Non hai un nickname</h5>
-    <p>Crea il tuo nickname per entrare.</p>
-    <P>Nickname: <input type="text" id="setName">
-      <button id="setNameButton" class="btn btn-primary">Crea</button>
-    </p>
-  </div>
-</div>
-
-<div id="invitationSection" class="container-fluid p-4 start-hidden">
-  <div class="card p-4 rounded-3 border-primary">
-    <div class="card-header"><h5>Hai raggiunto l'invito al gruppo <span id="invGroupName">-</span></h5></div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-6">
-          Conferma di candidarti a entrare in questo gruppo:
-        </div>
-        <div class="col-6" id="IcandidateSection">
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="container-fluid p-4 start-hidden" id="settingsSection" >
-  <div class="card p-4 rounded-3 shadow-sm border-primary">
-    <h5 class="align-center">Personal Settings</h5>
-    <div class="card-header">Name</div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-4">
-          <label for="changeMyName">Change My name:</label>
-        </div>
-        <div class="col-4">
-          <input type="text" id="changeMyName" class="form-control" />
-        </div>
-        <div class="col-4">
-          <button class="btn btn-primary" id="changeNameButton" onclick="changeName()">Change</button>
-        </div>
-      </div>
-    </div>
-    <div class="card-header">Leave group <span class="currentGroupName">-</span></div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-4">
-          <label for="changeMyName">Are you sure? </label>
-        </div>
-        <div class="col">
-          <button class="btn btn-primary" id="changeNameButton" onclick="leaveGroup()">Goodbye!</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="container-fluid p-4 start-hidden" id="DAOSection" >
-
-  <div class="card p-4 rounded-3 shadow-sm border-primary">
-    <h5 class="align-center">DAO del gruppo</h5>
-    <div class="card-header">Proprietà Generali</div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-3">
-        Soglia di voto:
-        </div>
-        <div class="col-9">
-          <span id="voteThreshold">-</span>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-3">
-          Link invito:
-        </div>
-        <div class="col-9">
-          <span id="invitationLink">-</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="p-4"></div>
-
-    <div class="card-header">Proposta cambio soglia (soglia: <span class="votersThreshold"></span> voti)</div>
-    <div class="card-body">
-      <table class="table table-hover">
-        <thead>
-          <tr><th>Proposta</th><th>voti</th><th>vota</th></tr>
-        </thead>
-        <tbody id="candidatesThresholdBody"></tbody>
-      </table>
-    </div>
-
-    <div class="card-header">Candidati al gruppo (soglia: <span class="votersThreshold"></span> voti)</div>
-    <div class="card-body">
-      <table class="table table-hover">
-        <thead>
-          <tr><th>ID</th><th>nome</th><th>indirizzo</th><th>voti</th><th>vota</th></tr>
-        </thead>
-        <tbody id="candidatesTableBody"></tbody>
-      </table>
-    </div>
-
-    <div class="card-header">Candidati Tokens al gruppo (soglia: <span class="votersThreshold"></span> voti)</div>
-    <div class="card-body">
-      <table class="table table-hover">
-        <thead>
-          <tr><th>candidate ID</th><th>Esiste?</th><th>nome nuovo</th><th>supply nuova</th><th>duration nuova</th><th>voti</th><th>vota</th></tr>
-        </thead>
-        <tbody id="candidateTokensTableBody"></tbody>
-      </table>
-    </div>
-
-
-    <div class="p-4"></div>
-
-    <div class="card-header">Proponi modifica a un token esistente</div>
-    <div class="card-body">
-      <table class="table table-hover" >
-        <thead>          
-          <tr><th>Id</th><th>Nome</th><th>Refill Ciclo</th><th>Durata Ciclo</th></tr>
-        </thead>
-        <tbody id="groupChangeTokensTable"></tbody>
-      </table>
-      <div class="row">
-        <div class="col-4">
-          <label for="changeTokenId">Id</label>
-        </div>
-        <div class="col">
-          <div id="changeTokenId" ></div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-4">
-          <label for="changeTokenName">Nome</label>
-        </div>
-        <div class="col">
-          <input type="text" id="changeTokenName" class="form-control" />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-4">
-          <label for="changeTokenSupply">Refill Ciclo</label>
-        </div>
-        <div class="col">
-          <input type="number" id="changeTokenSupply" class="form-control" />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-4">
-          <label for="changeTokenDuration">Durata Ciclo (giorni)</label>
-        </div>
-        <div class="col">
-          <input type="number" id="changeTokenDuration"  class="form-control"/>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <button class="btn btn-primary disabled" id="changeTokenButton" onclick="changeToken()">Proponi modifica</button>
-        </div>
-      </div>
-    </div>
-    
-    <div class="card-header">Proponi un nuovo token per questo gruppo</div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-4">
-          <label for="newTokenName">Nome</label>
-        </div>
-        <div class="col">
-          <input type="text" id="newTokenName" class="form-control" />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-4">
-          <label for="newTokenSupply">Refill Ciclo</label>
-        </div>
-        <div class="col">
-          <input type="number" id="newTokenSupply" class="form-control" />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-4">
-          <label for="newTokenDuration">Durata Ciclo (giorni)</label>
-        </div>
-        <div class="col">
-          <input type="number" id="newTokenDuration"  class="form-control"/>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <button class="btn btn-primary" id="newTokenButton" onclick="createToken()">Proponi nuovo</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card-header">Proponi cambio soglia di voto</div>
-    <div class="card-body">
-      <div class="row">
-        <div class="col-4">
-          <label for="newTokenName">Soglia</label>
-        </div>
-        <div class="col">
-          <input type="range" class="form-range" id="thresholdVote" min="0" max="10" step="1" oninput="document.getElementById('thresholdValue').innerHTML = this.value">
-        </div>
-        <div class="col-2"><span id="thresholdValue"></span>0%</div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <button class="btn btn-primary" id="newTokenButton" onclick="changeThreshold()">Proponi soglia</button>
-        </div>
-      </div>
-    </div>
+    <div class="language-container">
 
     </div>
-  </div>
-</div>
-
-<div id="myGroupsSection" class="container-fluid p-4  start-hidden">
-  <div class="card p-4 rounded-3 border-primary">
-    <div class="card-header">I miei gruppi</div>
-    <div class="card-body">
-      <table class="table table-hover">
-        <thead>          
-          <tr><th>nome</th><th>members</th></tr>
-        </thead>
-        <tbody id="myGroupsTable"></tbody>
-      </table>
-    </div>
-  </div>
-  <div class="p-4"></div>
-  <div class="card p-4 rounded-3 border-primary">
-    <div class="card-header">Crea un nuovo gruppo</div>
-    <div class="card-body">
-      Crea gruppo: <input type="text" id="setGroupName">
-      <button class="btn btn-primary" id="createGroup">Crea</button>
-    </div>
-  </div>
-</div>
-
-<div id="showGroupSection" class="container-fluid p-4  start-hidden" >
-  <div class="card p-4 rounded-3 border-primary">
-    <div class="card-header">Gruppo <span class="currentGroupName">-</span></div>
-    <div class="card-body">
-      <table class="table table-hover">
-        <thead>
-          <tr><th>nome</th><th>manda token</th></tr>
-        </thead>
-        <tbody id="groupTableBody"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-
-
-  <script src="jquery.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-  <script src="web3.min.js"></script>
-  <script src="truffle-contract.min.js"></script>
-  <script src="app.js"></script>
-
-<div class="footer">
-  <p>      
-    <h6>KuoriciniDAO is in Pilot Stage! You are free to play with it and tell us what you think about it</h6> 
-    <h6>
-        <a href='javascript: $("#helpSection").toggle()''>[HELP]</a> -
-        <a href="https://discord.gg/2a4sqEj6US"  target="_blank" rel="noopener noreferrer">[Discord]</a> - 
-        <a href="https://twitter.com/kuoricinidao"  target="_blank" rel="noopener noreferrer">[Twitter]</a> - 
-        <a href="https://github.com/techstationspace/kuoricinidao"  target="_blank" rel="noopener noreferrer">[Github]</a> - 
-        <a href="https://t.me/+nuN-D3FgWKE4Mzg8"  target="_blank" rel="noopener noreferrer">[Telegram]</a>
-    </h6> 
-</p>
-</div>
-  
-
+    <p>a</p>
+    <p>a</p>
+    <p>a</p>
+    <p>a</p><p>a</p>
+    <p>a</p>
+    <p>a</p>
+    <p>a</p>
+    <p>a</p>
+    <p>a</p>
+    <p>a</p>
+    <p>a</p>
+    <p>a</p>
+    <p>a</p>
+    <p>a</p>
+    <script src="index.js"></script>
 </body>
-
 
 </html>

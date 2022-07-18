@@ -1,3 +1,9 @@
+$(window).on("load", async function () {
+  await initWeb3();
+  await readAccount();
+  await userData()
+});
+
 async function initWeb3() {
   if (window.ethereum) {
     web3Provider = window.ethereum;
@@ -11,7 +17,6 @@ async function initWeb3() {
     //return;
   }
   web3 = new Web3(web3Provider);
-
   // temporary solution to wrong metamask gas suggestions
   // https://stackoverflow.com/questions/68926306/avoid-this-gas-fee-has-been-suggested-by-message-in-metamask-using-web3
   userGas = 300000;
@@ -33,7 +38,8 @@ async function readAccount() {
     console.log("Error reading account info!", err);
   };
   document.getElementById("userName").textContent = user.name;
-  // if (window.location.pathname === "/home.html") {
-  //   document.getElementById("myName").textContent = user.name;
-  // }
+}
+
+function userData(){
+  document.getElementById("myName").textContent = user.name;
 }
