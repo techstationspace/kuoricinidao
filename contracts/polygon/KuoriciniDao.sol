@@ -128,7 +128,6 @@ contract KuoriciniDao {
     return allTokens[_tokenid];
   }
 
-    
   function createGToken(uint tokid, string memory _name, uint _supply, uint _duration, bool present, uint _groupId) private returns(bool){
     require(isAddressInGroup(_groupId, msg.sender), "member cannot vote!" );
 
@@ -151,34 +150,58 @@ contract KuoriciniDao {
     return true;
   }
 
-//  event Timeupdate(uint tokenId, uint newTime, uint stamp);
-//  event BalanceUpdated(uint tokenId, uint xbalance, uint stamp);
 
-  function getUserTokens(uint _gid) public view returns(UToken[] memory) {
-    uint l = daoGroups[_gid].tokenIds.length;
-    UToken[] memory _userTokens = new UToken[](l);
-    for (uint w = 0; w < l; w++) {
-      uint q = daoGroups[_gid].tokenIds[w];
-      uint m = userTokens[msg.sender].length;
-      bool matchFound = false;
-      for (uint j = 0; j < m; j++) {
-        if (userTokens[msg.sender][j].tokenId == q) {
-          _userTokens[w]=userTokens[msg.sender][j];
-          uint newtime = allTokens[q].timestamp + allTokens[q].roundDuration;
-//          emit Timeupdate(q, newtime, block.timestamp);
-          if (block.timestamp > newtime ) {
-            _userTokens[w].xBalance = allTokens[q].roundSupply;
-//            emit BalanceUpdated(q, _userTokens[w].xBalance, block.timestamp);
-          }      
-          matchFound = true;
-          break;
+// temporary struct to make the output more verbose
+
+  struct EToken {
+    uint tokenId;
+    uint gTokenBalance;
+    uint xBalance;
+    uint blocktimestamp;
+    uint newtime;
+    bool overtime;
+  }
+
+
+  function getUserTokens(uint gid) public view returns(EToken[] memory) {
+    require(isAddressInGroup(gid, msg.sender), "user not authorized"); 
+
+
+    uint l = daoGroups[gid].tokenIds.length;
+    uint m = userTokens[msg.sender].length;
+    UToken[] memory utokens = new UToken[](l);
+    EToken[] memory etokens = new EToken[](l);
+
+    for ( uint w = 0; w < l; w++ ) { // all the tokens of this group 
+      uint tokid = daoGroups[gid].tokenIds[w];
+      uint blts = 0;
+      bool overtime = false;
+      uint newtime = 0;
+      utokens[w] = UToken ({ tokenId: tokid, gTokenBalance: 0, xBalance: allTokens[tokid].roundSupply});
+      for ( uint j = 0; j < m; j++ ) { // all the tokens of this user
+        if (userTokens[msg.sender][j].tokenId == tokid) {
+          utokens[w].gTokenBalance = userTokens[msg.sender][j].gTokenBalance;
+          newtime = allTokens[tokid].timestamp + allTokens[tokid].roundDuration;
+          blts = block.timestamp; 
+          if ( blts > newtime ) {
+            utokens[w].xBalance = allTokens[tokid].roundSupply;
+            overtime = true;
+          } 
+          else {
+            utokens[w].xBalance = userTokens[msg.sender][j].xBalance;
+            overtime = false;
+          }
         }
       }
-      if (matchFound == false) {
-        _userTokens[w]=UToken({ tokenId: q, gTokenBalance: 0, xBalance: allTokens[q].roundSupply});
-      }
+      etokens[w].tokenId = utokens[w].tokenId;
+      etokens[w].gTokenBalance = utokens[w].gTokenBalance;
+      etokens[w].xBalance = utokens[w].xBalance;
+      etokens[w].blocktimestamp = blts;
+      etokens[w].newtime = newtime;
+      etokens[w].overtime = overtime;
+
     }
-    return _userTokens;
+    return etokens;
   }
 
   function transferToken(uint _tokenId, address receiver, uint value) public returns(bool) {
@@ -196,15 +219,16 @@ contract KuoriciniDao {
     if (matchFoundSender == false){
       _tokSender = UToken({ tokenId: _tokenId, gTokenBalance: 0, xBalance: allTokens[_tokenId].roundSupply});
     }
-    
-    if (block.timestamp > (allTokens[_tokenId].timestamp + allTokens[_tokenId].roundDuration * 1 seconds) ) {
+
+    uint newtimestamp = allTokens[_tokenId].timestamp + allTokens[_tokenId].roundDuration;
+    if (block.timestamp > newtimestamp ) {
       _tokSender.xBalance = allTokens[_tokenId].roundSupply;
-      uint _newTimestamp = allTokens[_tokenId].timestamp;
-      for (uint k = 0; _newTimestamp < block.timestamp ; k++) {
-        _newTimestamp += allTokens[_tokenId].roundDuration;
-//      _newTimestamp += allTokens[_tokenId].roundDuration * k; // WAS with *k in Ropstein, ARE YOU SURE  ???
+
+      while ( block.timestamp > (newtimestamp + allTokens[_tokenId].roundDuration)) {
+        newtimestamp += allTokens[_tokenId].roundDuration;
       }
-      allTokens[_tokenId].timestamp=_newTimestamp;
+      
+      allTokens[_tokenId].timestamp=newtimestamp;
     }
     
     require(_tokSender.xBalance >= value, "non hai abbastanza token");

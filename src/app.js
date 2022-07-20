@@ -1,4 +1,7 @@
 
+//const timeMulti = 86400;
+const timeMulti = 1;
+
 async function initWeb3 () {
   if (window.ethereum) {
     web3Provider = window.ethereum;
@@ -44,6 +47,8 @@ async function bindEvents(){
 //  $(document).on('click', "#nowButton", checkNow);  
   $(document).on('click', "#groupSettingsButton", groupSettings);  
   $(document).on('click', "#personalSettingsButton", personalSettings);  
+  $(document).on('click', "#timeStampButton", timeStampSettings);  
+  
 }
 
 async function createGroup() {
@@ -165,7 +170,7 @@ async function showGroup(gid) {
 //      } else {
         tname = element.name;
         tsupply = element.roundSupply;
-        tduration = element.roundDuration/86400;
+        tduration = element.roundDuration/timeMulti;
 //      }
       newCell = newRow.insertCell(-1);
       newCell.innerHTML= tname; 
@@ -225,7 +230,7 @@ async function showGroup(gid) {
       newCell = newRow.insertCell(-1);
       newCell.innerHTML=_tok[1]; 
       newCell = newRow.insertCell(-1);
-      newCell.innerHTML=_tok[2]/86400+" giorni";
+      newCell.innerHTML=_tok[2]+" secondi / "+_tok[2]/3600+" ore / "+_tok[2]/86400+" giorni";
 //      $(newRow).click(function() {
 //      });
   }
@@ -249,7 +254,7 @@ async function proposeChangeToken(tokid) {
   $("#changeTokenButton").removeClass('disabled');
   $("#changeTokenName").val(tok[0]);
   $("#changeTokenSupply").val(tok[1]);
-  $("#changeTokenDuration").val(tok[2]/86400);
+  $("#changeTokenDuration").val(tok[2]/timeMulti);
   $("#changeTokenId").text(tokid);
 }
 
@@ -281,7 +286,10 @@ async function groupProperties(gid) {
       newCell = newRow.insertCell(-1);
       newCell.innerHTML=_tok[1]; 
       newCell = newRow.insertCell(-1);
-      newCell.innerHTML=_tok[2]/86400+" giorni";
+//      newCell.innerHTML=_tok[2]/timeMulti+" giorni";
+      newCell.innerHTML=_tok[2];
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=convertTimestamp(_tok[3]); 
       cTokens.push({id: element, name: _tok[0], roundSuppy: _tok[1], roundDuration: _tok[2]});
     });
   });
@@ -304,6 +312,14 @@ async function userProperties(gid) {
       newCell.innerHTML=element.gTokenBalance; 
       newCell = newRow.insertCell(-1);
       newCell.innerHTML=element.xBalance; 
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=convertTimestamp(element.blocktimestamp); 
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=convertTimestamp(element.newtime); 
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=parseInt(element.newtime)-parseInt(element.blocktimestamp); 
+      newCell = newRow.insertCell(-1);
+      newCell.innerHTML=element.overtime; 
     });
   });
 }
@@ -321,7 +337,7 @@ async function personalSettings() {
 async function createToken() {
   tokName=$("#newTokenName").val();
   tokSupply=parseInt($("#newTokenSupply").val());
-  tokDuration=parseInt($("#newTokenDuration").val())*86400;
+  tokDuration=parseInt($("#newTokenDuration").val())*timeMulti;
   await instance.changeToken(0,tokName,tokSupply,tokDuration,parseInt(group_id),1,{from: user.address, gas: userGas, gasPrice: null});
   await readAccount();    
   showGroup(group_id);
@@ -332,7 +348,7 @@ async function changeToken() {
   tokId=parseInt($("#changeTokenId").text());
   tokName=$("#changeTokenName").val();
   tokSupply=parseInt($("#changeTokenSupply").val());
-  tokDuration=parseInt($("#changeTokenDuration").val())*86400;
+  tokDuration=parseInt($("#changeTokenDuration").val())*timeMulti;
   await instance.changeToken(tokId,tokName,tokSupply,tokDuration,parseInt(group_id),2,{from: user.address, gas: userGas, gasPrice: null});
   await readAccount();    
   showGroup(group_id);
@@ -485,3 +501,40 @@ async function checkNow() {
   $('#tok_1').text(ts-s1);
 }
 */
+timeStampshow=false;
+
+function timeStampSettings() {
+  timeStampshow = !timeStampshow;
+  showGroup(group_id);
+}
+
+function convertTimestamp(timestamp) {
+  if (timeStampshow) {
+  var d = new Date(timestamp * 1000), // Convert the passed timestamp to milliseconds
+      yyyy = d.getFullYear(),
+      mm = ('0' + (d.getMonth() + 1)).slice(-2),  // Months are zero based. Add leading 0.
+      dd = ('0' + d.getDate()).slice(-2),         // Add leading 0.
+      hh = d.getHours(),
+      h = hh,
+      min = ('0' + d.getMinutes()).slice(-2),     // Add leading 0.
+      sec = ('0' + d.getSeconds()).slice(-2),     // Add leading 0.
+      time;
+/*
+  if (hh > 12) {
+      h = hh - 12;
+      ampm = 'PM';
+  } else if (hh === 12) {
+      h = 12;
+      ampm = 'PM';
+  } else if (hh == 0) {
+      h = 12;
+  }
+*/
+  // ie: 2014-03-24, 3:00 PM
+  time = dd + '/' + mm + ' ' + h + ':' + min + ':' + sec;
+  } 
+  else {
+    time = timestamp
+  }
+  return time;
+}

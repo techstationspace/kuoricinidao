@@ -72,12 +72,13 @@
             <h5>Il tuo Bilancio</h5>
             <table id="userBalances" class="table table-hover">
               <thead>          
-                <tr><th>Nome</th><th>Ricevuti</th><th>Da dare via</th></tr>
+                <tr><th>Nome</th><th>Ricevuti</th><th>Da dare via</th><th>Now</th><th>Scadenza</th><th>Mancano</th><th>Superato?</th></tr>
               </thead>
               <tbody id="userTokensTable"></tbody>
             </table>
             <div class="row">
               <div class="col text-end">
+                <button id="timeStampButton" class="btn btn-primary">time format</button>
                 <button id="personalSettingsButton" class="btn btn-primary">My Settings</button>
               </div>
             </div>    
@@ -93,7 +94,7 @@
           </div>
           <table class="table table-hover" >
             <thead>          
-              <tr><th>Nome</th><th>Refill Ciclo</th><th>Durata Ciclo</th></tr>
+              <tr><th>Nome</th><th>Refill</th><th>Durata</th><th>timestamp</th></tr>
             </thead>
             <tbody id="groupTokensTable"></tbody>
           </table>
