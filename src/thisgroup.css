@@ -1,0 +1,266 @@
+/* *{
+    outline: 1px green solid;
+} */
+
+.balance-container {
+    position: relative;
+    width: 80%;
+    height: auto;
+    margin-left: 10%;
+}
+
+.balance-container p {
+    font-size: 2rem;
+    text-align: center;
+}
+
+.balance-container table {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+}
+
+.balance-container table thead tr th {
+    font-size: 1.3rem;
+    width: 16.6%;
+    padding-bottom: 0.3em;
+    border-bottom: 2px solid #000;
+}
+
+.balance-container table tbody tr td {
+    font-size: 1.1rem;
+    width: 16.6%;
+    padding: 0.5em 0em;
+    border-bottom: 1px solid rgb(156, 156, 156);
+}
+
+.name-token {
+    text-indent: 1.5em;
+}
+
+.text-token {
+    text-align: center;
+}
+
+.leave-group {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 5;
+    top: 0%;
+    left: 0%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.leave-container {
+    width: 40%;
+    height: 10em;
+    background: #fff;
+    border-radius: 1em;
+}
+
+.leave-container p {
+    font-size: 2rem;
+    text-align: center;
+}
+
+.container-buttons {
+    position: relative;
+    width: 80%;
+    height: 3em;
+    margin-left: 10%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.exit-button {
+    width: 5em;
+    font-size: 1.5rem;
+    color: #fff;
+    background: rgb(255, 0, 0);
+    border: none;
+    border-radius: 0.2em;
+    cursor: pointer;
+}
+
+.close-button {
+    width: 5em;
+    font-size: 1.5rem;
+    color: #0000ff;
+    background: #fff;
+    border: 1px solid #000;
+    border-radius: 0.2em;
+    cursor: pointer;
+}
+
+.members-container {
+    position: relative;
+    width: 60%;
+    height: auto;
+    margin-left: 10%;
+}
+
+.members-title {
+    font-size: 2rem;
+    text-align: center;
+}
+
+.members-table {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+}
+
+.members-table-title th {
+    font-size: 1.3rem;
+    padding-bottom: 0.3em;
+    border-bottom: 2px solid #000;
+}
+
+.members-table tbody td {
+    font-size: 1.1rem;
+    padding: 0.5em 0em;
+    border-bottom: 1px solid rgb(156, 156, 156);
+}
+
+.member-name {
+    width: 90%;
+    text-indent: 2em;
+}
+
+.member-number {
+    width: 10%;
+    text-align: center;
+}
+
+.tokens-container {
+    position: relative;
+    width: 60%;
+    height: auto;
+    margin-left: 10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+}
+
+.tokens-container button, .tokens-container select{
+    width: 10em;
+}
+
+.tokens-title {
+    font-size: 2rem;
+    text-align: center;
+}
+
+.tokens-text {
+    font-size: 1.1rem;
+}
+
+.token-send {
+    color: #fff;
+    font-size: 1.1rem;
+    background: rgb(0, 170, 0);
+    border: none;
+    border-radius: 0.3em;
+}
+
+.user-candidate-container,
+.token-candidate-container,
+.quorum-candidate-container {
+    position: relative;
+    width: 60%;
+    height: auto;
+    margin-left: 10%;
+    margin-top: 3em;
+}
+
+.user-candidate-table,
+.token-candidate-table,
+.quorum-candidate-table {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+}
+
+.user-candidate-table-title,
+.token-candidate-table-title,
+.quorum-candidate-table-title {
+    font-size: 1.3rem;
+    padding-bottom: 0.3em;
+    border-bottom: 2px solid #000;
+}
+
+.tbody-user-candidate tr td,
+.tbody-token-candidate tr td,
+.tbody-quorum-candidate tr td {
+    font-size: 1.1rem;
+    width: 16.6%;
+    padding: 0.5em 0em;
+    border-bottom: 1px solid rgb(156, 156, 156);
+}
+
+.vote-button {
+    color: #fff;
+    font-size: 1.1rem;
+    background: rgb(0, 170, 0);
+    border: none;
+    border-radius: 0.3em;
+}
+
+.vote-candidate, .new-token-section, .change-token-section {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0%;
+    top: 0%;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+}
+
+.vote-candidate-container, .new-token-container, .change-token-container {
+    width: 40em;
+    height: auto;
+    background: #fff;
+    border-radius: 1em;
+}
+
+.new-token-container h2, .change-token-container h2{
+    text-align: center;
+}
+
+.new-token-container label, .change-token-container label{
+    margin-left: 3em;
+    font-size: 1.2rem;
+}
+
+.vote-yes-button, .confirm-button {
+    width: 5em;
+    font-size: 1.6rem;
+    color: #fff;
+    background: rgb(0, 170, 0);
+    border: none;
+    border-radius: 0.2em;
+    cursor: pointer;
+}
+
+.vote-no-button {
+    width: 5em;
+    font-size: 1.6rem;
+    color: #fff;
+    background: rgb(255, 0, 0);
+    border: none;
+    border-radius: 0.2em;
+    cursor: pointer;
+}
+
+#voteTokenInfo li{
+    font-size: 1.2rem;
+}

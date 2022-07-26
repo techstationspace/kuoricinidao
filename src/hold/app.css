@@ -1,0 +1,65 @@
+tbody {
+    cursor: pointer;
+}
+
+#navbar {
+    background-color: #240653;
+}
+
+#homeButton {
+    cursor: pointer;
+}
+
+body {
+    background-color: #791baa;
+/*    background-image: linear-gradient(red, yellow);*/
+}
+
+button {
+    min-width: 6rem;
+    max-width: 30rem;
+}
+
+.btn-primary {
+    background-color: #791baa;
+}
+
+.btn-primary:hover {
+    background-color: #240653;
+}
+
+.start-hidden {
+    display: none;
+}
+
+#invitationLink {
+    background-color: rgba(172, 255, 47, 0.489);
+}
+
+iframe {
+    display: block;
+    margin-left: auto;
+    margin-right: auto 
+    
+}
+
+img {
+    margin: 5px;
+    border: medium solid #240653;
+    border-radius: 5px;
+    max-height: 500px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #240653;
+  color: white;
+  text-align: center;
+}

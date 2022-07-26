@@ -1,0 +1,140 @@
+html {
+    --text-color: #fff;
+    --title-container: #fff;
+    --transition-components-background: rgb(140, 0, 255);
+}
+
+body{
+    margin: 0;
+    background: rgb(140, 0, 255);
+}
+
+header {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+nav ul {
+    padding: 0em;
+}
+
+nav ul li {
+    display: inline;
+    padding: 1em;
+    cursor: pointer;
+}
+
+nav ul li a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+main {
+    height: 80%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+footer {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+footer ul {
+    padding: 0em;
+}
+
+footer ul li {
+    display: inline;
+    padding: 1em;
+    cursor: pointer;
+}
+
+footer ul li a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.transition-page {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0em;
+    left: 0em;
+    display: flex;
+    flex-direction: row;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.transition-components {
+    top:0;
+    width: 20%;
+    height: inherit;
+    background: var(--transition-components-background);
+    z-index: 11;
+    visibility: hidden;
+}
+
+.transition-components span {
+    position: absolute;
+    top: -20%;
+    width: 20%;
+    height: 40%;
+    background-color: red !important;
+    border-radius: 50%;
+    transition: all linear 1000ms;
+}
+
+.container {
+    width: 30em;
+    border: black solid 2px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: visible;
+}
+
+.title-container {
+    color: var(--title-container);
+    font-size: 2rem;
+    text-align: center;
+}
+
+.start-button {
+    height: 50px;
+    width: 120px;
+    padding: 0em;
+    color: #fff;
+    font-size: 15pt;
+    border: 1px solid #000;
+    border-radius: 2em;
+    background: transparent;
+    cursor: pointer;
+}
+
+.start-button::before {
+    content: "";
+    position: absolute;
+    margin-top: -13px;
+    margin-left: -18px;
+    width: inherit;
+    height: inherit;
+    background: red;
+    border: 0px;
+    border-radius: 2em;
+    z-index: -1;
+}

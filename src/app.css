@@ -1,71 +1,137 @@
-tbody {
-    cursor: pointer;
-}
-
-#navbar {
-    background-color: #240653;
-}
-
-#homeButton {
-    cursor: pointer;
-}
-
 body {
-    background-color: #240653;
-/*    background-image: linear-gradient(red, yellow);*/
+    margin: 0;
+    padding: 0;
 }
 
-.thebody {
-    background-color: #791baa;
+header {
+    position: fixed;
+    top: 0em;
+    left: 0em;
+    height: 5em;
+    width: 100%;
+    background: #000;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1;
 }
 
-button {
-    min-width: 6rem;
-    max-width: 30rem;
+header ul {
+    margin: 0em;
+    padding: 0em;
+    list-style-type: none;
 }
 
-.btn-primary {
-    background-color: #791baa;
+header ul li {
+    padding: 1em;
+    display: inline-block;
 }
 
-.btn-primary:hover {
-    background-color: #240653;
+header ul li a {
+    color: #fff;
+    font-size: 1.5rem;
+    text-decoration: none;
 }
 
-.start-hidden {
-    display: none;
+header ul ul{
+    position: fixed;
+    background: rgb(255, 255, 255);
+    transform: translateX(-0.5em);
+    border-radius: 1em;
 }
 
-#invitationLink {
-    background-color: rgba(172, 255, 47, 0.489);
-}
-
-iframe {
+header ul ul li{
     display: block;
-    margin-left: auto;
-    margin-right: auto 
-    
 }
 
-img {
-    margin: 5px;
-    border: medium solid #240653;
-    border-radius: 5px;
-    max-height: 500px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-
+header ul ul li a{
+    font-size: 1.2rem;
+    color: rgb(0, 0, 0);
 }
 
-.footer {
-  position: relative;
-  left: 0;
-  bottom: 0;
-  margin-top: 2em;
-  width: 100%;
-  background-color: #240653;
-  color: white;
-  text-align: center;
-  height: 4em;
+.groups-navbar, .profile-navbar, .this-group-navbar{
+    height: 0em;
+    overflow: hidden;
+    opacity: 0.9;
+    transition: height ease-out 300ms;
+}
+
+header li:hover .groups-navbar{
+    height: 3.4em;
+}
+
+.groups-navbar li, .profile-navbar li, .this-group-navbar li{
+    transition: background ease-out 400ms;
+}
+
+.groups-navbar li:hover, .profile-navbar li:hover, .this-group-navbar li:hover{
+    background: rgb(187, 187, 187);
+}
+
+header li:hover .profile-navbar{
+    height: 6.8em;
+}
+
+header li:hover .this-group-navbar{
+    height: 13.5em;
+}
+
+.nothing {
+    position: relative;
+    height: 5em;
+    width: 100%;
+}
+
+footer{
+    position: relative;
+    height: 7em;
+    width: 100%;
+    background: rgb(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+footer p{
+    color: #fff;
+    font-size: 1rem;
+}
+
+.link{
+    padding: 0em;
+    list-style-type: none;
+}
+
+.link li{
+    display: inline;
+    padding: 1em;
+    color: #fff;
+}
+
+.link li a{
+    color: #fff;
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+main{
+    position: relative;
+    min-height: 90vh;
+    height: auto;
+    width: 100%;
+}
+
+.logo{
+    height: 60px;
+}
+
+.title{
+    text-align: center;
+}
+
+.user{
+    color: #fff;
+    font-size: 1.3rem;
 }

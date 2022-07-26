@@ -1,0 +1,59 @@
+.groups-table{
+    width: 80%;
+    margin-left: 10%;
+    border: 1px solid rgb(112, 112, 112);
+    border-radius: 1em;
+}
+
+.groups-table thead th{
+    width: 50%;
+    font-size: 1.2rem;
+}
+
+.groups-table tbody td{
+    width: 50%;
+    text-align: center;
+    padding: 0.5em 0em;
+    z-index: -1;
+}
+
+.groups-table tbody tr{
+    cursor: pointer;
+}
+
+.groups-table tbody tr:hover{
+    background: rgb(151, 151, 151);
+}
+
+.new-group{
+    width: 80%;
+    margin-left: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    overflow: hidden;
+    /* height: 0em; */
+    transition: height linear 300ms;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
+}
+
+#newGroup{
+    border-radius: 1em;
+    border: 0px;
+    background: yellow;
+    transition: background ease-out 300ms, color ease-out 300ms;
+}
+
+#newGroup:hover{
+    background: gray;
+    color: white;
+}
+
+.close-button{
+    position: absolute;
+    transform: translateY(-150%);
+    color: rgb(148, 148, 148);
+    cursor: pointer;
+}

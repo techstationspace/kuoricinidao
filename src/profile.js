@@ -1,3 +1,9 @@
+$(window).on("load", async function () {
+  await initWeb3();
+  await readAccount();
+  await userProfile();
+});
+
 async function initWeb3() {
   if (window.ethereum) {
     web3Provider = window.ethereum;
@@ -33,7 +39,9 @@ async function readAccount() {
     console.log("Error reading account info!", err);
   };
   document.getElementById("userName").textContent = user.name;
-  // if (window.location.pathname === "/home.html") {
-  //   document.getElementById("myName").textContent = user.name;
-  // }
+}
+
+function userProfile() {
+  document.getElementById("profileAddress").textContent = user.address;
+  document.getElementById("profileName").textContent = user.name;
 }
