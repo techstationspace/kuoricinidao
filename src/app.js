@@ -99,7 +99,7 @@ async function showGroup(gid) {
   $('.currentGroupName').text(group.name);
   currentTokens = await groupProperties(gid);
   userProperties(gid);
-  candidatetokens = await instance.getGroupCandidateTokens(gid, {from: user.address});
+  candidates = await instance.getGroupCandidates(gid, {from: user.address});
 
   group.members = await instance.getGroupAddressfromId(gid, {from: user.address});
   let stable=document.getElementById("groupTableBody");
@@ -125,8 +125,8 @@ async function showGroup(gid) {
   ctable=document.getElementById("candidatesTableBody");
   ctable.innerHTML="";
 
-  for ( i = 0 ; i < candidatetokens.length; i++ ) {
-      element = candidatetokens[i];
+  for ( i = 0 ; i < candidates.length; i++ ) {
+      element = candidates[i];
       if (element.candType == 0) {
         _name = await instance.nameOf(element.candidateAddress, {from: user.address});
         newRow = ctable.insertRow(-1);
@@ -143,8 +143,8 @@ async function showGroup(gid) {
           voteText="hai gia' votato";
         }
         else {
-          voteText="<button class=\"btn btn-primary\" onclick='voteCandidateToken("+gid+",\""+group.candidateTokenIds[i]+"\",1)'>YES</button> ";
-          voteText+="<button class=\"btn btn-primary\" onclick='voteCandidateToken("+gid+",\""+group.candidateTokenIds[i]+"\",0)'>NO</button> ";
+          voteText="<button class=\"btn btn-primary\" onclick='voteCandidate("+gid+",\""+group.candidateTokenIds[i]+"\",1)'>YES</button> ";
+          voteText+="<button class=\"btn btn-primary\" onclick='voteCandidate("+gid+",\""+group.candidateTokenIds[i]+"\",0)'>NO</button> ";
         }
         newCell.innerHTML=voteText;
       }
@@ -154,12 +154,12 @@ async function showGroup(gid) {
   ttable=document.getElementById("candidateTokensTableBody");
   ttable.innerHTML="";
 
-  for ( i = 0 ; i < candidatetokens.length; i++ ) {
-    element = candidatetokens[i];
+  for ( i = 0 ; i < candidates.length; i++ ) {
+    element = candidates[i];
     if (element.candType == 2 || element.candType == 1) {
       newRow = ttable.insertRow(-1);
       newCell = newRow.insertCell(0); 
-      newCell.innerHTML=group.candidateTokenIds[i] +" - "+element.id; 
+      newCell.innerHTML=group.candidateIds[i] +" - "+element.id; 
       newCell = newRow.insertCell(-1); 
       newCell.innerHTML=(element.candType == 2); 
 //      oldtok = await instance.getToken(element.id, {from: user.address});
@@ -186,8 +186,8 @@ async function showGroup(gid) {
         voteText="hai gia' votato";
       }
       else {
-        voteText="<button class=\"btn btn-primary\" onclick='voteCandidateToken("+gid+",\""+group.candidateTokenIds[i]+"\",1)'>YES</button> ";
-        voteText+="<button class=\"btn btn-primary\" onclick='voteCandidateToken("+gid+",\""+group.candidateTokenIds[i]+"\",0)'>NO</button> ";
+        voteText="<button class=\"btn btn-primary\" onclick='voteCandidate("+gid+",\""+group.candidateIds[i]+"\",1)'>YES</button> ";
+        voteText+="<button class=\"btn btn-primary\" onclick='voteCandidate("+gid+",\""+group.candidateIds[i]+"\",0)'>NO</button> ";
       }
       newCell.innerHTML=voteText;
     }
@@ -196,8 +196,8 @@ async function showGroup(gid) {
   thtable=document.getElementById("candidatesThresholdBody");
   thtable.innerHTML="";
 
-  for ( i = 0 ; i < candidatetokens.length; i++ ) {
-    element = candidatetokens[i];
+  for ( i = 0 ; i < candidates.length; i++ ) {
+    element = candidates[i];
     if (element.candType == 3) {
       newRow = thtable.insertRow(-1);
       newCell = newRow.insertCell(0); 
@@ -209,8 +209,8 @@ async function showGroup(gid) {
         voteText="hai gia' votato";
       }
       else {
-        voteText="<button class=\"btn btn-primary\" onclick='voteCandidateToken("+gid+",\""+group.candidateTokenIds[i]+"\",1)'>YES</button> ";
-        voteText+="<button class=\"btn btn-primary\" onclick='voteCandidateToken("+gid+",\""+group.candidateTokenIds[i]+"\",0)'>NO</button> ";
+        voteText="<button class=\"btn btn-primary\" onclick='voteCandidate("+gid+",\""+group.candidateIds[i]+"\",1)'>YES</button> ";
+        voteText+="<button class=\"btn btn-primary\" onclick='voteCandidate("+gid+",\""+group.candidateIds[i]+"\",0)'>NO</button> ";
       }
       newCell.innerHTML=voteText;
     }
@@ -259,14 +259,14 @@ async function proposeChangeToken(tokid) {
 }
 
 async function voteCandidate(gid,candidatePos,vote) {
-  await instance.voteCandidateToken(gid, parseInt(candidatePos), vote, {from: user.address, gas: userGas, gasPrice: null});
+  await instance.voteCandidate(gid, parseInt(candidatePos), vote, {from: user.address, gas: userGas, gasPrice: null});
   await readAccount();    
   showGroup(gid);
   $("#DAOSection").show();
 }
 
-async function voteCandidateToken(gid,candidateTokenId,vote) {
-  await instance.voteCandidateToken(gid, parseInt(candidateTokenId), vote, {from: user.address, gas: userGas, gasPrice: null});
+async function voteCandidate(gid,candidateId,vote) {
+  await instance.voteCandidate(gid, parseInt(candidateId), vote, {from: user.address, gas: userGas, gasPrice: null});
   await readAccount();    
   showGroup(gid);
   $("#DAOSection").show();
