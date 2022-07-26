@@ -54,16 +54,19 @@ header ul ul li a{
     height: 0em;
     overflow: hidden;
     opacity: 0.9;
-    transition: height ease-out 300ms, background ease-out 400ms;
+    transition: height ease-out 300ms;
 }
 
 header li:hover .groups-navbar{
     height: 3.4em;
 }
 
+.groups-navbar li, .profile-navbar li, .this-group-navbar li{
+    transition: background ease-out 400ms;
+}
+
 .groups-navbar li:hover, .profile-navbar li:hover, .this-group-navbar li:hover{
     background: rgb(187, 187, 187);
-    opacity: 1;
 }
 
 header li:hover .profile-navbar{
@@ -115,7 +118,7 @@ footer p{
 
 main{
     position: relative;
-    min-height: 40em;
+    min-height: 90vh;
     height: auto;
     width: 100%;
 }

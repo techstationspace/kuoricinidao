@@ -21,7 +21,7 @@
 
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const fs = require('fs');
-const mnemonic = fs.readFileSync(".secret-matic").toString().trim();
+// const mnemonic = fs.readFileSync(".secret-matic").toString().trim();
 //
 // const fs = require('fs');
 // const mnemonic = fs.readFileSync(".secret").toString().trim();

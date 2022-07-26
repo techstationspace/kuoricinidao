@@ -143,6 +143,13 @@
     width: 60%;
     height: auto;
     margin-left: 10%;
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+}
+
+.tokens-container button, .tokens-container select{
+    width: 10em;
 }
 
 .tokens-title {
@@ -205,7 +212,7 @@
     border-radius: 0.3em;
 }
 
-.vote-candidate {
+.vote-candidate, .new-token-section, .change-token-section {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -218,14 +225,23 @@
     z-index: 5;
 }
 
-.vote-candidate-container {
+.vote-candidate-container, .new-token-container, .change-token-container {
     width: 40em;
     height: auto;
     background: #fff;
     border-radius: 1em;
 }
 
-.vote-yes-button {
+.new-token-container h2, .change-token-container h2{
+    text-align: center;
+}
+
+.new-token-container label, .change-token-container label{
+    margin-left: 3em;
+    font-size: 1.2rem;
+}
+
+.vote-yes-button, .confirm-button {
     width: 5em;
     font-size: 1.6rem;
     color: #fff;
@@ -243,4 +259,8 @@
     border: none;
     border-radius: 0.2em;
     cursor: pointer;
+}
+
+#voteTokenInfo li{
+    font-size: 1.2rem;
 }

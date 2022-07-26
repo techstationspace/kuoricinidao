@@ -199,10 +199,38 @@ async function votePage() {
     if (document.querySelector(".votes-container")) {
         document.querySelector(".votes-container").remove();
     }
+    const candidateTokens = await instance.getGroupCandidateTokens(listGroups[posListGroup], { from: accounts[0] });
+    const proposeContainer = document.createElement("div");
+    document.querySelector("main").appendChild(proposeContainer).setAttribute("class", "propose-container");
+    for (let i = 0; i < 3; i++) {
+        const button = document.createElement("button");
+        switch (i) {
+            case 0:
+                document.querySelector(".propose-container").appendChild(button).textContent = "New Token";
+                document.querySelector(".propose-container").appendChild(button).setAttribute("id", "newTokenButton");
+                break;
+            case 1:
+                document.querySelector(".propose-container").appendChild(button).textContent = "Change Token";
+                document.querySelector(".propose-container").appendChild(button).setAttribute("id", "changeTokenButton");
+                break;
+            case 2:
+                document.querySelector(".propose-container").appendChild(button).textContent = "New Quorum";
+                document.querySelector(".propose-container").appendChild(button).setAttribute("id", "newQuorumButton");
+                break;
+        }
+    }
+    document.querySelector("#newTokenButton").addEventListener("click", () => {
+        newTokenPage();
+    });
+    document.querySelector("#changeTokenButton").addEventListener("click", () => {
+        changeTokenPage(candidateTokens);
+    });
+    document.querySelector("#newQuorumButton").addEventListener("click", () => {
+        newQuorumPage();
+    });
     const candType0 = [];
     const candType12 = [];
     const candType3 = [];
-    const candidateTokens = await instance.getGroupCandidateTokens(listGroups[posListGroup], { from: accounts[0] });
     for (let i = 0; i < candidateTokens.length; i++) {
         if (candidateTokens[i].candType === "0") {
             candType0[candType0.length] = candidateTokens[i];
@@ -217,7 +245,6 @@ async function votePage() {
             candType3[candType3.length] = candidateTokens[i];
         }
     }
-    console.log(candidateTokens)
     const voteContainer = document.createElement("div");
     document.querySelector("main").appendChild(voteContainer).setAttribute("class", "votes-container")
     for (let i = 0; i < 3; i++) {
@@ -470,7 +497,220 @@ async function votePage() {
             }
         }
     }
+
 }
+
+function newTokenPage() {
+    const newTokenSection = document.createElement("div");
+    const newTokenContainer = document.createElement("div");
+    const newTokenh2 = document.createElement("h2");
+    const br1 = document.createElement("br");
+    const br2 = document.createElement("br");
+    const newTokenLabel1 = document.createElement("label");
+    const newTokenLabel2 = document.createElement("label");
+    const newTokenLabel3 = document.createElement("label");
+    const newTokenInput1 = document.createElement("input");
+    const newTokenInput2 = document.createElement("input");
+    const newTokenInput3 = document.createElement("input");
+    const newTokenButtonSpace = document.createElement("div");
+    const newTokenButton = document.createElement("button");
+    const newTokenButtonClose = document.createElement("button");
+    document.querySelector("body").appendChild(newTokenSection).setAttribute("class", "new-token-section");
+    document.querySelector(".new-token-section").appendChild(newTokenContainer).setAttribute("class", "new-token-container");
+    document.querySelector(".new-token-container").appendChild(newTokenh2).textContent = "New Token:"
+    document.querySelector(".new-token-container").appendChild(newTokenLabel1).setAttribute("for", "nameToken");
+    document.querySelector(".new-token-container").appendChild(newTokenLabel1).textContent = "Name: ";
+    document.querySelector(".new-token-container").appendChild(newTokenInput1).setAttribute("id", "nameToken");
+    document.querySelector(".new-token-container").appendChild(newTokenInput1).setAttribute("type", "text");
+    document.querySelector(".new-token-container").appendChild(br1);
+    document.querySelector(".new-token-container").appendChild(newTokenLabel2).setAttribute("for", "timeToken");
+    document.querySelector(".new-token-container").appendChild(newTokenLabel2).textContent = "N Tokens every refill: ";
+    document.querySelector(".new-token-container").appendChild(newTokenInput2).setAttribute("id", "timeToken");
+    document.querySelector(".new-token-container").appendChild(newTokenInput2).setAttribute("type", "number");
+    document.querySelector(".new-token-container").appendChild(br2);
+    document.querySelector(".new-token-container").appendChild(newTokenLabel3).setAttribute("for", "nToken");
+    document.querySelector(".new-token-container").appendChild(newTokenLabel3).textContent = "Time to refill: ";
+    document.querySelector(".new-token-container").appendChild(newTokenInput3).setAttribute("id", "nToken");
+    document.querySelector(".new-token-container").appendChild(newTokenInput3).setAttribute("type", "number");
+    document.querySelector(".new-token-container").appendChild(newTokenButtonSpace).setAttribute("class", "container-buttons");
+    document.querySelector(".container-buttons").appendChild(newTokenButtonClose).setAttribute("class", "close-button");
+    document.querySelector(".close-button").textContent = "Cancel";
+    document.querySelector(".close-button").addEventListener("click", () => {
+        document.querySelector(".new-token-section").remove();
+    });
+    document.querySelector(".container-buttons").appendChild(newTokenButton).setAttribute("class", "confirm-button");
+    document.querySelector(".confirm-button").textContent = "Confirm";
+    document.querySelector(".confirm-button").addEventListener("click", async () => {
+        document.querySelector(".confirm-button").setAttribute("disabled", "true");
+        let nameToken = document.getElementById("nameToken").value;
+        let timeToken = parseInt(document.getElementById("timeToken").value);
+        let nToken = parseInt(document.getElementById("nToken").value);
+        if (nameToken === "" || timeToken === NaN || nToken === NaN || timeToken === 0 || nToken === 0) {
+            alert("Data not included!");
+            document.querySelector(".confirm-button").removeAttribute("disabled");
+            return;
+        }
+        if (timeToken < 0) {
+            timeToken = absoluteNumber(timeToken);
+        }
+        if (nToken < 0) {
+            nToken = absoluteNumber(nToken);
+        }
+        try {
+            await instance.changeToken(0, nameToken, nToken, timeToken, listGroups[posListGroup], 1, { from: accounts[0], gas: userGas, gasPrice: null });
+        } catch (err) {
+            alert("Transition not successfull!");
+            document.querySelector(".confirm-button").removeAttribute("disabled");
+        }
+    });
+
+}
+
+async function changeTokenPage(candidateTokens) {
+    console.log(candidateTokens)
+    console.log(group)
+    const changeTokenSection = document.createElement("div");
+    const changeTokenContainer = document.createElement("div");
+    const changeTokenh2 = document.createElement("h2");
+    const br1 = document.createElement("br");
+    const br2 = document.createElement("br");
+    const br3 = document.createElement("br");
+    const changeTokenLabel1 = document.createElement("label");
+    const changeTokenLabel2 = document.createElement("label");
+    const changeTokenLabel3 = document.createElement("label");
+    const changeTokenInput1 = document.createElement("input");
+    const changeTokenInput2 = document.createElement("input");
+    const changeTokenInput3 = document.createElement("input");
+    const changeTokenButtonSpace = document.createElement("div");
+    const changeTokenButton = document.createElement("button");
+    const changeTokenButtonClose = document.createElement("button");
+    const changeTokenSelect = document.createElement("select");
+    document.querySelector("body").appendChild(changeTokenSection).setAttribute("class", "change-token-section");
+    document.querySelector(".change-token-section").appendChild(changeTokenContainer).setAttribute("class", "change-token-container");
+    document.querySelector(".change-token-container").appendChild(changeTokenh2).textContent = "Change Token:"
+    document.querySelector(".change-token-container").appendChild(changeTokenSelect).setAttribute("id", "changeTokenListId");
+    document.querySelector(".change-token-container").appendChild(br3);
+    for (let i = -1; i < parseInt(group.tokenIds.length); i++) {
+        const changeTokenOption = document.createElement("option");
+        if (i >= 0) {
+            const token = await instance.getToken(group.tokenIds[i]);
+            document.querySelector("#changeTokenListId").appendChild(changeTokenOption).textContent = token.name;
+            document.querySelector("#changeTokenListId").appendChild(changeTokenOption).setAttribute("value", group.tokenIds[i]);
+        }
+        else {
+            document.querySelector("#changeTokenListId").appendChild(changeTokenOption).textContent = "----------";
+            document.querySelector("#changeTokenListId").appendChild(changeTokenOption).setAttribute("value", "-1");
+        }
+    }
+    document.querySelector(".change-token-container").appendChild(changeTokenLabel1).setAttribute("for", "nameToken");
+    document.querySelector(".change-token-container").appendChild(changeTokenLabel1).textContent = "Name: ";
+    document.querySelector(".change-token-container").appendChild(changeTokenInput1).setAttribute("id", "nameToken");
+    document.querySelector(".change-token-container").appendChild(changeTokenInput1).setAttribute("type", "text");
+    document.querySelector(".change-token-container").appendChild(br1);
+    document.querySelector(".change-token-container").appendChild(changeTokenLabel2).setAttribute("for", "timeToken");
+    document.querySelector(".change-token-container").appendChild(changeTokenLabel2).textContent = "N Tokens every refill: ";
+    document.querySelector(".change-token-container").appendChild(changeTokenInput2).setAttribute("id", "timeToken");
+    document.querySelector(".change-token-container").appendChild(changeTokenInput2).setAttribute("type", "number");
+    document.querySelector(".change-token-container").appendChild(br2);
+    document.querySelector(".change-token-container").appendChild(changeTokenLabel3).setAttribute("for", "nToken");
+    document.querySelector(".change-token-container").appendChild(changeTokenLabel3).textContent = "Time to refill: ";
+    document.querySelector(".change-token-container").appendChild(changeTokenInput3).setAttribute("id", "nToken");
+    document.querySelector(".change-token-container").appendChild(changeTokenInput3).setAttribute("type", "number");
+    document.querySelector(".change-token-container").appendChild(changeTokenButtonSpace).setAttribute("class", "container-buttons");
+    document.querySelector(".container-buttons").appendChild(changeTokenButtonClose).setAttribute("class", "close-button");
+    document.querySelector(".close-button").textContent = "Cancel";
+    document.querySelector(".close-button").addEventListener("click", () => {
+        document.querySelector(".change-token-section").remove();
+    });
+    document.querySelector(".container-buttons").appendChild(changeTokenButton).setAttribute("class", "confirm-button");
+    document.querySelector(".confirm-button").textContent = "Confirm";
+    document.querySelector(".confirm-button").addEventListener("click", async () => {
+        document.querySelector(".confirm-button").setAttribute("disabled", "true");
+        let nameToken = document.getElementById("nameToken").value;
+        let timeToken = parseInt(document.getElementById("timeToken").value);
+        let nToken = parseInt(document.getElementById("nToken").value);
+        if (nameToken === "" || timeToken === NaN || nToken === NaN) {
+            alert("Data not included!");
+        }
+        if (timeToken < 1) {
+            timeToken = absoluteNumber(timeToken);
+        }
+        if (nToken < 1) {
+            nToken = absoluteNumber(nToken);
+        }
+        try {
+            // await instance.changeToken(0, nameToken, nToken, timeToken, listGroups[posListGroup], 1, { from: accounts[0], gas: userGas, gasPrice: null });
+        } catch (err) {
+            alert("Transition not successfull!");
+            document.querySelector(".confirm-button").removeAttribute("disabled");
+        }
+    });
+
+}
+
+// function changeTokenPage(candidateTokens) {
+//     const changeTokenSection = document.createElement("div");
+//     const changeTokenContainer = document.createElement("div");
+//     const changeTokenh2 = document.createElement("h2");
+//     const br1 = document.createElement("br");
+//     const br2 = document.createElement("br");
+//     const changeTokenLabel1 = document.createElement("label");
+//     const changeTokenLabel2 = document.createElement("label");
+//     const changeTokenLabel3 = document.createElement("label");
+//     const changeTokenInput1 = document.createElement("input");
+//     const changeTokenInput2 = document.createElement("input");
+//     const changeTokenInput3 = document.createElement("input");
+//     const changeTokenButtonSpace = document.createElement("div");
+//     const changeTokenButton = document.createElement("button");
+//     const changeTokenButtonClose = document.createElement("button");
+//     document.querySelector("body").appendChild(changeTokenSection).setAttribute("class", "change-token-section");
+//     document.querySelector(".change-token-section").appendChild(changeTokenContainer).setAttribute("class", "change-token-container");
+//     document.querySelector(".change-token-container").appendChild(changeTokenh2).textContent = "Change Token:"
+//     document.querySelector(".change-token-container").appendChild(changeTokenLabel1).setAttribute("for", "nameToken");
+//     document.querySelector(".change-token-container").appendChild(changeTokenLabel1).textContent = "Name: ";
+//     document.querySelector(".change-token-container").appendChild(changeTokenInput1).setAttribute("id", "nameToken");
+//     document.querySelector(".change-token-container").appendChild(changeTokenInput1).setAttribute("type", "text");
+//     document.querySelector(".change-token-container").appendChild(br1);
+//     document.querySelector(".change-token-container").appendChild(changeTokenLabel2).setAttribute("for", "timeToken");
+//     document.querySelector(".change-token-container").appendChild(changeTokenLabel2).textContent = "N Tokens every refill: ";
+//     document.querySelector(".change-token-container").appendChild(changeTokenInput2).setAttribute("id", "timeToken");
+//     document.querySelector(".change-token-container").appendChild(changeTokenInput2).setAttribute("type", "number");
+//     document.querySelector(".change-token-container").appendChild(br2);
+//     document.querySelector(".change-token-container").appendChild(changeTokenLabel3).setAttribute("for", "nToken");
+//     document.querySelector(".change-token-container").appendChild(changeTokenLabel3).textContent = "Time to refill: ";
+//     document.querySelector(".change-token-container").appendChild(changeTokenInput3).setAttribute("id", "nToken");
+//     document.querySelector(".change-token-container").appendChild(changeTokenInput3).setAttribute("type", "number");
+//     document.querySelector(".change-token-container").appendChild(changeTokenButtonSpace).setAttribute("class", "container-buttons");
+//     document.querySelector(".container-buttons").appendChild(changeTokenButtonClose).setAttribute("class", "close-button");
+//     document.querySelector(".close-button").textContent = "Cancel";
+//     document.querySelector(".close-button").addEventListener("click", () => {
+//         document.querySelector(".change-token-section").remove();
+//     });
+//     document.querySelector(".container-buttons").appendChild(changeTokenButton).setAttribute("class", "confirm-button");
+//     document.querySelector(".confirm-button").textContent = "Confirm";
+//     document.querySelector(".confirm-button").addEventListener("click", async () => {
+//         document.querySelector(".confirm-button").setAttribute("disabled", "true");
+//         let nameToken = document.getElementById("nameToken").value;
+//         let timeToken = parseInt(document.getElementById("timeToken").value);
+//         let nToken = parseInt(document.getElementById("nToken").value);
+//         if (nameToken === "" || timeToken === NaN || nToken === NaN) {
+//             alert("Data not included!");
+//         }
+//         if (timeToken < 1) {
+//             timeToken = absoluteNumber(timeToken);
+//         }
+//         if (nToken < 1) {
+//             nToken = absoluteNumber(nToken);
+//         }
+//         try {
+//             await instance.changeToken(0, nameToken, nToken, timeToken, listGroups[posListGroup], 1, { from: accounts[0], gas: userGas, gasPrice: null });
+//         } catch (err) {
+//             alert("Transition not successfull!");
+//             document.querySelector(".confirm-button").removeAttribute("disabled");
+//         }
+//     });
+
+// }
 
 function leaveGroup() {
     const leaveSection = document.createElement("div");
@@ -567,4 +807,11 @@ function controlVoters(cand, j) {
         }
     }
     return false;
+}
+
+function absoluteNumber(number) {
+    if (number < 0) {
+        number = -number;
+    }
+    return number;
 }
