@@ -10,12 +10,13 @@
     <script src="web3.min.js"></script>
     <script src="truffle-contract.min.js"></script>
     <script src="jquery.min.js"></script>
+    <script src="profile.js" defer></script>
     <title>KuoriciniDAO</title>
 </head>
 
 <body>
     <header>
-        <a class="logo" href="home.html"><img src="img/logo.png" h width="260" height="60"></a>
+        <a class="logo" href="home.html"><img src="images/logo.png" h width="260" height="60"></a>
         <div class="user">
             <span id="userImage"></span>
             <span id="userName"></span>
@@ -62,7 +63,7 @@
                             Name:
                         </td>
                         <td>
-                            <span id="profileName"></span>
+                            <div class="profile-name-container"><span id="profileName"></span><button class="change-name">Change name</button></div>
                         </td>
                     </tr>
                 </tbody>
@@ -75,13 +76,13 @@
     <footer>
         <p>KuoriciniDAO is in Pilot Stage! You are free to play with it and tell us what you think about it</p>
         <ul class="link">
-            <li><a href="#">Discord</a></li>
+            <li><a href="https://discord.gg/tdCCgXrsnb">Discord</a></li>
             <li>|</li>
-            <li><a href="#">Twitter</a></li>
+            <li><a href="https://mobile.twitter.com/kuoricinidao">Twitter</a></li>
             <li>|</li>
-            <li><a href="#">Telegram</a></li>
+            <li><a href="https://t.me/+Fd2MefdXzoM5OWNk">Telegram</a></li>
             <li>|</li>
-            <li><a href="#">Github</a></li>
+            <li><a href="https://github.com/techstationspace/kuoricinidao">Github</a></li>
         </ul>
     </footer>
     <div class="transition-page">
@@ -91,7 +92,6 @@
         <div class="transition-components"><span></span></div>
         <div class="transition-components"><span></span></div>
     </div>
-    <script src="profile.js"></script>
 </body>
 
 </html>

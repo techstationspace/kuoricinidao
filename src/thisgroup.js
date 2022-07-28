@@ -4,12 +4,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     await startComponents();
 });
 
-/*$(window).on("load", async function () {
-    await initWeb3();
-    await readAccount();
-    await startComponents();
-});*/
-
 async function initWeb3() {
     if (window.ethereum) {
         web3Provider = window.ethereum;
@@ -105,6 +99,9 @@ async function membersPage() {
     if (document.querySelector(".votes-container")) {
         document.querySelector(".votes-container").remove();
     }
+    if (document.querySelector(".propose-container")) {
+        document.querySelector(".propose-container").remove();
+    }
     const membersContainer = document.createElement("div");
     const membersTitle = document.createElement("p");
     const membersTable = document.createElement("table");
@@ -143,6 +140,9 @@ async function tokenPage() {
     }
     if (document.querySelector(".votes-container")) {
         document.querySelector(".votes-container").remove();
+    }
+    if (document.querySelector(".propose-container")) {
+        document.querySelector(".propose-container").remove();
     }
     const tokensContainer = document.createElement("div");
     const tokensTitle = document.createElement("p");
@@ -199,6 +199,9 @@ async function votePage() {
     if (document.querySelector(".votes-container")) {
         document.querySelector(".votes-container").remove();
     }
+    if (document.querySelector(".propose-container")) {
+        document.querySelector(".propose-container").remove();
+    }
     const candidateTokens = await instance.getGroupCandidateTokens(listGroups[posListGroup], { from: accounts[0] });
     const proposeContainer = document.createElement("div");
     document.querySelector("main").appendChild(proposeContainer).setAttribute("class", "propose-container");
@@ -223,7 +226,7 @@ async function votePage() {
         newTokenPage();
     });
     document.querySelector("#changeTokenButton").addEventListener("click", () => {
-        changeTokenPage(candidateTokens);
+        changeTokenPage();
     });
     document.querySelector("#newQuorumButton").addEventListener("click", () => {
         newQuorumPage();
@@ -541,13 +544,11 @@ function newTokenPage() {
     document.querySelector(".container-buttons").appendChild(newTokenButton).setAttribute("class", "confirm-button");
     document.querySelector(".confirm-button").textContent = "Confirm";
     document.querySelector(".confirm-button").addEventListener("click", async () => {
-        document.querySelector(".confirm-button").setAttribute("disabled", "true");
-        let nameToken = document.getElementById("nameToken").value;
+        const nameToken = document.getElementById("nameToken").value;
         let timeToken = parseInt(document.getElementById("timeToken").value);
         let nToken = parseInt(document.getElementById("nToken").value);
         if (nameToken === "" || timeToken === NaN || nToken === NaN || timeToken === 0 || nToken === 0) {
             alert("Data not included!");
-            document.querySelector(".confirm-button").removeAttribute("disabled");
             return;
         }
         if (timeToken < 0) {
@@ -556,19 +557,18 @@ function newTokenPage() {
         if (nToken < 0) {
             nToken = absoluteNumber(nToken);
         }
+        document.querySelector(".confirm-button").setAttribute("disabled", "true");
         try {
             await instance.changeToken(0, nameToken, nToken, timeToken, listGroups[posListGroup], 1, { from: accounts[0], gas: userGas, gasPrice: null });
         } catch (err) {
-            alert("Transition not successfull!");
+            alert("Transition failed!");
             document.querySelector(".confirm-button").removeAttribute("disabled");
         }
     });
 
 }
 
-async function changeTokenPage(candidateTokens) {
-    console.log(candidateTokens)
-    console.log(group)
+async function changeTokenPage() {
     const changeTokenSection = document.createElement("div");
     const changeTokenContainer = document.createElement("div");
     const changeTokenh2 = document.createElement("h2");
@@ -625,92 +625,73 @@ async function changeTokenPage(candidateTokens) {
     document.querySelector(".container-buttons").appendChild(changeTokenButton).setAttribute("class", "confirm-button");
     document.querySelector(".confirm-button").textContent = "Confirm";
     document.querySelector(".confirm-button").addEventListener("click", async () => {
-        document.querySelector(".confirm-button").setAttribute("disabled", "true");
-        let nameToken = document.getElementById("nameToken").value;
+        const idToken = parseInt(document.getElementById("changeTokenListId").value);
+        const nameToken = document.getElementById("nameToken").value;
         let timeToken = parseInt(document.getElementById("timeToken").value);
         let nToken = parseInt(document.getElementById("nToken").value);
-        if (nameToken === "" || timeToken === NaN || nToken === NaN) {
+        if (nameToken === "" || timeToken === NaN || nToken === NaN || timeToken === 0 || nToken === 0 || idToken===-1) {
             alert("Data not included!");
+            return;
         }
-        if (timeToken < 1) {
+        if (timeToken < 0) {
             timeToken = absoluteNumber(timeToken);
         }
-        if (nToken < 1) {
+        if (nToken < 0) {
             nToken = absoluteNumber(nToken);
         }
+        document.querySelector(".confirm-button").setAttribute("disabled", "true");
         try {
-            // await instance.changeToken(0, nameToken, nToken, timeToken, listGroups[posListGroup], 1, { from: accounts[0], gas: userGas, gasPrice: null });
+            await instance.changeToken(idToken, nameToken, nToken, timeToken, listGroups[posListGroup], 2, { from: accounts[0], gas: userGas, gasPrice: null });
         } catch (err) {
             alert("Transition not successfull!");
             document.querySelector(".confirm-button").removeAttribute("disabled");
         }
     });
-
 }
 
-// function changeTokenPage(candidateTokens) {
-//     const changeTokenSection = document.createElement("div");
-//     const changeTokenContainer = document.createElement("div");
-//     const changeTokenh2 = document.createElement("h2");
-//     const br1 = document.createElement("br");
-//     const br2 = document.createElement("br");
-//     const changeTokenLabel1 = document.createElement("label");
-//     const changeTokenLabel2 = document.createElement("label");
-//     const changeTokenLabel3 = document.createElement("label");
-//     const changeTokenInput1 = document.createElement("input");
-//     const changeTokenInput2 = document.createElement("input");
-//     const changeTokenInput3 = document.createElement("input");
-//     const changeTokenButtonSpace = document.createElement("div");
-//     const changeTokenButton = document.createElement("button");
-//     const changeTokenButtonClose = document.createElement("button");
-//     document.querySelector("body").appendChild(changeTokenSection).setAttribute("class", "change-token-section");
-//     document.querySelector(".change-token-section").appendChild(changeTokenContainer).setAttribute("class", "change-token-container");
-//     document.querySelector(".change-token-container").appendChild(changeTokenh2).textContent = "Change Token:"
-//     document.querySelector(".change-token-container").appendChild(changeTokenLabel1).setAttribute("for", "nameToken");
-//     document.querySelector(".change-token-container").appendChild(changeTokenLabel1).textContent = "Name: ";
-//     document.querySelector(".change-token-container").appendChild(changeTokenInput1).setAttribute("id", "nameToken");
-//     document.querySelector(".change-token-container").appendChild(changeTokenInput1).setAttribute("type", "text");
-//     document.querySelector(".change-token-container").appendChild(br1);
-//     document.querySelector(".change-token-container").appendChild(changeTokenLabel2).setAttribute("for", "timeToken");
-//     document.querySelector(".change-token-container").appendChild(changeTokenLabel2).textContent = "N Tokens every refill: ";
-//     document.querySelector(".change-token-container").appendChild(changeTokenInput2).setAttribute("id", "timeToken");
-//     document.querySelector(".change-token-container").appendChild(changeTokenInput2).setAttribute("type", "number");
-//     document.querySelector(".change-token-container").appendChild(br2);
-//     document.querySelector(".change-token-container").appendChild(changeTokenLabel3).setAttribute("for", "nToken");
-//     document.querySelector(".change-token-container").appendChild(changeTokenLabel3).textContent = "Time to refill: ";
-//     document.querySelector(".change-token-container").appendChild(changeTokenInput3).setAttribute("id", "nToken");
-//     document.querySelector(".change-token-container").appendChild(changeTokenInput3).setAttribute("type", "number");
-//     document.querySelector(".change-token-container").appendChild(changeTokenButtonSpace).setAttribute("class", "container-buttons");
-//     document.querySelector(".container-buttons").appendChild(changeTokenButtonClose).setAttribute("class", "close-button");
-//     document.querySelector(".close-button").textContent = "Cancel";
-//     document.querySelector(".close-button").addEventListener("click", () => {
-//         document.querySelector(".change-token-section").remove();
-//     });
-//     document.querySelector(".container-buttons").appendChild(changeTokenButton).setAttribute("class", "confirm-button");
-//     document.querySelector(".confirm-button").textContent = "Confirm";
-//     document.querySelector(".confirm-button").addEventListener("click", async () => {
-//         document.querySelector(".confirm-button").setAttribute("disabled", "true");
-//         let nameToken = document.getElementById("nameToken").value;
-//         let timeToken = parseInt(document.getElementById("timeToken").value);
-//         let nToken = parseInt(document.getElementById("nToken").value);
-//         if (nameToken === "" || timeToken === NaN || nToken === NaN) {
-//             alert("Data not included!");
-//         }
-//         if (timeToken < 1) {
-//             timeToken = absoluteNumber(timeToken);
-//         }
-//         if (nToken < 1) {
-//             nToken = absoluteNumber(nToken);
-//         }
-//         try {
-//             await instance.changeToken(0, nameToken, nToken, timeToken, listGroups[posListGroup], 1, { from: accounts[0], gas: userGas, gasPrice: null });
-//         } catch (err) {
-//             alert("Transition not successfull!");
-//             document.querySelector(".confirm-button").removeAttribute("disabled");
-//         }
-//     });
-
-// }
+async function newQuorumPage() {
+    const newQuorumSection = document.createElement("div");
+    const newQuorumContainer = document.createElement("div");
+    const newQuorumh2 = document.createElement("h2");
+    const p = document.createElement("p");
+    const newQuorumInput = document.createElement("input");
+    const newQuorumButtonSpace = document.createElement("div");
+    const newQuorumButton = document.createElement("button");
+    const newQuorumButtonClose = document.createElement("button");
+    document.querySelector("body").appendChild(newQuorumSection).setAttribute("class", "new-quorum-section");
+    document.querySelector(".new-quorum-section").appendChild(newQuorumContainer).setAttribute("class", "new-quorum-container");
+    document.querySelector(".new-quorum-container").appendChild(newQuorumh2).textContent = "New quorum:"
+    document.querySelector(".new-quorum-container").appendChild(p).textContent = "Set new quorum of group (1 - 10): ";
+    document.querySelector(".new-quorum-container").appendChild(newQuorumInput).setAttribute("type", "value");
+    document.querySelector(".new-quorum-container").appendChild(newQuorumInput).setAttribute("id", "newQuorum");
+    document.querySelector(".new-quorum-container").appendChild(newQuorumButtonSpace).setAttribute("class", "container-buttons");
+    document.querySelector(".container-buttons").appendChild(newQuorumButtonClose).setAttribute("class", "close-button");
+    document.querySelector(".close-button").textContent = "Cancel";
+    document.querySelector(".close-button").addEventListener("click", () => {
+        document.querySelector(".new-quorum-section").remove();
+    });
+    document.querySelector(".container-buttons").appendChild(newQuorumButton).setAttribute("class", "confirm-button");
+    document.querySelector(".confirm-button").textContent = "Confirm";
+    document.querySelector(".confirm-button").addEventListener("click", async () => {
+        const newQuorumValue = parseInt(document.getElementById("newQuorum").value);
+        console.log(newQuorumValue)
+        if (newQuorumValue === "") {
+            alert("Data not included!");
+            return;
+        }
+        if (newQuorumValue === "0") {
+            alert("Data not valid!");
+            return;
+        }
+        document.querySelector(".confirm-button").setAttribute("disabled", "true");
+        try {
+            await instance.changeToken(newQuorumValue, "", 0, 0, listGroups[posListGroup], 3, { from: accounts[0], gas: userGas, gasPrice: null });
+        } catch (err) {
+            alert("Transition not successfull!");
+            document.querySelector(".confirm-button").removeAttribute("disabled");
+        }
+    });
+}
 
 function leaveGroup() {
     const leaveSection = document.createElement("div");

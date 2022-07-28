@@ -1,4 +1,4 @@
-$(window).on("load", async function () {
+document.addEventListener("DOMContentLoaded", async function () {
   await initWeb3();
   await readAccount();
   await userData()

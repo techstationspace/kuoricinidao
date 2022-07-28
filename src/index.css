@@ -1,12 +1,12 @@
 html {
     --text-color: #fff;
-    --title-container: #fff;
+    --title-container: #000;
     --transition-components-background: rgb(140, 0, 255);
 }
 
 body{
     margin: 0;
-    background: rgb(140, 0, 255);
+    background: linear-gradient(#000,#fff,#000);
 }
 
 header {
@@ -31,7 +31,6 @@ nav ul li a {
     color: var(--text-color);
     text-decoration: none;
     font-size: 1.5rem;
-    font-weight: bold;
 }
 
 main {
@@ -57,9 +56,9 @@ footer ul {
 }
 
 footer ul li {
+    color: #fff;
     display: inline;
     padding: 1em;
-    cursor: pointer;
 }
 
 footer ul li a {
@@ -67,7 +66,7 @@ footer ul li a {
     text-decoration: none;
 }
 
-.transition-page {
+/* .transition-page {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -96,16 +95,20 @@ footer ul li a {
     background-color: red !important;
     border-radius: 50%;
     transition: all linear 1000ms;
-}
+} */
 
 .container {
     width: 30em;
-    border: black solid 2px;
+    border: none;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     overflow: visible;
+}
+
+.container p{
+    text-align: center;
 }
 
 .title-container {
@@ -120,8 +123,7 @@ footer ul li a {
     padding: 0em;
     color: #fff;
     font-size: 15pt;
-    border: 1px solid #000;
-    border-radius: 2em;
+    border: none;
     background: transparent;
     cursor: pointer;
 }
