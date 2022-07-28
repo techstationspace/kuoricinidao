@@ -144,7 +144,7 @@ contract KuoriciniDao {
   }
 
 
-// temporary struct to make the output more verbose
+// temporary struct to make the output of a token more verbose
 
   struct EToken {
     uint tokenId;
@@ -155,11 +155,8 @@ contract KuoriciniDao {
     bool overtime;
   }
 
-
   function getUserTokens(uint gid) public view returns(EToken[] memory) {
     require(isAddressInGroup(gid, msg.sender), "user not authorized"); 
-
-
     uint l = daoGroups[gid].tokenIds.length;
     uint m = userTokens[msg.sender].length;
     UToken[] memory utokens = new UToken[](l);
@@ -192,7 +189,6 @@ contract KuoriciniDao {
       etokens[w].blocktimestamp = blts;
       etokens[w].newtime = newtime;
       etokens[w].overtime = overtime;
-
     }
     return etokens;
   }
@@ -331,6 +327,10 @@ contract KuoriciniDao {
     return true;
 
   }
+/*
+ * New PROPOSALS API
+ * Commented for now (run out of gas cannot compile)
+ *
 
 function proposeQuorum(uint val, uint gid) public returns(bool) {
   require(val <= 10, "invalid quorum");
@@ -375,21 +375,23 @@ function getQuorumProposals(uint gid) public view returns (quorumProposal[] memo
   }
   return proposals;
 }
-
+*/
 
   // get candidate tokens of a group
-  /*
   function getGroupCandidates(uint gid) public view returns(Candidate[] memory) {
     require(isAddressInGroup(gid, msg.sender), "member not allowed!" );
     uint l = daoGroups[gid].candidateIds.length;
     Candidate[] memory candidates = new Candidate[](l);
     for (uint i = 0; i < l; i++) {
       uint c = daoGroups[gid].candidateIds[i];
-      candidates[i] = allCandidates[c];
+      if ( (allCandidates[c].timestamp + DaoGroups[gid].voteDuration) < block.timestamp ) {
+        candidates[i] = allCandidates[c];
+      }
     }
+    // TODO : size of array could be shortened, there are empty spaces where candidates are expired
     return candidates;
   }
-*/
+
   // vote candidate token and eventually promote the change if quorum is passed
   function voteCandidate(uint gid, uint candTokId, uint vote) public returns(bool) {
     require(isAddressInGroup(gid, msg.sender), "member cannot vote!" );
