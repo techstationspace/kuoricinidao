@@ -301,22 +301,21 @@ async function votePage() {
             } else {
                 for (let j = 0; j < candType0.length; j++) {
                     const tr = document.createElement("tr");
-                    const td = document.createElement("td");
-                    document.querySelector(".tbody-user-candidate").appendChild(tr).setAttribute("class", "tbody-tr-user-candidate");
-                    document.querySelector(".tbody-user-candidate").appendChild(td).setAttribute("class", "name-token");
+                    document.querySelector(".tbody-user-candidate").appendChild(tr).setAttribute("class", "tbody-tr-user-candidate" + j);
                     for (let t = 0; t < 5; t++) {
                         const td = document.createElement("td");
                         switch (t) {
                             case 0:
-                                document.querySelector(".tbody-tr-user-candidate" + j).appendChild(td).textContent = "nome";
+                                document.querySelector(".tbody-tr-user-candidate" + j).appendChild(td).textContent = await instance.nameOf(candType0[j].candidateAddress, { from: user.address });
                                 document.querySelector(".tbody-tr-user-candidate" + j).appendChild(td).setAttribute("class", "text-token");
                                 break;
                             case 1:
-                                document.querySelector(".tbody-tr-user-candidate" + j).appendChild(td).textContent = candType0[j].address;
+                                document.querySelector(".tbody-tr-user-candidate" + j).appendChild(td).textContent = candType0[j].candidateAddress;
                                 document.querySelector(".tbody-tr-user-candidate" + j).appendChild(td).setAttribute("class", "text-token");
                                 break;
                             case 2:
                                 document.querySelector(".tbody-tr-user-candidate" + j).appendChild(td).textContent = candType0[j].votes;
+                                document.querySelector(".tbody-tr-user-candidate" + j).appendChild(td).setAttribute("class", "text-token");
                                 break;
                             case 3:
                                 document.querySelector(".tbody-tr-user-candidate" + j).appendChild(td).textContent = candType0[j].timestamp;
@@ -470,7 +469,6 @@ async function votePage() {
                 switch (j) {
                     case 0:
                         document.querySelector(".quorum-candidate-table-thead-tr").appendChild(th).setAttribute("class", "quorum-candidate-table-title");
-//                        document.querySelector(".quorum-candidate-table-thead-tr").appendChild(th).setAttribute("colspan", "3");
                         document.querySelector(".quorum-candidate-table-thead-tr").appendChild(th).textContent = "New quorum";
                         break;
                     case 1:
@@ -508,7 +506,6 @@ async function votePage() {
                         switch (t) {
                             case 0:
                                 document.querySelector(".tbody-tr-quorum-candidate" + j).appendChild(td).textContent = candType3[j].id + "0%";
-//                                document.querySelector(".tbody-tr-quorum-candidate").appendChild(td).setAttribute("colspan", "3");
                                 document.querySelector(".tbody-tr-quorum-candidate" + j).appendChild(td).setAttribute("class", "text-token");
                                 break;
                             case 1:
