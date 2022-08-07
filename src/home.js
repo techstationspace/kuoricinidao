@@ -1,4 +1,4 @@
-$(window).on("load", async function () {
+document.addEventListener("DOMContentLoaded", async function () {
   await initWeb3();
   await readAccount();
   await userData()
@@ -20,6 +20,7 @@ async function initWeb3() {
   // temporary solution to wrong metamask gas suggestions
   // https://stackoverflow.com/questions/68926306/avoid-this-gas-fee-has-been-suggested-by-message-in-metamask-using-web3
   userGas = 300000;
+	sessionStorage.setItem("userGas", userGas);
 
   await $.getJSON('KuoriciniDao.json', function (data) {
     KuoriciniDao = TruffleContract(data);

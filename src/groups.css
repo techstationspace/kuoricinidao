@@ -33,7 +33,6 @@
     justify-content: center;
     flex-direction: column;
     overflow: hidden;
-    /* height: 0em; */
     transition: height linear 300ms;
     border-top: 1px solid #000;
     border-bottom: 1px solid #000;
@@ -42,7 +41,6 @@
 #newGroup{
     border-radius: 1em;
     border: 0px;
-    background: yellow;
     transition: background ease-out 300ms, color ease-out 300ms;
 }
 
@@ -51,9 +49,64 @@
     color: white;
 }
 
-.close-button{
-    position: absolute;
-    transform: translateY(-150%);
-    color: rgb(148, 148, 148);
+.new-group-section, .box-section {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0%;
+    top: 0%;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+}
+
+.new-group-container, .box-container {
+    width: 40em;
+    height: auto;
+    background: #fff;
+    border-radius: 1em;
+    padding: 20px;
+}
+
+.new-group-container h2, .box-container h2 {
+    text-align: center;
+}
+
+.new-group-container label, .box-container label {
+    margin-left: 3em;
+    font-size: 1.2rem;
+}
+
+.container-buttons {
+    position: relative;
+    width: 80%;
+    height: 3em;
+    margin-left: 10%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.confirm-button {
+    width: 5em;
+    font-size: 1.6rem;
+    color: #fff;
+    background: rgb(0, 170, 0);
+    border: none;
+    border-radius: 0.2em;
+    cursor: pointer;
+}
+
+.close-button {
+    width: 5em;
+    font-size: 1.5rem;
+    color: #0000ff;
+    background: #fff;
+    border: 1px solid #000;
+    border-radius: 0.2em;
     cursor: pointer;
 }

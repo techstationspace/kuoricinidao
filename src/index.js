@@ -1,9 +1,3 @@
-function prova(){
-    let components=document.querySelectorAll(".transition-components");
-    components.style.top="1000px";
-    console.log("ciao");
-}
-
-// function transition(){
-//     let 
-// }
+document.querySelector(".start-button").addEventListener("click", ()=>{
+    window.location="home.html";
+});

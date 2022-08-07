@@ -140,7 +140,7 @@
 
 .tokens-container {
     position: relative;
-    width: 60%;
+    width: 80%;
     height: auto;
     margin-left: 10%;
     display: flex;
@@ -171,9 +171,10 @@
 
 .user-candidate-container,
 .token-candidate-container,
-.quorum-candidate-container {
+.quorum-candidate-container,
+.description-container {
     position: relative;
-    width: 60%;
+    width: 80%;
     height: auto;
     margin-left: 10%;
     margin-top: 3em;
@@ -212,7 +213,7 @@
     border-radius: 0.3em;
 }
 
-.vote-candidate, .new-token-section, .change-token-section {
+.vote-candidate, .new-token-section, .change-token-section, .new-quorum-section {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -225,19 +226,28 @@
     z-index: 5;
 }
 
-.vote-candidate-container, .new-token-container, .change-token-container {
+.vote-candidate-container, .new-token-container, .change-token-container, .new-quorum-container {
     width: 40em;
     height: auto;
     background: #fff;
     border-radius: 1em;
 }
 
-.new-token-container h2, .change-token-container h2{
+.new-token-container h2, .change-token-container h2, .new-quorum-container h2{
     text-align: center;
 }
 
-.new-token-container label, .change-token-container label{
+.new-token-container label, .change-token-container label, .new-quorum-container p {
     margin-left: 3em;
+    font-size: 1.2rem;
+}
+
+.new-quorum-container input {
+    margin-left: calc(50% - 7em);
+}
+
+.change-token-container select{
+    margin-left: calc(50% - 3em);
     font-size: 1.2rem;
 }
 
@@ -263,4 +273,27 @@
 
 #voteTokenInfo li{
     font-size: 1.2rem;
+}
+
+.propose-container{
+    margin-top: 3em;
+    margin-left: 30%;
+    width: 40%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.propose-container button{
+    font-size: 1.1rem;
+    color: #fff;
+    border: none;
+    border-radius: 1em;
+    padding: 0.5em 1em;
+    background: #0000ff;
+    cursor: pointer;
+}
+
+.members-link {
+    background-color: rgba(172, 255, 47, 0.489);
 }

@@ -1,3 +1,5 @@
+alert('This file is never used?');
+
 async function initWeb3() {
   if (window.ethereum) {
     web3Provider = window.ethereum;
@@ -12,9 +14,6 @@ async function initWeb3() {
   }
   web3 = new Web3(web3Provider);
 
-  // temporary solution to wrong metamask gas suggestions
-  // https://stackoverflow.com/questions/68926306/avoid-this-gas-fee-has-been-suggested-by-message-in-metamask-using-web3
-  userGas = 300000;
 
   await $.getJSON('KuoriciniDao.json', function (data) {
     KuoriciniDao = TruffleContract(data);
@@ -37,3 +36,4 @@ async function readAccount() {
   //   document.getElementById("myName").textContent = user.name;
   // }
 }
+

@@ -89,12 +89,16 @@ contract KuoriciniDao {
   
   function checkInvitationLink(string calldata link) public view returns (uint) {    
     uint groupInv =  invitationLinks[link];
-    require(!isAddressInGroup(groupInv, msg.sender), "member already present" );
+    if (isAddressInGroup(groupInv, msg.sender)) {
+      return 0;      
+    }
     uint l = daoGroups[groupInv].candidateIds.length;
     uint[] memory candidateIds = new uint[](l+1);
     for (uint i = 0; i < l; i++) {
       candidateIds[i] = daoGroups[groupInv].candidateIds[i];
-      require ( allCandidates[candidateIds[i]].candidateAddress != msg.sender, "candidate already present" );
+      if ( allCandidates[candidateIds[i]].candidateAddress == msg.sender ){
+        return 0;
+      }
     }    
     return groupInv;
   }
@@ -169,18 +173,18 @@ contract KuoriciniDao {
       uint newtime = 0;
       utokens[w] = UToken ({ tokenId: tokid, gTokenBalance: 0, xBalance: allTokens[tokid].roundSupply});
       for ( uint j = 0; j < m; j++ ) { // all the tokens of this user
+        newtime = allTokens[tokid].timestamp + allTokens[tokid].roundDuration;
+        blts = block.timestamp; 
+        if ( blts > newtime ) {
+          utokens[w].xBalance = allTokens[tokid].roundSupply;
+          overtime = true;
+        } 
+        else {
+          utokens[w].xBalance = userTokens[msg.sender][j].xBalance;
+          overtime = false;
+        }
         if (userTokens[msg.sender][j].tokenId == tokid) {
-          utokens[w].gTokenBalance = userTokens[msg.sender][j].gTokenBalance;
-          newtime = allTokens[tokid].timestamp + allTokens[tokid].roundDuration;
-          blts = block.timestamp; 
-          if ( blts > newtime ) {
-            utokens[w].xBalance = allTokens[tokid].roundSupply;
-            overtime = true;
-          } 
-          else {
-            utokens[w].xBalance = userTokens[msg.sender][j].xBalance;
-            overtime = false;
-          }
+            utokens[w].gTokenBalance = userTokens[msg.sender][j].gTokenBalance;
         }
       }
       etokens[w].tokenId = utokens[w].tokenId;
@@ -384,7 +388,7 @@ function getQuorumProposals(uint gid) public view returns (quorumProposal[] memo
     Candidate[] memory candidates = new Candidate[](l);
     for (uint i = 0; i < l; i++) {
       uint c = daoGroups[gid].candidateIds[i];
-      if ( (allCandidates[c].timestamp + DaoGroups[gid].voteDuration) < block.timestamp ) {
+      if ( (allCandidates[c].timestamp + daoGroups[gid].voteDuration) > block.timestamp ) {
         candidates[i] = allCandidates[c];
       }
     }
