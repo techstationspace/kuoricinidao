@@ -60,7 +60,8 @@ async function dataGroup(groupSelected) {
 }
 
 async function myBalance() {
-    const dayTime = 86400;
+//    dayTime = 86400;
+dayTime = 1;
     const userTokens = await instance.getUserTokens(listGroups[posListGroup], { from: accounts[0] });
     for (let i = 0; i < userTokens.length; i++) {
         const token = await instance.getToken(userTokens[i][0], { from: accounts[0] });
@@ -79,9 +80,9 @@ async function myBalance() {
         document.getElementById("token" + (i + 1)).appendChild(col3).setAttribute("class", "text-token");
         document.getElementById("token" + (i + 1)).appendChild(col3).textContent = userTokens[i].xBalance;
         document.getElementById("token" + (i + 1)).appendChild(col4).setAttribute("class", "text-token");
-        document.getElementById("token" + (i + 1)).appendChild(col4).textContent = "next refill token";
+        document.getElementById("token" + (i + 1)).appendChild(col4).textContent = convertTimestamp(userTokens[i].newtime)+', '+userTokens[i].residualtime+" sec";
         document.getElementById("token" + (i + 1)).appendChild(col5).setAttribute("class", "text-token");
-        document.getElementById("token" + (i + 1)).appendChild(col5).textContent = (token.roundDuration / dayTime) + " days";
+        document.getElementById("token" + (i + 1)).appendChild(col5).textContent = (token.roundDuration / dayTime) + " sec";
         document.getElementById("token" + (i + 1)).appendChild(col6).setAttribute("class", "text-token");
         document.getElementById("token" + (i + 1)).appendChild(col6).textContent = token.roundSupply;
     }
@@ -194,6 +195,8 @@ async function tokenPage() {
 }
 
 async function votePage() {
+    const bn = await web3.eth.getBlockNumber();
+    const block = await web3.eth.getBlock(bn);
     if (document.querySelector(".members-container")) {
         document.querySelector(".members-container").remove();
     }
@@ -318,10 +321,11 @@ async function votePage() {
                                 document.querySelector(".tbody-tr-user-candidate" + j).appendChild(td).setAttribute("class", "text-token");
                                 break;
                             case 3:
-                                document.querySelector(".tbody-tr-user-candidate" + j).appendChild(td).textContent = candType0[j].timestamp;
+                                const expires = parseInt(candType0[j].timestamp) + parseInt(group.voteDuration);
+                                document.querySelector(".tbody-tr-user-candidate" + j).appendChild(td).textContent = convertTimestamp(expires)+", "+ (expires - block.timestamp );
                                 break;
                             case 4:
-                                if (controlVoters(candType0, j) === true) {
+                                if ( candType0[j].voted ) {
                                     document.querySelector(".tbody-tr-user-candidate" + j).appendChild(td).textContent = "Already voted";
                                 }
                                 else {
@@ -394,7 +398,7 @@ async function votePage() {
                 const tr0 = document.createElement("tr")
                 const td0 = document.createElement("td")
                 document.querySelector(".tbody-token-candidate").appendChild(tr0).setAttribute("class", "token-tr-no-candidate");
-                document.querySelector(".token-tr-no-candidate").appendChild(td0).setAttribute("colspan", "5");
+                document.querySelector(".token-tr-no-candidate").appendChild(td0).setAttribute("colspan", "7");
                 document.querySelector(".token-tr-no-candidate").appendChild(td0).setAttribute("class", "name-token");
                 document.querySelector(".token-tr-no-candidate").appendChild(td0).textContent = "No candidates";
             } else {
@@ -413,7 +417,7 @@ async function votePage() {
                                 document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).setAttribute("class", "text-token");
                                 break;
                             case 2:
-                                document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).textContent = candType12[j].roundDuration / 86400 + " days";
+                                document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).textContent = candType12[j].roundDuration / dayTime + " seconds";
                                 document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).setAttribute("class", "text-token");
                                 break;
                             case 3:
@@ -425,11 +429,13 @@ async function votePage() {
                                 document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).setAttribute("class", "text-token");
                                 break;
                             case 5:
-                                document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).textContent = candType12[j].timestamp;
+                                const expires = parseInt(candType12[j].timestamp) + parseInt(group.voteDuration);
+                                document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).textContent = convertTimestamp(expires)+", "+ (expires - block.timestamp );
                                 document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).setAttribute("class", "text-token");
                                 break;
                             case 6:
-                                if (controlVoters(candType12, j) === true) {
+//                                if (controlVoters(candType12, j) === true) {
+                                if ( candType12[j].voted ) {
                                     document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).textContent = "Already voted";
                                 }
                                 else {
@@ -517,11 +523,12 @@ async function votePage() {
                                 document.querySelector(".tbody-tr-quorum-candidate" + j).appendChild(td).setAttribute("class", "text-token");
                                 break;
                             case 3:
-                                document.querySelector(".tbody-tr-quorum-candidate" + j).appendChild(td).textContent = candType3[j].timestamp;
+                                const expires = parseInt(candType3[j].timestamp) + parseInt(group.voteDuration);
+                                document.querySelector(".tbody-tr-quorum-candidate" + j).appendChild(td).textContent = convertTimestamp(expires)+", "+ (expires - block.timestamp );
                                 document.querySelector(".tbody-tr-quorum-candidate" + j).appendChild(td).setAttribute("class", "text-token");
                                 break;
                             case 4:
-                                if (controlVoters(candType3, j) === true) {
+                                if ( candType3[j].voted ) {
                                     document.querySelector(".tbody-tr-quorum-candidate" + j).appendChild(td).textContent = "Already voted";
                                 }
                                 else {
@@ -599,7 +606,7 @@ function newTokenPage() {
     document.querySelector(".confirm-button").addEventListener("click", async () => {
         const nameToken = document.getElementById("nameToken").value;
         let timeToken = Math.abs(parseInt(document.getElementById("timeToken").value));
-        let nToken = Math.abs(parseInt(document.getElementById("nToken").value)*86400);
+        let nToken = Math.abs(parseInt(document.getElementById("nToken").value)*dayTime);
         if (nameToken === "" || timeToken === NaN || nToken === NaN || timeToken === 0 || nToken === 0) {
             alert("Data not included!");
             return;
@@ -676,7 +683,7 @@ async function changeTokenPage() {
         const idToken = parseInt(document.getElementById("changeTokenListId").value);
         const nameToken = document.getElementById("nameToken").value;
         let timeToken = Math.abs(parseInt(document.getElementById("timeToken").value));
-        let nToken = Math.abs(parseInt(document.getElementById("nToken").value)*86400);
+        let nToken = Math.abs(parseInt(document.getElementById("nToken").value)*dayTime);
         if (nameToken === "" || timeToken === NaN || nToken === NaN || timeToken === 0 || nToken === 0 || idToken===-1) {
             alert("Data not included!");
             return;
@@ -794,7 +801,7 @@ function voteCandidate(cand, id) {
                 document.getElementById("voteTokenInfo").appendChild(li).textContent = "N tokens: " + cand.roundSupply;
                 break;
             case 2:
-                document.getElementById("voteTokenInfo").appendChild(li).textContent = "Time to refill: " + cand.roundDuration / 86400 + " Days";
+                document.getElementById("voteTokenInfo").appendChild(li).textContent = "Time to refill: " + cand.roundDuration / dayTime + " Days";
                 break;
             case 3:
                 document.getElementById("voteTokenInfo").appendChild(li).textContent = "In Agreement: " + cand.votes;
@@ -831,3 +838,22 @@ function controlVoters(cand, j) {
     }
     return false;
 }
+
+function timeStampSettings() {
+    timeStampshow = !timeStampshow;
+    showGroup(group_id);
+}
+
+function convertTimestamp(timestamp) {
+    var d = new Date(timestamp * 1000), // Convert the passed timestamp to milliseconds
+    yyyy = d.getFullYear(),
+    mm = ('0' + (d.getMonth() + 1)).slice(-2),  // Months are zero based. Add leading 0.
+    dd = ('0' + d.getDate()).slice(-2),         // Add leading 0.
+    hh = d.getHours(),
+    h = hh,
+    min = ('0' + d.getMinutes()).slice(-2),     // Add leading 0.
+    sec = ('0' + d.getSeconds()).slice(-2),     // Add leading 0.
+    time;
+    time = dd + '/' + mm + ' ' + h + ':' + min + ':' + sec;
+    return time;
+  }

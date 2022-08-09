@@ -156,7 +156,7 @@ contract KuoriciniDao {
     uint xBalance;
     uint blocktimestamp;
     uint newtime;
-    bool overtime;
+    uint residualtime;
   }
 
   function getUserTokens(uint gid) public view returns(EToken[] memory) {
@@ -168,31 +168,30 @@ contract KuoriciniDao {
 
     for ( uint w = 0; w < l; w++ ) { // all the tokens of this group 
       uint tokid = daoGroups[gid].tokenIds[w];
-      uint blts = 0;
-      bool overtime = false;
-      uint newtime = 0;
       utokens[w] = UToken ({ tokenId: tokid, gTokenBalance: 0, xBalance: allTokens[tokid].roundSupply});
+      uint x = 0;
+      uint newtime = allTokens[tokid].timestamp + allTokens[tokid].roundDuration;
+      while (newtime < block.timestamp) {
+        newtime += allTokens[tokid].roundDuration;
+      }
+
       for ( uint j = 0; j < m; j++ ) { // all the tokens of this user
-        newtime = allTokens[tokid].timestamp + allTokens[tokid].roundDuration;
-        blts = block.timestamp; 
-        if ( blts > newtime ) {
-          utokens[w].xBalance = allTokens[tokid].roundSupply;
-          overtime = true;
-        } 
-        else {
-          utokens[w].xBalance = userTokens[msg.sender][j].xBalance;
-          overtime = false;
-        }
         if (userTokens[msg.sender][j].tokenId == tokid) {
-            utokens[w].gTokenBalance = userTokens[msg.sender][j].gTokenBalance;
+          utokens[w].gTokenBalance = userTokens[msg.sender][j].gTokenBalance;
+          if (x == 0 ) {
+            utokens[w].xBalance = userTokens[msg.sender][j].xBalance;
+          }
         }
       }
       etokens[w].tokenId = utokens[w].tokenId;
       etokens[w].gTokenBalance = utokens[w].gTokenBalance;
       etokens[w].xBalance = utokens[w].xBalance;
-      etokens[w].blocktimestamp = blts;
+      etokens[w].blocktimestamp = block.timestamp;
       etokens[w].newtime = newtime;
-      etokens[w].overtime = overtime;
+      while ( ( newtime - block.timestamp ) > allTokens[tokid].roundDuration ) {
+        newtime -= allTokens[tokid].roundDuration;
+      }
+      etokens[w].residualtime = newtime - block.timestamp;
     }
     return etokens;
   }
@@ -305,8 +304,8 @@ contract KuoriciniDao {
     
     for (uint i = 0; i < l; i++) {
       candidateIds[i] = daoGroups[gid].candidateIds[i];
-       if ( candtype == 0 ) {    
-        require(allCandidates[candidateIds[i]].candidateAddress != msg.sender, "candidate already added!");
+      if ( ( candtype == 0 ) &&  ( allCandidates[candidateIds[i]].candidateAddress == msg.sender ) ) {
+        require ( !candidateValid(allCandidates[candidateIds[i]].timestamp, gid), "candidate already added" ); 
       }
     }
 
@@ -381,19 +380,50 @@ function getQuorumProposals(uint gid) public view returns (quorumProposal[] memo
 }
 */
 
+// hide voters expose voted
+struct ECandidate {
+  uint id;
+  uint candType;
+  string name;
+  uint roundSupply;
+  uint roundDuration;
+  address candidateAddress;
+  uint votes;
+  bool voted;
+  uint timestamp;
+}
+
   // get candidate tokens of a group
-  function getGroupCandidates(uint gid) public view returns(Candidate[] memory) {
+  function getGroupCandidates(uint gid) public view returns(ECandidate[] memory) {
     require(isAddressInGroup(gid, msg.sender), "member not allowed!" );
     uint l = daoGroups[gid].candidateIds.length;
-    Candidate[] memory candidates = new Candidate[](l);
+    ECandidate[] memory candidates = new ECandidate[](l);
+    uint pos = 0;
     for (uint i = 0; i < l; i++) {
       uint c = daoGroups[gid].candidateIds[i];
-      if ( (allCandidates[c].timestamp + daoGroups[gid].voteDuration) > block.timestamp ) {
-        candidates[i] = allCandidates[c];
+      if ( candidateValid(allCandidates[c].timestamp, gid) ) {
+        candidates[pos].id = allCandidates[c].id;
+        candidates[pos].candType = allCandidates[c].candType;
+        candidates[pos].name = allCandidates[c].name;
+        candidates[pos].roundSupply = allCandidates[c].roundSupply;
+        candidates[pos].roundDuration = allCandidates[c].roundDuration;
+        candidates[pos].candidateAddress = allCandidates[c].candidateAddress;
+        candidates[pos].votes = allCandidates[c].votes;
+        candidates[pos].voted = false;
+        for (uint q=0; q < allCandidates[c].voters.length ; q++ ) {
+          if ( allCandidates[c].voters[q] == msg.sender) {
+            candidates[pos].voted = true;
+          }
+        }
+        candidates[pos].timestamp = allCandidates[c].timestamp;
+        pos++;
       }
     }
-    // TODO : size of array could be shortened, there are empty spaces where candidates are expired
     return candidates;
+  }
+
+  function candidateValid(uint candidateTimestamp, uint gid) private view returns(bool) {
+    return ( ( candidateTimestamp + daoGroups[gid].voteDuration) > block.timestamp );
   }
 
   // vote candidate token and eventually promote the change if quorum is passed
@@ -413,6 +443,7 @@ function getQuorumProposals(uint gid) public view returns (quorumProposal[] memo
       }
     }
     require(candidateFound, "candidate token doesn't exists");
+    require(candidateValid(candidate.timestamp, gid), "candidate invalid");
 
     // add voter (this would be the same if we merge)
     uint m = candidate.voters.length;
