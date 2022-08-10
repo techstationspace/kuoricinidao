@@ -18,6 +18,7 @@ contract KuoriciniDao {
     1 : new token
     2 : change existing token
     3 : new quorum
+    4 : new vote duration
     */
 
   struct Candidate {
@@ -169,16 +170,12 @@ contract KuoriciniDao {
     for ( uint w = 0; w < l; w++ ) { // all the tokens of this group 
       uint tokid = daoGroups[gid].tokenIds[w];
       utokens[w] = UToken ({ tokenId: tokid, gTokenBalance: 0, xBalance: allTokens[tokid].roundSupply});
-      uint x = 0;
       uint newtime = allTokens[tokid].timestamp + allTokens[tokid].roundDuration;
-      while (newtime < block.timestamp) {
-        newtime += allTokens[tokid].roundDuration;
-      }
 
       for ( uint j = 0; j < m; j++ ) { // all the tokens of this user
         if (userTokens[msg.sender][j].tokenId == tokid) {
           utokens[w].gTokenBalance = userTokens[msg.sender][j].gTokenBalance;
-          if (x == 0 ) {
+          if ( block.timestamp < newtime ) {
             utokens[w].xBalance = userTokens[msg.sender][j].xBalance;
           }
         }
@@ -187,7 +184,14 @@ contract KuoriciniDao {
       etokens[w].gTokenBalance = utokens[w].gTokenBalance;
       etokens[w].xBalance = utokens[w].xBalance;
       etokens[w].blocktimestamp = block.timestamp;
+
+      // expiration time calculation
+      while (newtime < block.timestamp) {
+        newtime += allTokens[tokid].roundDuration;
+      }
       etokens[w].newtime = newtime;
+
+      // residual time calculation
       while ( ( newtime - block.timestamp ) > allTokens[tokid].roundDuration ) {
         newtime -= allTokens[tokid].roundDuration;
       }
@@ -398,25 +402,25 @@ struct ECandidate {
     require(isAddressInGroup(gid, msg.sender), "member not allowed!" );
     uint l = daoGroups[gid].candidateIds.length;
     ECandidate[] memory candidates = new ECandidate[](l);
-    uint pos = 0;
     for (uint i = 0; i < l; i++) {
       uint c = daoGroups[gid].candidateIds[i];
-      if ( candidateValid(allCandidates[c].timestamp, gid) ) {
-        candidates[pos].id = allCandidates[c].id;
-        candidates[pos].candType = allCandidates[c].candType;
-        candidates[pos].name = allCandidates[c].name;
-        candidates[pos].roundSupply = allCandidates[c].roundSupply;
-        candidates[pos].roundDuration = allCandidates[c].roundDuration;
-        candidates[pos].candidateAddress = allCandidates[c].candidateAddress;
-        candidates[pos].votes = allCandidates[c].votes;
-        candidates[pos].voted = false;
-        for (uint q=0; q < allCandidates[c].voters.length ; q++ ) {
-          if ( allCandidates[c].voters[q] == msg.sender) {
-            candidates[pos].voted = true;
-          }
+      candidates[i].id = allCandidates[c].id;
+      candidates[i].candType = allCandidates[c].candType;
+      candidates[i].name = allCandidates[c].name;
+      candidates[i].roundSupply = allCandidates[c].roundSupply;
+      candidates[i].roundDuration = allCandidates[c].roundDuration;
+      candidates[i].candidateAddress = allCandidates[c].candidateAddress;
+      candidates[i].votes = allCandidates[c].votes;
+      candidates[i].voted = false;
+      for (uint q=0; q < allCandidates[c].voters.length ; q++ ) {
+        if ( allCandidates[c].voters[q] == msg.sender) {
+          candidates[i].voted = true;
         }
-        candidates[pos].timestamp = allCandidates[c].timestamp;
-        pos++;
+      }
+      if ( candidateValid(allCandidates[c].timestamp, gid) ) {
+        candidates[i].timestamp = allCandidates[c].timestamp;
+      } else {
+        candidates[i].timestamp = 0;
       }
     }
     return candidates;
@@ -474,6 +478,9 @@ struct ECandidate {
       }
       if ( candidate.candType == 3 ) {
         daoGroups[gid].voteThreshold = candidate.id;  
+      } 
+      if ( candidate.candType == 4 ) {
+        daoGroups[gid].voteDuration = candidate.id;  
       } 
 
       // remove element from candidates array
@@ -596,6 +603,5 @@ struct ECandidate {
     names[msg.sender]=name;
     return true;
   }
-
 
 }

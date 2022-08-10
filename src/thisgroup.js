@@ -74,7 +74,9 @@ dayTime = 1;
         const col6 = document.createElement("td");
         document.getElementById("userTableBalance").appendChild(row).setAttribute("id", "token" + (i + 1));
         document.getElementById("token" + (i + 1)).appendChild(col1).setAttribute("class", "name-token");
-        document.getElementById("token" + (i + 1)).appendChild(col1).textContent = token.name;
+        document.getElementById("token" + (i + 1)).appendChild(col1).innerHTML = token.name;
+        if (token.name[0] == "&")
+            document.getElementById("token" + (i + 1)).appendChild(col1).setAttribute("style", "font-size: 30px;");
         document.getElementById("token" + (i + 1)).appendChild(col2).setAttribute("class", "text-token");
         document.getElementById("token" + (i + 1)).appendChild(col2).textContent = userTokens[i].gTokenBalance;
         document.getElementById("token" + (i + 1)).appendChild(col3).setAttribute("class", "text-token");
@@ -184,7 +186,7 @@ async function tokenPage() {
         const token = await instance.getToken(userTokens[i][0], { from: accounts[0] });
         if (userTokens[i].xBalance > 0) {
             document.getElementById("tokenInputList").appendChild(tokensList).setAttribute("value", userTokens[i].tokenId);
-            document.getElementById("tokenInputList").appendChild(tokensList).textContent = token.name;
+            document.getElementById("tokenInputList").appendChild(tokensList).innerHTML = token.name;
         }
     }
     document.querySelector(".tokens-container").appendChild(tokenSendButton).setAttribute("class", "token-send");
@@ -294,7 +296,7 @@ async function votePage() {
                     }
             }
             document.querySelector(".user-candidate-table").appendChild(tbody).setAttribute("class", "tbody-user-candidate");
-            if (candType0.length === 0) {
+            if (candType0.filter(c => c.timestamp >0).length === 0) {
                 const tr0 = document.createElement("tr")
                 const td0 = document.createElement("td")
                 document.querySelector(".tbody-user-candidate").appendChild(tr0).setAttribute("class", "user-tr-no-candidate");
@@ -303,6 +305,7 @@ async function votePage() {
                 document.querySelector(".user-tr-no-candidate").appendChild(td0).textContent = "No candidates";
             } else {
                 for (let j = 0; j < candType0.length; j++) {
+                    if ( candType0[j].timestamp == 0 ) continue;
                     const tr = document.createElement("tr");
                     document.querySelector(".tbody-user-candidate").appendChild(tr).setAttribute("class", "tbody-tr-user-candidate" + j);
                     for (let t = 0; t < 5; t++) {
@@ -394,7 +397,7 @@ async function votePage() {
                     }
             }
             document.querySelector(".token-candidate-table").appendChild(tbody).setAttribute("class", "tbody-token-candidate");
-            if (candType12.length === 0) {
+            if (candType12.filter(c => c.timestamp >0).length === 0) {
                 const tr0 = document.createElement("tr")
                 const td0 = document.createElement("td")
                 document.querySelector(".tbody-token-candidate").appendChild(tr0).setAttribute("class", "token-tr-no-candidate");
@@ -403,14 +406,17 @@ async function votePage() {
                 document.querySelector(".token-tr-no-candidate").appendChild(td0).textContent = "No candidates";
             } else {
                 for (let j = 0; j < candType12.length; j++) {
+                    if ( candType12[j].timestamp == 0 ) continue;
                     const tr = document.createElement("tr");
                     document.querySelector(".tbody-token-candidate").appendChild(tr).setAttribute("class", "tbody-tr-token-candidate" + j);
                     for (let t = 0; t < 7; t++) {
                         const td = document.createElement("td");
                         switch (t) {
                             case 0:
-                                document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).textContent = candType12[j].name;
+                                document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).innerHTML = candType12[j].name;
                                 document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).setAttribute("class", "name-token");
+                                if (candType12[j].name[0] == "&")
+                                    document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).setAttribute("style", "font-size: 30px;");  
                                 break;
                             case 1:
                                 document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).textContent = candType12[j].roundSupply;
@@ -496,7 +502,7 @@ async function votePage() {
                 }
             }
             document.querySelector(".quorum-candidate-table").appendChild(tbody).setAttribute("class", "tbody-quorum-candidate");
-            if (candType3.length === 0) {
+            if (candType3.filter(c => c.timestamp >0).length === 0) {
                 const tr0 = document.createElement("tr")
                 const td0 = document.createElement("td")
                 document.querySelector(".tbody-quorum-candidate").appendChild(tr0).setAttribute("class", "quorum-tr-no-candidate");
@@ -505,6 +511,7 @@ async function votePage() {
                 document.querySelector(".quorum-tr-no-candidate").appendChild(td0).textContent = "No candidates";
             } else {
                 for (let j = 0; j < candType3.length; j++) {
+                    if ( candType3[j].timestamp == 0 ) continue;
                     const tr = document.createElement("tr");
                     document.querySelector(".tbody-quorum-candidate").appendChild(tr).setAttribute("class", "tbody-tr-quorum-candidate" + j);
                     for (let t = 0; t < 5; t++) {
@@ -826,6 +833,7 @@ function voteCandidate(cand, id) {
     document.querySelector(".vote-yes-button").addEventListener("click", async () => {
         document.querySelector(".vote-yes-button").setAttribute("disabled", "true");
         document.querySelector(".vote-no-button").setAttribute("disabled", "true");
+        console.log("await instance.voteCandidate("+listGroups[posListGroup]+", "+group.candidateIds[id]+", 1, { from: "+accounts[0]+", gas: "+userGas+", gasPrice: null })");
         await instance.voteCandidate(listGroups[posListGroup], group.candidateIds[id], 1, { from: accounts[0], gas: userGas, gasPrice: null });
     });
 }
