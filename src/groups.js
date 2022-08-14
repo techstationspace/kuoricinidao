@@ -90,13 +90,14 @@ async function newGroupPage() {
 
 async function myGroups() {
 	let myGroup = await instance.myGroups({ from: accounts[0] });
+	console.log(myGroup)
 	for (let i = 0; i < myGroup.length; i++) {
 		const col1 = document.createElement("td");
 		const col2 = document.createElement("td");
 		const row = document.createElement("tr");
 		const group = await instance.getGroup(parseInt(myGroup[i]), { from: accounts[0] });
 		document.getElementById("listGroups").appendChild(row).setAttribute("id", "group" + (i + 1));
-		document.getElementById("group" + (i + 1)).setAttribute("data-id", group.name);
+		document.getElementById("group" + (i + 1)).setAttribute("data-id", myGroup[i]);
 		document.getElementById("group" + (i + 1)).appendChild(col1).textContent = group.name;
 		document.getElementById("group" + (i + 1)).appendChild(col2).textContent = group.members.length;
 	}

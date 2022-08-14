@@ -148,7 +148,7 @@
     justify-content: left;
 }
 
-.tokens-container button, .tokens-container select{
+.tokens-container button, .tokens-container select, .tokens-container input{
     width: 10em;
 }
 

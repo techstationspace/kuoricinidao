@@ -39,9 +39,11 @@ async function readAccount() {
 }
 
 async function startComponents() {
-    // TODO : modify SessionStorage to save the group ID not the name
     const groupSelected = sessionStorage.getItem("group");
-    group = await dataGroup(groupSelected);
+    if(await dataGroup(groupSelected)===false){
+        return console.log("fictional group");
+    }
+    group = await instance.getGroup(parseInt(listGroups[posListGroup]), { from: accounts[0] });
     document.getElementById("groupName").textContent = group.name;
     myBalance();
 
@@ -50,13 +52,12 @@ async function startComponents() {
 async function dataGroup(groupSelected) {
     listGroups = await instance.myGroups({ from: accounts[0] });
     for (let i = 0; i < listGroups.length; i++) {
-        const groups = await instance.getGroup(parseInt(listGroups[i]), { from: accounts[0] });
-        if (groups.name === groupSelected) {
-            posListGroup = i;
-            return groups;
+        if (listGroups[i] == groupSelected) {
+            posListGroup=i;
+            return true;
         }
     }
-    return console.log("fictional group");
+    return false;
 }
 
 async function myBalance() {
@@ -74,7 +75,7 @@ dayTime = 1;
         const col6 = document.createElement("td");
         document.getElementById("userTableBalance").appendChild(row).setAttribute("id", "token" + (i + 1));
         document.getElementById("token" + (i + 1)).appendChild(col1).setAttribute("class", "name-token");
-        document.getElementById("token" + (i + 1)).appendChild(col1).innerHTML = token.name;
+        document.getElementById("token" + (i + 1)).appendChild(col1).textContent = token.name;
         if (token.name[0] == "&")
             document.getElementById("token" + (i + 1)).appendChild(col1).setAttribute("style", "font-size: 30px;");
         document.getElementById("token" + (i + 1)).appendChild(col2).setAttribute("class", "text-token");
@@ -158,6 +159,8 @@ async function tokenPage() {
     const usersInputList = document.createElement("select");
     const tokensTextInput = document.createElement("label");
     const tokensInputList = document.createElement("select");
+    const nTokensTextInput = document.createElement("label");
+    const nTokensInput = document.createElement("input");
     const tokenSendButton = document.createElement("button");
     const userTokens = await instance.getUserTokens(listGroups[posListGroup], { from: accounts[0] });
     document.querySelector("main").appendChild(tokensContainer).setAttribute("class", "tokens-container");
@@ -186,9 +189,14 @@ async function tokenPage() {
         const token = await instance.getToken(userTokens[i][0], { from: accounts[0] });
         if (userTokens[i].xBalance > 0) {
             document.getElementById("tokenInputList").appendChild(tokensList).setAttribute("value", userTokens[i].tokenId);
-            document.getElementById("tokenInputList").appendChild(tokensList).innerHTML = token.name;
+            document.getElementById("tokenInputList").appendChild(tokensList).textContent = token.name;
         }
     }
+    document.querySelector(".tokens-container").appendChild(nTokensTextInput).setAttribute("class", "tokens-text");
+    document.querySelector(".tokens-container").appendChild(nTokensTextInput).setAttribute("for", "nSendToken");
+    document.querySelector(".tokens-container").appendChild(nTokensTextInput).textContent = "N Token: ";
+    document.querySelector(".tokens-container").appendChild(nTokensInput).setAttribute("type", "number");
+    document.querySelector(".tokens-container").appendChild(nTokensInput).setAttribute("id", "nSendToken");
     document.querySelector(".tokens-container").appendChild(tokenSendButton).setAttribute("class", "token-send");
     document.querySelector(".token-send").textContent = "Send Token!";
     document.querySelector(".token-send").addEventListener("click", () => {
@@ -413,7 +421,7 @@ async function votePage() {
                         const td = document.createElement("td");
                         switch (t) {
                             case 0:
-                                document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).innerHTML = candType12[j].name;
+                                document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).textContent = candType12[j].name;
                                 document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).setAttribute("class", "name-token");
                                 if (candType12[j].name[0] == "&")
                                     document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).setAttribute("style", "font-size: 30px;");  
@@ -622,6 +630,7 @@ function newTokenPage() {
         try {
             console.log("changetoke "+nameToken+", "+nToken+", "+timeToken+", "+listGroups[posListGroup]);
             await instance.changeToken(0, nameToken, timeToken, nToken, listGroups[posListGroup], 1, { from: accounts[0], gas: userGas, gasPrice: null });
+            document.querySelector(".new-token-section").remove();
         } catch (err) {
             alert("Transition failed!");
             document.querySelector(".confirm-button").removeAttribute("disabled");
@@ -669,14 +678,14 @@ async function changeTokenPage() {
     document.querySelector(".change-token-container").appendChild(changeTokenInput1).setAttribute("id", "nameToken");
     document.querySelector(".change-token-container").appendChild(changeTokenInput1).setAttribute("type", "text");
     document.querySelector(".change-token-container").appendChild(br1);
-    document.querySelector(".change-token-container").appendChild(changeTokenLabel2).setAttribute("for", "timeToken");
+    document.querySelector(".change-token-container").appendChild(changeTokenLabel2).setAttribute("for", "nToken");
     document.querySelector(".change-token-container").appendChild(changeTokenLabel2).textContent = "N Tokens every refill: ";
-    document.querySelector(".change-token-container").appendChild(changeTokenInput2).setAttribute("id", "timeToken");
+    document.querySelector(".change-token-container").appendChild(changeTokenInput2).setAttribute("id", "nToken");
     document.querySelector(".change-token-container").appendChild(changeTokenInput2).setAttribute("type", "number");
     document.querySelector(".change-token-container").appendChild(br2);
-    document.querySelector(".change-token-container").appendChild(changeTokenLabel3).setAttribute("for", "nToken");
+    document.querySelector(".change-token-container").appendChild(changeTokenLabel3).setAttribute("for", "timeToken");
     document.querySelector(".change-token-container").appendChild(changeTokenLabel3).textContent = "Time to refill: ";
-    document.querySelector(".change-token-container").appendChild(changeTokenInput3).setAttribute("id", "nToken");
+    document.querySelector(".change-token-container").appendChild(changeTokenInput3).setAttribute("id", "timeToken");
     document.querySelector(".change-token-container").appendChild(changeTokenInput3).setAttribute("type", "number");
     document.querySelector(".change-token-container").appendChild(changeTokenButtonSpace).setAttribute("class", "container-buttons");
     document.querySelector(".container-buttons").appendChild(changeTokenButtonClose).setAttribute("class", "close-button");
@@ -697,7 +706,8 @@ async function changeTokenPage() {
         }
         document.querySelector(".confirm-button").setAttribute("disabled", "true");
         try {
-            await instance.changeToken(idToken, nameToken, timeToken, nToken, listGroups[posListGroup], 2, { from: accounts[0], gas: userGas, gasPrice: null });
+            await instance.changeToken(idToken, nameToken, nToken, timeToken, listGroups[posListGroup], 2, { from: accounts[0], gas: userGas, gasPrice: null });
+            document.querySelector(".change-token-section").remove();
         } catch (err) {
             alert("Transition not successfull!");
             document.querySelector(".confirm-button").removeAttribute("disabled");
@@ -742,6 +752,7 @@ async function newQuorumPage() {
         document.querySelector(".confirm-button").setAttribute("disabled", "true");
         try {
             await instance.changeToken(newQuorumValue, "", 0, 0, listGroups[posListGroup], 3, { from: accounts[0], gas: userGas, gasPrice: null });
+            document.querySelector(".new-quorum-section").remove();
         } catch (err) {
             alert("Transition not successfull!");
             document.querySelector(".confirm-button").removeAttribute("disabled");
@@ -776,6 +787,7 @@ function leaveGroup() {
 async function sendTokens() {
     const sendUser = document.getElementById("usersInputList").value;
     const sendToken = document.getElementById("tokenInputList").value;
+    const nSendToken = parseInt(document.getElementById("nSendToken").value);
     let sendAddress;
     for (let i = 0; i < group.members.length; i++) {
         const memberName = await instance.nameOf(group.members[i], { from: accounts[0] });
@@ -783,7 +795,14 @@ async function sendTokens() {
             sendAddress = group.members[i];
         }
     }
-    await instance.transferToken(parseInt(sendToken), sendAddress, 1, { from: accounts[0], gas: userGas, gasPrice: null });
+    try{
+    await instance.transferToken(parseInt(sendToken), sendAddress, nSendToken, { from: accounts[0], gas: userGas, gasPrice: null });
+    }
+    catch (err){
+        console.log(err);
+        alert("Transaction FAILED!");
+    }
+
 }
 
 function voteCandidate(cand, id) {
@@ -826,15 +845,29 @@ function voteCandidate(cand, id) {
     document.querySelector(".vote-no-button").addEventListener("click", async () => {
         document.querySelector(".vote-no-button").setAttribute("disabled", "true");
         document.querySelector(".vote-yes-button").setAttribute("disabled", "true");
-        await instance.voteCandidate(listGroups[posListGroup], group.candidateIds[id], 0, { from: accounts[0], gas: userGas, gasPrice: null });
+        try{
+            await instance.voteCandidate(listGroups[posListGroup], group.candidateIds[id], 0, { from: accounts[0], gas: userGas, gasPrice: null });
+            document.querySelector(".vote-candidate").remove();
+        } catch (err){
+            document.querySelector(".vote-no-button").removeAttribute("disabled");
+            document.querySelector(".vote-yes-button").removeAttribute("disabled");
+            alert("Transaction FAILED!");
+        }
+        
     });
     document.querySelector(".container-buttons").appendChild(voteButtonYes).setAttribute("class", "vote-yes-button");
     document.querySelector(".vote-yes-button").textContent = "Yes";
     document.querySelector(".vote-yes-button").addEventListener("click", async () => {
         document.querySelector(".vote-yes-button").setAttribute("disabled", "true");
         document.querySelector(".vote-no-button").setAttribute("disabled", "true");
-        console.log("await instance.voteCandidate("+listGroups[posListGroup]+", "+group.candidateIds[id]+", 1, { from: "+accounts[0]+", gas: "+userGas+", gasPrice: null })");
-        await instance.voteCandidate(listGroups[posListGroup], group.candidateIds[id], 1, { from: accounts[0], gas: userGas, gasPrice: null });
+        try{
+            await instance.voteCandidate(listGroups[posListGroup], group.candidateIds[id], 1, { from: accounts[0], gas: userGas, gasPrice: null });
+            document.querySelector(".vote-candidate").remove();
+        } catch (err){
+            document.querySelector(".vote-no-button").removeAttribute("disabled");
+            document.querySelector(".vote-yes-button").removeAttribute("disabled");
+            alert("Transaction FAILED!");
+        }
     });
 }
 
