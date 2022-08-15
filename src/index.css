@@ -1,12 +1,13 @@
 html {
     --text-color: #fff;
-    --title-container: #000;
+    --title-container: #2C2347;
     --transition-components-background: rgb(140, 0, 255);
 }
 
 body{
     margin: 0;
-    background: linear-gradient(#000,#fff,#000);
+    background: linear-gradient(#A025DE,#BBCDFF,#A025DE);
+    font-family: "Arial";
 }
 
 header {
@@ -34,7 +35,6 @@ nav ul li a {
 }
 
 main {
-    height: 80%;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -98,7 +98,7 @@ footer ul li a {
 } */
 
 .container {
-    width: 30em;
+    width: 80%;
     border: none;
     display: flex;
     flex-direction: column;
@@ -139,4 +139,40 @@ footer ul li a {
     border: 0px;
     border-radius: 2em;
     z-index: -1;
+}
+
+/* landing page review starts here */
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: space-between;
+    font-size: 1.5rem;
+    color: #2C2347;
+    margin-bottom: 100px;
+    align-items: center;
+}
+
+.row div {
+    width: 50%;
+}
+
+.col-text {
+    text-align: left;
+}
+
+.col-text p {
+    text-align: left;
+    font-size: 1.8rem;
+}
+
+
+.col-img {
+    text-align: center;
+}
+
+.col-img img {
+    max-width: 300px;
+    border-radius: 5%;
 }
