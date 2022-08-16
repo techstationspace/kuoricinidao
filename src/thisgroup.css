@@ -325,3 +325,18 @@
         margin-left: 1%;
     }
 }
+
+.update-container{
+    width: 100%;
+    height: auto;
+}
+
+.button-update{
+    font-size: 1.1rem;
+    color: #fff;
+    border: none;
+    border-radius: 1em;
+    padding: 0.5em 1em;
+    background: #0000ff;
+    cursor: pointer;
+}

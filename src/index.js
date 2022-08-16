@@ -1,3 +1,3 @@
 document.querySelector(".start-button").addEventListener("click", ()=>{
-    window.location="home.html";
+    window.location="groups.html";
 });
