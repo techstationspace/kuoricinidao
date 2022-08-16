@@ -420,7 +420,7 @@ async function tokenPage() {
         const token = await instance.getToken(userTokens[i][0], { from: accounts[0] });
         if (userTokens[i].xBalance > 0) {
             document.getElementById("tokenInputList").appendChild(tokensList).setAttribute("value", userTokens[i].tokenId);
-            document.getElementById("tokenInputList").appendChild(tokensList).textContent = token.name;
+            document.getElementById("tokenInputList").appendChild(tokensList).innerHTML = token.name;
         }
     }
     document.querySelector(".tokens-container").appendChild(nTokensTextInput).setAttribute("class", "tokens-text");
