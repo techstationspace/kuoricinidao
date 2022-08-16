@@ -287,7 +287,7 @@ async function myBalance() {
         const col6 = document.createElement("td");
         document.getElementById("userTableBalance").appendChild(row).setAttribute("id", "token" + (i + 1));
         document.getElementById("token" + (i + 1)).appendChild(col1).setAttribute("class", "name-token");
-        document.getElementById("token" + (i + 1)).appendChild(col1).textContent = token.name;
+        document.getElementById("token" + (i + 1)).appendChild(col1).innerHTML = token.name;
         if (token.name[0] == "&")
             document.getElementById("token" + (i + 1)).appendChild(col1).setAttribute("style", "font-size: 30px;");
         document.getElementById("token" + (i + 1)).appendChild(col2).setAttribute("class", "text-token");
@@ -596,7 +596,6 @@ async function votePage() {
                                 document.querySelector(".tbody-tr-user-candidate" + j).appendChild(td).setAttribute("class", "text-token");
                                 break;
                         }
-
                     }
                 }
             }
@@ -656,7 +655,7 @@ async function votePage() {
                         const td = document.createElement("td");
                         switch (t) {
                             case 0:
-                                document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).textContent = candType12[j].name;
+                                document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).innerHTML = candType12[j].name;
                                 document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).setAttribute("class", "name-token");
                                 if (candType12[j].name[0] == "&")
                                     document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).setAttribute("style", "font-size: 30px;");
