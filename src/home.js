@@ -44,3 +44,4 @@ async function readAccount() {
 function userData(){
   document.getElementById("myName").textContent = user.name;
 }
+

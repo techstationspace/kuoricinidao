@@ -125,7 +125,7 @@ async function checkInvitation() {
             const groupName = await instance.groupNameByInvitation(invGroup, invitation, { from: user.address });
 			box = windowBox();
 			box.title.textContent = "You have reached an invitation link!";
-			box.label.textContent = "Do you want to candidate to become a member of group "+groupName+" ?";
+			box.label.textContent = "Do you want to candidate to become a member of group "+groupName+"?";
 			box.confirmButton.textContent = "YES";
 			box.cancelButton.textContent = "NO";
 			document.querySelector(".confirm-button").addEventListener("click", async () => {

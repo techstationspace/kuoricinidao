@@ -1,3 +1,184 @@
+
+const canvas = document.getElementById("transition");
+const transition = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const msHeight = canvas.height / 3000;
+const nObj = 5;
+const widthObj = canvas.width / 5;
+const transitionComponents = [];
+let transizione = false;
+let transitionFinished = false;
+let stoptransition = false;
+
+let votePageActive = false;
+let memberPageActive = false;
+let tokenPageActive = false;
+
+class Oggetto {
+    constructor(posX, dir, pageLoading) {
+        this.pageLoading = pageLoading;
+        if (pageLoading === false) {
+            this.direction = dir;
+            this.width = Math.ceil(canvas.width / nObj);
+            if (dir === true) {
+                this.height = 0;
+                this.pos = {
+                    x: posX,
+                    y: 0
+                }
+            } else {
+                this.height = canvas.height;
+                this.pos = {
+                    x: posX,
+                    y: canvas.height
+                }
+            }
+            this.secondPart = false;
+            this.block = false;
+        } else {
+            this.direction = dir;
+            this.width = Math.ceil(canvas.width / nObj);
+            this.height = canvas.height;
+            this.pos = {
+                x: posX,
+                y: canvas.height
+            }
+
+            this.block = false;
+        }
+
+    }
+    draw() {
+        let gradient = transition.createLinearGradient(0, 0, 0, canvas.height);
+        gradient.addColorStop(0, "black");
+        gradient.addColorStop(0.5, "white");
+        gradient.addColorStop(1, "black");
+        transition.fillStyle = gradient;
+        transition.fillRect(this.pos.x, this.pos.y, this.width, this.height);
+        if (this.pageLoading === true) {
+            if (this.direction === true) {
+                this.up_first();
+            } else {
+                this.down_first();
+            }
+        } else {
+            if (this.direction === true) {
+                this.down_second();
+            } else {
+                this.up_second();
+            }
+        }
+        if (this.secondPart === true && stoptransition === true) {
+            transitionFinished = true;
+        }
+    }
+
+    up_second() {
+        if (this.block === false) {
+            if (this.secondPart === false) {
+                if (this.pos.y > 0) {
+                    this.pos.y -= msHeight * 100;
+                } else {
+                    this.secondPart = true;
+                    this.block = true;
+                }
+            } else {
+                if (this.pos.y < canvas.height) {
+                    this.pos.y += msHeight * 100;
+                } else {
+                    stoptransition = true;
+                }
+            }
+        }
+    }
+
+    down_second() {
+        if (this.block === false) {
+            if (this.secondPart === false) {
+                if (this.height < canvas.height) {
+                    this.height += msHeight * 100;
+                } else {
+                    this.secondPart = true;
+                    this.block = true;
+                }
+            } else {
+                if (this.height > this.pos.y) {
+                    this.height -= msHeight * 100;
+                } else {
+                    stoptransition = true;
+                }
+            }
+        }
+    }
+    up_first() {
+
+        if (this.height > this.pos.y) {
+            this.height -= msHeight * 100;
+        }
+    }
+    down_first() {
+        if (this.pos.y > 0) {
+            this.pos.y += msHeight * 100;
+        }
+    }
+}
+
+class Container {
+    constructor() {
+        this.height = 300;
+        this.width = 600;
+        this.pos = {
+            x: Math.ceil((canvas.width / 2) - (this.width / 2)),
+            y: Math.ceil((canvas.height / 2) - (this.height / 2))
+        }
+        this.counter = 0;
+    }
+    draw() {
+        if (this.counter === 100) {
+            this.counter = 0;
+        } else {
+            this.counter++;
+        }
+        transition.fillRect(this.pos.x, this.pos.y, this.width, this.height);
+        transition.font = "30pt arial";
+        transition.fillStyle = "black";
+        transition.fillText("KUORICINI DAO", this.pos.x + (this.width / 2) - 150, this.pos.y + (this.height / 2) - 30);
+        transition.font = "24pt arial";
+        transition.fillStyle = "black";
+        if (this.counter >= 0 && this.counter <= 25) {
+            transition.fillText("LOADING", this.pos.x + (this.width / 2) - 100, this.pos.y + (this.height / 2) + 30);
+        }
+        if (this.counter > 25 && this.counter <= 50) {
+            transition.fillText("LOADING .", this.pos.x + (this.width / 2) - 100, this.pos.y + (this.height / 2) + 30);
+        }
+        if (this.counter > 50 && this.counter <= 75) {
+            transition.fillText("LOADING . .", this.pos.x + (this.width / 2) - 100, this.pos.y + (this.height / 2) + 30);
+        }
+        if (this.counter > 75 && this.counter <= 100) {
+            transition.fillText("LOADING . . .", this.pos.x + (this.width / 2) - 100, this.pos.y + (this.height / 2) + 30);
+        }
+    }
+}
+
+const loader = new Container;
+
+function transitionUpdate() {
+    if (transitionFinished === true) {
+        return resetComponents();
+    }
+    requestAnimationFrame(transitionUpdate);
+    transition.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < transitionComponents.length; i++) {
+        transitionComponents[i].draw();
+    }
+    if (transitionComponents[0].block === true) {
+        loader.draw();
+    }
+}
+
+const dayTime = 1;
+
 document.addEventListener("DOMContentLoaded", async function () {
     await initWeb3();
     await readAccount();
@@ -17,7 +198,7 @@ async function initWeb3() {
         //return;
     }
     web3 = new Web3(web3Provider);
-    userGas = (sessionStorage.getItem("userGas") == "null" ? null : parseInt(sessionStorage.getItem("userGas"))  );
+    userGas = (sessionStorage.getItem("userGas") == "null" ? null : parseInt(sessionStorage.getItem("userGas")));
 
     await $.getJSON('KuoriciniDao.json', function (data) {
         KuoriciniDao = TruffleContract(data);
@@ -40,20 +221,53 @@ async function readAccount() {
 
 async function startComponents() {
     const groupSelected = sessionStorage.getItem("group");
-    if(await dataGroup(groupSelected)===false){
+    if (await dataGroup(groupSelected) === false) {
         return console.log("fictional group");
     }
-    group = await instance.getGroup(parseInt(listGroups[posListGroup]), { from: accounts[0] });
+    group = await instance.getGroup(listGroups[posListGroup], { from: accounts[0] });
     document.getElementById("groupName").textContent = group.name;
     myBalance();
+    tokenPage();
 
+}
+
+document.querySelector(".button-update").addEventListener("click", () => {
+    reloadPage();
+});
+
+function reloadPage() {
+    if (document.querySelector(".members-container")) {
+        document.querySelector(".members-container").remove();
+    }
+    if (document.querySelector(".tokens-container")) {
+        document.querySelector(".tokens-container").remove();
+    }
+    if (document.querySelector(".votes-container")) {
+        document.querySelector(".votes-container").remove();
+    }
+    if (document.querySelector(".propose-container")) {
+        document.querySelector(".propose-container").remove();
+    }
+    for (let i = 0; i < document.querySelector("#userTableBalance").children.length; i++) {
+        document.querySelector("#userTableBalance").removeChild(document.querySelector("#userTableBalance").children[i]);
+    }
+    myBalance();
+    if (tokenPageActive === true) {
+        tokenPage();
+    }
+    if (memberPageActive === true) {
+        membersPage();
+    }
+    if (votePageActive === true) {
+        votePage();
+    }
 }
 
 async function dataGroup(groupSelected) {
     listGroups = await instance.myGroups({ from: accounts[0] });
     for (let i = 0; i < listGroups.length; i++) {
         if (listGroups[i] == groupSelected) {
-            posListGroup=i;
+            posListGroup = i;
             return true;
         }
     }
@@ -61,8 +275,6 @@ async function dataGroup(groupSelected) {
 }
 
 async function myBalance() {
-//    dayTime = 86400;
-dayTime = 1;
     const userTokens = await instance.getUserTokens(listGroups[posListGroup], { from: accounts[0] });
     for (let i = 0; i < userTokens.length; i++) {
         const token = await instance.getToken(userTokens[i][0], { from: accounts[0] });
@@ -83,15 +295,20 @@ dayTime = 1;
         document.getElementById("token" + (i + 1)).appendChild(col3).setAttribute("class", "text-token");
         document.getElementById("token" + (i + 1)).appendChild(col3).textContent = userTokens[i].xBalance;
         document.getElementById("token" + (i + 1)).appendChild(col4).setAttribute("class", "text-token");
-        document.getElementById("token" + (i + 1)).appendChild(col4).textContent = convertTimestamp(userTokens[i].newtime)+', '+userTokens[i].residualtime+" sec";
+        document.getElementById("token" + (i + 1)).appendChild(col4).textContent = convertTimestamp(userTokens[i].newtime) + ', ' + userTokens[i].residualtime + " sec";
         document.getElementById("token" + (i + 1)).appendChild(col5).setAttribute("class", "text-token");
         document.getElementById("token" + (i + 1)).appendChild(col5).textContent = (token.roundDuration / dayTime) + " sec";
         document.getElementById("token" + (i + 1)).appendChild(col6).setAttribute("class", "text-token");
         document.getElementById("token" + (i + 1)).appendChild(col6).textContent = token.roundSupply;
     }
+
+    
 }
 
 async function membersPage() {
+    votePageActive = false;
+    memberPageActive = true;
+    tokenPageActive = false;
     if (document.querySelector(".members-container")) {
         document.querySelector(".members-container").remove();
     }
@@ -140,6 +357,9 @@ async function membersPage() {
 }
 
 async function tokenPage() {
+    votePageActive = false;
+    memberPageActive = false;
+    tokenPageActive = true;
     if (document.querySelector(".members-container")) {
         document.querySelector(".members-container").remove();
     }
@@ -157,11 +377,16 @@ async function tokenPage() {
     const tokensText = document.createElement("p");
     const usersTextInput = document.createElement("label");
     const usersInputList = document.createElement("select");
+    const usersInputList0 = document.createElement("option");
     const tokensTextInput = document.createElement("label");
     const tokensInputList = document.createElement("select");
+    const tokensInputList0 = document.createElement("option");
     const nTokensTextInput = document.createElement("label");
     const nTokensInput = document.createElement("input");
     const tokenSendButton = document.createElement("button");
+    const br5=document.createElement("br");
+    const br6=document.createElement("br");
+    const br7=document.createElement("br");
     const userTokens = await instance.getUserTokens(listGroups[posListGroup], { from: accounts[0] });
     document.querySelector("main").appendChild(tokensContainer).setAttribute("class", "tokens-container");
     document.querySelector(".tokens-container").appendChild(tokensTitle).setAttribute("class", "tokens-title");
@@ -172,6 +397,9 @@ async function tokenPage() {
     document.querySelector(".tokens-container").appendChild(usersTextInput).setAttribute("for", "usersInputList");
     document.querySelector(".tokens-container").appendChild(usersTextInput).textContent = "User: ";
     document.querySelector(".tokens-container").appendChild(usersInputList).setAttribute("id", "usersInputList");
+    document.querySelector(".tokens-container").appendChild(br5);
+    document.getElementById("usersInputList").appendChild(tokensInputList0).setAttribute("value", "null");
+    document.getElementById("usersInputList").appendChild(tokensInputList0).textContent = "-----";
     for (let i = 0; i < group.members.length; i++) {
         const usersList = document.createElement("option");
         const memberName = await instance.nameOf(group.members[i], { from: accounts[0] });
@@ -184,6 +412,9 @@ async function tokenPage() {
     document.querySelector(".tokens-container").appendChild(tokensTextInput).setAttribute("for", "tokenInputList");
     document.querySelector(".tokens-container").appendChild(tokensTextInput).textContent = "Token: ";
     document.querySelector(".tokens-container").appendChild(tokensInputList).setAttribute("id", "tokenInputList");
+    document.querySelector(".tokens-container").appendChild(br6);
+    document.getElementById("tokenInputList").appendChild(usersInputList0).setAttribute("value", "null");
+    document.getElementById("tokenInputList").appendChild(usersInputList0).textContent = "-----";
     for (let i = 0; i < userTokens.length; i++) {
         const tokensList = document.createElement("option");
         const token = await instance.getToken(userTokens[i][0], { from: accounts[0] });
@@ -197,6 +428,7 @@ async function tokenPage() {
     document.querySelector(".tokens-container").appendChild(nTokensTextInput).textContent = "N Token: ";
     document.querySelector(".tokens-container").appendChild(nTokensInput).setAttribute("type", "number");
     document.querySelector(".tokens-container").appendChild(nTokensInput).setAttribute("id", "nSendToken");
+    document.querySelector(".tokens-container").appendChild(br7);
     document.querySelector(".tokens-container").appendChild(tokenSendButton).setAttribute("class", "token-send");
     document.querySelector(".token-send").textContent = "Send Token!";
     document.querySelector(".token-send").addEventListener("click", () => {
@@ -207,6 +439,9 @@ async function tokenPage() {
 async function votePage() {
     const bn = await web3.eth.getBlockNumber();
     const block = await web3.eth.getBlock(bn);
+    votePageActive = true;
+    memberPageActive = false;
+    tokenPageActive = false;
     if (document.querySelector(".members-container")) {
         document.querySelector(".members-container").remove();
     }
@@ -301,10 +536,10 @@ async function votePage() {
                         document.querySelector(".user-candidate-table-thead-tr").appendChild(th).setAttribute("class", "user-candidate-table-title");
                         document.querySelector(".user-candidate-table-thead-tr").appendChild(th);
                         break;
-                    }
+                }
             }
             document.querySelector(".user-candidate-table").appendChild(tbody).setAttribute("class", "tbody-user-candidate");
-            if (candType0.filter(c => c.timestamp >0).length === 0) {
+            if (candType0.filter(c => c.timestamp > 0).length === 0) {
                 const tr0 = document.createElement("tr")
                 const td0 = document.createElement("td")
                 document.querySelector(".tbody-user-candidate").appendChild(tr0).setAttribute("class", "user-tr-no-candidate");
@@ -313,7 +548,7 @@ async function votePage() {
                 document.querySelector(".user-tr-no-candidate").appendChild(td0).textContent = "No candidates";
             } else {
                 for (let j = 0; j < candType0.length; j++) {
-                    if ( candType0[j].timestamp == 0 ) continue;
+                    if (candType0[j].timestamp == 0) continue;
                     const tr = document.createElement("tr");
                     document.querySelector(".tbody-user-candidate").appendChild(tr).setAttribute("class", "tbody-tr-user-candidate" + j);
                     for (let t = 0; t < 5; t++) {
@@ -333,10 +568,10 @@ async function votePage() {
                                 break;
                             case 3:
                                 const expires = parseInt(candType0[j].timestamp) + parseInt(group.voteDuration);
-                                document.querySelector(".tbody-tr-user-candidate" + j).appendChild(td).textContent = convertTimestamp(expires)+", "+ (expires - block.timestamp );
+                                document.querySelector(".tbody-tr-user-candidate" + j).appendChild(td).textContent = convertTimestamp(expires) + ", " + (expires - block.timestamp);
                                 break;
                             case 4:
-                                if ( candType0[j].voted ) {
+                                if (candType0[j].voted) {
                                     document.querySelector(".tbody-tr-user-candidate" + j).appendChild(td).textContent = "Already voted";
                                 }
                                 else {
@@ -402,10 +637,10 @@ async function votePage() {
                         document.querySelector(".token-candidate-table-thead-tr").appendChild(th).setAttribute("class", "token-candidate-table-title");
                         document.querySelector(".token-candidate-table-thead-tr").appendChild(th);
                         break;
-                    }
+                }
             }
             document.querySelector(".token-candidate-table").appendChild(tbody).setAttribute("class", "tbody-token-candidate");
-            if (candType12.filter(c => c.timestamp >0).length === 0) {
+            if (candType12.filter(c => c.timestamp > 0).length === 0) {
                 const tr0 = document.createElement("tr")
                 const td0 = document.createElement("td")
                 document.querySelector(".tbody-token-candidate").appendChild(tr0).setAttribute("class", "token-tr-no-candidate");
@@ -414,7 +649,7 @@ async function votePage() {
                 document.querySelector(".token-tr-no-candidate").appendChild(td0).textContent = "No candidates";
             } else {
                 for (let j = 0; j < candType12.length; j++) {
-                    if ( candType12[j].timestamp == 0 ) continue;
+                    if (candType12[j].timestamp == 0) continue;
                     const tr = document.createElement("tr");
                     document.querySelector(".tbody-token-candidate").appendChild(tr).setAttribute("class", "tbody-tr-token-candidate" + j);
                     for (let t = 0; t < 7; t++) {
@@ -424,7 +659,7 @@ async function votePage() {
                                 document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).textContent = candType12[j].name;
                                 document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).setAttribute("class", "name-token");
                                 if (candType12[j].name[0] == "&")
-                                    document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).setAttribute("style", "font-size: 30px;");  
+                                    document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).setAttribute("style", "font-size: 30px;");
                                 break;
                             case 1:
                                 document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).textContent = candType12[j].roundSupply;
@@ -444,12 +679,12 @@ async function votePage() {
                                 break;
                             case 5:
                                 const expires = parseInt(candType12[j].timestamp) + parseInt(group.voteDuration);
-                                document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).textContent = convertTimestamp(expires)+", "+ (expires - block.timestamp );
+                                document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).textContent = convertTimestamp(expires) + ", " + (expires - block.timestamp);
                                 document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).setAttribute("class", "text-token");
                                 break;
                             case 6:
-//                                if (controlVoters(candType12, j) === true) {
-                                if ( candType12[j].voted ) {
+                               
+                                if (candType12[j].voted) {
                                     document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).textContent = "Already voted";
                                 }
                                 else {
@@ -510,7 +745,7 @@ async function votePage() {
                 }
             }
             document.querySelector(".quorum-candidate-table").appendChild(tbody).setAttribute("class", "tbody-quorum-candidate");
-            if (candType3.filter(c => c.timestamp >0).length === 0) {
+            if (candType3.filter(c => c.timestamp > 0).length === 0) {
                 const tr0 = document.createElement("tr")
                 const td0 = document.createElement("td")
                 document.querySelector(".tbody-quorum-candidate").appendChild(tr0).setAttribute("class", "quorum-tr-no-candidate");
@@ -519,7 +754,7 @@ async function votePage() {
                 document.querySelector(".quorum-tr-no-candidate").appendChild(td0).textContent = "No candidates";
             } else {
                 for (let j = 0; j < candType3.length; j++) {
-                    if ( candType3[j].timestamp == 0 ) continue;
+                    if (candType3[j].timestamp == 0) continue;
                     const tr = document.createElement("tr");
                     document.querySelector(".tbody-quorum-candidate").appendChild(tr).setAttribute("class", "tbody-tr-quorum-candidate" + j);
                     for (let t = 0; t < 5; t++) {
@@ -539,11 +774,11 @@ async function votePage() {
                                 break;
                             case 3:
                                 const expires = parseInt(candType3[j].timestamp) + parseInt(group.voteDuration);
-                                document.querySelector(".tbody-tr-quorum-candidate" + j).appendChild(td).textContent = convertTimestamp(expires)+", "+ (expires - block.timestamp );
+                                document.querySelector(".tbody-tr-quorum-candidate" + j).appendChild(td).textContent = convertTimestamp(expires) + ", " + (expires - block.timestamp);
                                 document.querySelector(".tbody-tr-quorum-candidate" + j).appendChild(td).setAttribute("class", "text-token");
                                 break;
                             case 4:
-                                if ( candType3[j].voted ) {
+                                if (candType3[j].voted) {
                                     document.querySelector(".tbody-tr-quorum-candidate" + j).appendChild(td).textContent = "Already voted";
                                 }
                                 else {
@@ -573,7 +808,7 @@ async function votePage() {
             }
             const voteDescription = document.createElement("div");
             document.querySelector(".votes-container").appendChild(voteDescription).setAttribute("class", "description-container");
-            document.querySelector(".votes-container").appendChild(voteDescription).textContent = "Current Quorum: "+group.voteThreshold+"0%";
+            document.querySelector(".votes-container").appendChild(voteDescription).textContent = "Current Quorum: " + group.voteThreshold + "0%";
         }
     }
 }
@@ -621,15 +856,26 @@ function newTokenPage() {
     document.querySelector(".confirm-button").addEventListener("click", async () => {
         const nameToken = document.getElementById("nameToken").value;
         let timeToken = Math.abs(parseInt(document.getElementById("timeToken").value));
-        let nToken = Math.abs(parseInt(document.getElementById("nToken").value)*dayTime);
+        let nToken = Math.abs(parseInt(document.getElementById("nToken").value) * dayTime);
         if (nameToken === "" || timeToken === NaN || nToken === NaN || timeToken === 0 || nToken === 0) {
             alert("Data not included!");
             return;
         }
         document.querySelector(".confirm-button").setAttribute("disabled", "true");
+        // const prova = await instance.changeToken(0, nameToken, timeToken, nToken, listGroups[posListGroup], 1, { from: accounts[0], gas: userGas, gasPrice: null });
+        //     console.log(prova)
+        // while(true){
+        //         if(prova.receipt.status==true){
+        //             break;
+        //         }
+        //     }
+        //     setTimeout(()=>{
+        //         reloadPage();
+        //     }, "2000");
+
+
         try {
-            console.log("changetoke "+nameToken+", "+nToken+", "+timeToken+", "+listGroups[posListGroup]);
-            await instance.changeToken(0, nameToken, timeToken, nToken, listGroups[posListGroup], 1, { from: accounts[0], gas: userGas, gasPrice: null });
+            const prova = await instance.changeToken(0, nameToken, timeToken, nToken, listGroups[posListGroup], 1, { from: accounts[0], gas: userGas, gasPrice: null });
             document.querySelector(".new-token-section").remove();
         } catch (err) {
             alert("Transition failed!");
@@ -699,8 +945,8 @@ async function changeTokenPage() {
         const idToken = parseInt(document.getElementById("changeTokenListId").value);
         const nameToken = document.getElementById("nameToken").value;
         let timeToken = Math.abs(parseInt(document.getElementById("timeToken").value));
-        let nToken = Math.abs(parseInt(document.getElementById("nToken").value)*dayTime);
-        if (nameToken === "" || timeToken === NaN || nToken === NaN || timeToken === 0 || nToken === 0 || idToken===-1) {
+        let nToken = Math.abs(parseInt(document.getElementById("nToken").value) * dayTime);
+        if (nameToken === "" || timeToken === NaN || nToken === NaN || timeToken === 0 || nToken === 0 || idToken === -1) {
             alert("Data not included!");
             return;
         }
@@ -740,7 +986,6 @@ async function newQuorumPage() {
     document.querySelector(".confirm-button").textContent = "Confirm";
     document.querySelector(".confirm-button").addEventListener("click", async () => {
         const newQuorumValue = parseInt(document.getElementById("newQuorum").value);
-        console.log(newQuorumValue)
         if (newQuorumValue === "") {
             alert("Data not included!");
             return;
@@ -785,6 +1030,7 @@ function leaveGroup() {
 }
 
 async function sendTokens() {
+    document.querySelector(".token-send").setAttribute("disabled", "true");
     const sendUser = document.getElementById("usersInputList").value;
     const sendToken = document.getElementById("tokenInputList").value;
     const nSendToken = parseInt(document.getElementById("nSendToken").value);
@@ -795,17 +1041,17 @@ async function sendTokens() {
             sendAddress = group.members[i];
         }
     }
-    try{
-    await instance.transferToken(parseInt(sendToken), sendAddress, nSendToken, { from: accounts[0], gas: userGas, gasPrice: null });
+    try {
+        await instance.transferToken(parseInt(sendToken), sendAddress, nSendToken, { from: accounts[0], gas: userGas, gasPrice: null });
     }
-    catch (err){
+    catch (err) {
         console.log(err);
         alert("Transaction FAILED!");
     }
-
+    document.querySelector(".token-send").removeAttribute("disabled");
 }
 
-function voteCandidate(cand, id) {
+async function voteCandidate(cand, id) {
     const voteSection = document.createElement("div");
     const voteContainer = document.createElement("span");
     const voteButtonSpace = document.createElement("div");
@@ -817,22 +1063,55 @@ function voteCandidate(cand, id) {
     document.querySelector(".vote-candidate").appendChild(voteContainer).setAttribute("class", "vote-candidate-container");
     document.querySelector(".vote-candidate-container").appendChild(voteList).setAttribute("id", "voteTokenInfo");
     document.getElementById("voteTokenInfo").setAttribute("type", "none");
-    for (let i = 0; i < 4; i++) {
-        const li = document.createElement("li");
-        switch (i) {
-            case 0:
-                document.getElementById("voteTokenInfo").appendChild(li).textContent = "Name: " + cand.name;
-                break;
-            case 1:
-                document.getElementById("voteTokenInfo").appendChild(li).textContent = "N tokens: " + cand.roundSupply;
-                break;
-            case 2:
-                document.getElementById("voteTokenInfo").appendChild(li).textContent = "Time to refill: " + cand.roundDuration / dayTime + " Days";
-                break;
-            case 3:
-                document.getElementById("voteTokenInfo").appendChild(li).textContent = "In Agreement: " + cand.votes;
-                break;
+    if (cand.candType === "0") {
+        const name = await instance.nameOf(cand.candidateAddress, { from: accounts[0] });
+        for (let i = 0; i < 3; i++) {
+            const li = document.createElement("li");
+            switch (i) {
+                case 0:
+                    document.getElementById("voteTokenInfo").appendChild(li).textContent = "Candidate address: " + cand.candidateAddress;
+                    break;
+                case 1:
+                    document.getElementById("voteTokenInfo").appendChild(li).textContent = "Name: " + name;
+                    break;
+                case 2:
+                    document.getElementById("voteTokenInfo").appendChild(li).textContent = "In Agreement: " + cand.votes;
+                    break;
+            }
         }
+    }
+    if (cand.candType === "1" || cand.candType === "2") {
+        for (let i = 0; i < 4; i++) {
+            const li = document.createElement("li");
+            switch (i) {
+                case 0:
+                    document.getElementById("voteTokenInfo").appendChild(li).textContent = "Name: " + cand.name;
+                    break;
+                case 1:
+                    document.getElementById("voteTokenInfo").appendChild(li).textContent = "N tokens: " + cand.roundSupply;
+                    break;
+                case 2:
+                    document.getElementById("voteTokenInfo").appendChild(li).textContent = "Time to refill: " + cand.roundDuration / dayTime + " Days";
+                    break;
+                case 3:
+                    document.getElementById("voteTokenInfo").appendChild(li).textContent = "In Agreement: " + cand.votes;
+                    break;
+            }
+        }
+    }
+    if (cand.candType === "3") {
+        for (let i = 0; i < 2; i++) {
+            const li = document.createElement("li");
+            switch (i) {
+                case 0:
+                    document.getElementById("voteTokenInfo").appendChild(li).textContent = "New proposal quorum: " + cand.id * 10 + "%";
+                    break;
+                case 1:
+                    document.getElementById("voteTokenInfo").appendChild(li).textContent = "In Agreement: " + cand.votes;
+                    break;
+            }
+        }
+
     }
     document.querySelector(".vote-candidate-container").appendChild(voteButtonSpace).setAttribute("class", "container-buttons");
     document.querySelector(".container-buttons").appendChild(voteButtonClose).setAttribute("class", "close-button");
@@ -845,25 +1124,25 @@ function voteCandidate(cand, id) {
     document.querySelector(".vote-no-button").addEventListener("click", async () => {
         document.querySelector(".vote-no-button").setAttribute("disabled", "true");
         document.querySelector(".vote-yes-button").setAttribute("disabled", "true");
-        try{
+        try {
             await instance.voteCandidate(listGroups[posListGroup], group.candidateIds[id], 0, { from: accounts[0], gas: userGas, gasPrice: null });
             document.querySelector(".vote-candidate").remove();
-        } catch (err){
+        } catch (err) {
             document.querySelector(".vote-no-button").removeAttribute("disabled");
             document.querySelector(".vote-yes-button").removeAttribute("disabled");
             alert("Transaction FAILED!");
         }
-        
+
     });
     document.querySelector(".container-buttons").appendChild(voteButtonYes).setAttribute("class", "vote-yes-button");
     document.querySelector(".vote-yes-button").textContent = "Yes";
     document.querySelector(".vote-yes-button").addEventListener("click", async () => {
         document.querySelector(".vote-yes-button").setAttribute("disabled", "true");
         document.querySelector(".vote-no-button").setAttribute("disabled", "true");
-        try{
+        try {
             await instance.voteCandidate(listGroups[posListGroup], group.candidateIds[id], 1, { from: accounts[0], gas: userGas, gasPrice: null });
             document.querySelector(".vote-candidate").remove();
-        } catch (err){
+        } catch (err) {
             document.querySelector(".vote-no-button").removeAttribute("disabled");
             document.querySelector(".vote-yes-button").removeAttribute("disabled");
             alert("Transaction FAILED!");
@@ -887,14 +1166,45 @@ function timeStampSettings() {
 
 function convertTimestamp(timestamp) {
     var d = new Date(timestamp * 1000), // Convert the passed timestamp to milliseconds
-    yyyy = d.getFullYear(),
-    mm = ('0' + (d.getMonth() + 1)).slice(-2),  // Months are zero based. Add leading 0.
-    dd = ('0' + d.getDate()).slice(-2),         // Add leading 0.
-    hh = d.getHours(),
-    h = hh,
-    min = ('0' + d.getMinutes()).slice(-2),     // Add leading 0.
-    sec = ('0' + d.getSeconds()).slice(-2),     // Add leading 0.
-    time;
+        yyyy = d.getFullYear(),
+        mm = ('0' + (d.getMonth() + 1)).slice(-2),  // Months are zero based. Add leading 0.
+        dd = ('0' + d.getDate()).slice(-2),         // Add leading 0.
+        hh = d.getHours(),
+        h = hh,
+        min = ('0' + d.getMinutes()).slice(-2),     // Add leading 0.
+        sec = ('0' + d.getSeconds()).slice(-2),     // Add leading 0.
+        time;
     time = dd + '/' + mm + ' ' + h + ':' + min + ':' + sec;
     return time;
-  }
+}
+
+function updateDataPage() {
+    canvas.removeAttribute("style");
+    canvas.setAttribute("style", "z-index:100; visibility: visible;");
+    transitionFinished = false;
+    stoptransition = false;
+    let posIni = 0;
+    for (let i = 0; i < nObj; i++) {
+        if (i % 2 == 0) {
+            transitionComponents[i] = new Oggetto(posIni, true, true);
+        }
+        else {
+            transitionComponents[i] = new Oggetto(posIni, false, true);
+        }
+        posIni += widthObj;
+    }
+    transitionUpdate();
+}
+
+function resetComponents() {
+    for (let i = 0; i < transitionComponents.length; i++) {
+        delete transitionComponents[i];
+    }
+    canvas.setAttribute("style", "z-index:-100; visibility: hidden;")
+}
+
+function prova() {
+    for (let i = 0; i < transitionComponents.length; i++) {
+        transitionComponents[i].block = false;
+    }
+}

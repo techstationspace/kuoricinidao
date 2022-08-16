@@ -140,3 +140,25 @@ main{
     color: #fff;
     font-size: 1.3rem;
 }
+
+
+
+@media screen and (max-width: 800px) {
+    html {
+        font-size: 12px;
+    }
+    header {
+        flex-direction: column;
+        height: 10em;
+    }
+    .nothing {
+        height: 10em;
+    }
+}
+
+#transition{
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -100;
+}
