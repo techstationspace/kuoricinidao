@@ -236,6 +236,7 @@ document.querySelector(".button-update").addEventListener("click", () => {
 });
 
 function reloadPage() {
+    document.querySelector(".button-update").setAttribute("disabled", "true");
     updateDataPage();
     setTimeout(()=>{if (document.querySelector(".members-container")) {
         document.querySelector(".members-container").remove();
@@ -263,6 +264,7 @@ function reloadPage() {
         votePage();
     }}, "2000");
     setTimeout(prova, "5000");
+    document.querySelector(".button-update").removeAttribute("disabled");
 }
 
 async function dataGroup(groupSelected) {
