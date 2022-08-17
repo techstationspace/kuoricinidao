@@ -236,7 +236,8 @@ document.querySelector(".button-update").addEventListener("click", () => {
 });
 
 function reloadPage() {
-    if (document.querySelector(".members-container")) {
+    updateDataPage();
+    setTimeout(()=>{if (document.querySelector(".members-container")) {
         document.querySelector(".members-container").remove();
     }
     if (document.querySelector(".tokens-container")) {
@@ -260,7 +261,8 @@ function reloadPage() {
     }
     if (votePageActive === true) {
         votePage();
-    }
+    }}, "2000");
+    setTimeout(prova, "5000");
 }
 
 async function dataGroup(groupSelected) {
@@ -1185,10 +1187,10 @@ function updateDataPage() {
     let posIni = 0;
     for (let i = 0; i < nObj; i++) {
         if (i % 2 == 0) {
-            transitionComponents[i] = new Oggetto(posIni, true, true);
+            transitionComponents[i] = new Oggetto(posIni, true, false);
         }
         else {
-            transitionComponents[i] = new Oggetto(posIni, false, true);
+            transitionComponents[i] = new Oggetto(posIni, false, false);
         }
         posIni += widthObj;
     }

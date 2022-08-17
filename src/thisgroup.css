@@ -150,6 +150,7 @@
 
 .tokens-container button, .tokens-container select, .tokens-container input{
     width: 10em;
+    
 }
 
 .tokens-title {
@@ -167,6 +168,7 @@
     background: rgb(0, 170, 0);
     border: none;
     border-radius: 0.3em;
+    cursor: pointer;
 }
 
 .user-candidate-container,
@@ -211,6 +213,7 @@
     background: rgb(0, 170, 0);
     border: none;
     border-radius: 0.3em;
+    cursor: pointer;
 }
 
 .vote-candidate, .new-token-section, .change-token-section, .new-quorum-section {
@@ -326,17 +329,26 @@
     }
 }
 
-.update-container{
+.container-update{
+    z-index: 1;
+    position: sticky;
+    top: 5.1em;
     width: 100%;
-    height: auto;
+    height: 3em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
 }
 
 .button-update{
+    
     font-size: 1.1rem;
-    color: #fff;
+    color: #000;
+    font-weight: bold;
     border: none;
     border-radius: 1em;
     padding: 0.5em 1em;
-    background: #0000ff;
+    background: #fff;
     cursor: pointer;
 }
