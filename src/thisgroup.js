@@ -177,7 +177,7 @@ function transitionUpdate() {
     }
 }
 
-const dayTime = 1;
+const dayTime = 86400;
 
 document.addEventListener("DOMContentLoaded", async function () {
     await initWeb3();
@@ -299,9 +299,9 @@ async function myBalance() {
         document.getElementById("token" + (i + 1)).appendChild(col3).setAttribute("class", "text-token");
         document.getElementById("token" + (i + 1)).appendChild(col3).textContent = userTokens[i].xBalance;
         document.getElementById("token" + (i + 1)).appendChild(col4).setAttribute("class", "text-token");
-        document.getElementById("token" + (i + 1)).appendChild(col4).textContent = convertTimestamp(userTokens[i].newtime) + ', ' + userTokens[i].residualtime + " sec";
+        document.getElementById("token" + (i + 1)).appendChild(col4).textContent = convertTimestamp(userTokens[i].newtime) + ' (' + roundDigits(userTokens[i].residualtime/dayTime) + " days)";
         document.getElementById("token" + (i + 1)).appendChild(col5).setAttribute("class", "text-token");
-        document.getElementById("token" + (i + 1)).appendChild(col5).textContent = (token.roundDuration / dayTime) + " sec";
+        document.getElementById("token" + (i + 1)).appendChild(col5).textContent = (token.roundDuration / dayTime) + " days";
         document.getElementById("token" + (i + 1)).appendChild(col6).setAttribute("class", "text-token");
         document.getElementById("token" + (i + 1)).appendChild(col6).textContent = token.roundSupply;
     }
@@ -572,7 +572,7 @@ async function votePage() {
                                 break;
                             case 3:
                                 const expires = parseInt(candType0[j].timestamp) + parseInt(group.voteDuration);
-                                document.querySelector(".tbody-tr-user-candidate" + j).appendChild(td).textContent = convertTimestamp(expires) + ", " + (expires - block.timestamp);
+                                document.querySelector(".tbody-tr-user-candidate" + j).appendChild(td).textContent = convertTimestamp(expires) + " (" + roundDigits((expires - block.timestamp) / dayTime) + " days)";
                                 break;
                             case 4:
                                 if (candType0[j].voted) {
@@ -669,7 +669,7 @@ async function votePage() {
                                 document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).setAttribute("class", "text-token");
                                 break;
                             case 2:
-                                document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).textContent = candType12[j].roundDuration / dayTime + " seconds";
+                                document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).textContent = roundDigits(candType12[j].roundDuration / dayTime) + " days";
                                 document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).setAttribute("class", "text-token");
                                 break;
                             case 3:
@@ -682,7 +682,7 @@ async function votePage() {
                                 break;
                             case 5:
                                 const expires = parseInt(candType12[j].timestamp) + parseInt(group.voteDuration);
-                                document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).textContent = convertTimestamp(expires) + ", " + (expires - block.timestamp);
+                                document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).textContent = convertTimestamp(expires) + " (" + roundDigits((expires - block.timestamp) / dayTime) + " days)";
                                 document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).setAttribute("class", "text-token");
                                 break;
                             case 6:
@@ -777,7 +777,7 @@ async function votePage() {
                                 break;
                             case 3:
                                 const expires = parseInt(candType3[j].timestamp) + parseInt(group.voteDuration);
-                                document.querySelector(".tbody-tr-quorum-candidate" + j).appendChild(td).textContent = convertTimestamp(expires) + ", " + (expires - block.timestamp);
+                                document.querySelector(".tbody-tr-quorum-candidate" + j).appendChild(td).textContent = convertTimestamp(expires) + " (" + roundDigits((expires - block.timestamp) / dayTime) + " days)";
                                 document.querySelector(".tbody-tr-quorum-candidate" + j).appendChild(td).setAttribute("class", "text-token");
                                 break;
                             case 4:
@@ -845,7 +845,7 @@ function newTokenPage() {
     document.querySelector(".new-token-container").appendChild(newTokenInput2).setAttribute("type", "number");
     document.querySelector(".new-token-container").appendChild(br2);
     document.querySelector(".new-token-container").appendChild(newTokenLabel3).setAttribute("for", "nToken");
-    document.querySelector(".new-token-container").appendChild(newTokenLabel3).textContent = "Time to refill: ";
+    document.querySelector(".new-token-container").appendChild(newTokenLabel3).textContent = "Time to refill (days): ";
     document.querySelector(".new-token-container").appendChild(newTokenInput3).setAttribute("id", "nToken");
     document.querySelector(".new-token-container").appendChild(newTokenInput3).setAttribute("type", "number");
     document.querySelector(".new-token-container").appendChild(newTokenButtonSpace).setAttribute("class", "container-buttons");
@@ -914,7 +914,7 @@ async function changeTokenPage() {
         const changeTokenOption = document.createElement("option");
         if (i >= 0) {
             const token = await instance.getToken(group.tokenIds[i]);
-            document.querySelector("#changeTokenListId").appendChild(changeTokenOption).textContent = token.name;
+            document.querySelector("#changeTokenListId").appendChild(changeTokenOption).innerHTML = token.name;
             document.querySelector("#changeTokenListId").appendChild(changeTokenOption).setAttribute("value", group.tokenIds[i]);
         }
         else {
@@ -933,7 +933,7 @@ async function changeTokenPage() {
     document.querySelector(".change-token-container").appendChild(changeTokenInput2).setAttribute("type", "number");
     document.querySelector(".change-token-container").appendChild(br2);
     document.querySelector(".change-token-container").appendChild(changeTokenLabel3).setAttribute("for", "timeToken");
-    document.querySelector(".change-token-container").appendChild(changeTokenLabel3).textContent = "Time to refill: ";
+    document.querySelector(".change-token-container").appendChild(changeTokenLabel3).textContent = "Time to refill (days): ";
     document.querySelector(".change-token-container").appendChild(changeTokenInput3).setAttribute("id", "timeToken");
     document.querySelector(".change-token-container").appendChild(changeTokenInput3).setAttribute("type", "number");
     document.querySelector(".change-token-container").appendChild(changeTokenButtonSpace).setAttribute("class", "container-buttons");
@@ -1088,13 +1088,13 @@ async function voteCandidate(cand, id) {
             const li = document.createElement("li");
             switch (i) {
                 case 0:
-                    document.getElementById("voteTokenInfo").appendChild(li).textContent = "Name: " + cand.name;
+                    document.getElementById("voteTokenInfo").appendChild(li).innerHTML = "Name: " + cand.name;
                     break;
                 case 1:
                     document.getElementById("voteTokenInfo").appendChild(li).textContent = "N tokens: " + cand.roundSupply;
                     break;
                 case 2:
-                    document.getElementById("voteTokenInfo").appendChild(li).textContent = "Time to refill: " + cand.roundDuration / dayTime + " Days";
+                    document.getElementById("voteTokenInfo").appendChild(li).textContent = "Time to refill: " + roundDigits(cand.roundDuration / dayTime) + " Days";
                     break;
                 case 3:
                     document.getElementById("voteTokenInfo").appendChild(li).textContent = "In Agreement: " + cand.votes;
@@ -1210,4 +1210,12 @@ function prova() {
     for (let i = 0; i < transitionComponents.length; i++) {
         transitionComponents[i].block = false;
     }
+}
+
+function roundDigits(value) {
+    let ret=value.toFixed(2);
+    if ( ret.slice(-2) == "00" ) {
+        ret = ret.slice(0,-3);
+    }
+    return ret;
 }
