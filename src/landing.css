@@ -1,0 +1,75 @@
+html{
+    --section-height: 40em;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+}
+
+.section-1{
+    background: url(images/landing_img/section_1.jpg);
+    background-size: 100% 100%;
+}
+.section-2{
+    background: url(images/landing_img/section_2.jpg);
+    background-size: 100% 100%;
+}
+.section-3{
+    background: url(images/landing_img/section_3.jpg);
+    background-size: 100% 100%;
+}
+.section-4{
+    background: url(images/landing_img/section_4.jpg);
+    background-size: 100% 100%;
+}
+.section-5{
+    background: url(images/landing_img/section_5.jpg);
+    background-size: 100% 100%;
+}
+.section-6{
+    background: url(images/landing_img/section_6.jpg);
+    background-size: 100% 100%;
+}
+.section-7{
+    background: url(images/landing_img/section_2.jpg);
+    background-size: 100% 100%;
+}
+.section-8{
+    background: url(images/landing_img/section_1.jpg);
+    background-size: 100% 100%;
+}
+
+.container{
+    position: relative;
+    width: 100%;
+    height: auto;
+    display: grid;
+    grid-template: repeat(2, 1fr);
+    gap: 0;
+}
+
+.large-box{
+    grid-column: span 2;
+    width: 100%;
+    height: var(--section-height);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.small-box{
+    width: 100%;
+    height: var(--section-height);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+@media screen and (max-width: 375px){
+    .large-box{
+        grid-column: span 1;
+    }
+}

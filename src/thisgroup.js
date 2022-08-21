@@ -251,7 +251,7 @@ function reloadPage() {
         document.querySelector(".propose-container").remove();
     }
     for (let i = 0; i < document.querySelector("#userTableBalance").children.length; i++) {
-        document.querySelector("#userTableBalance").removeChild(document.querySelector("#userTableBalance").children[i]);
+        document.querySelector("#userTableBalance").removeChild(document.querySelector("#userTableBalance").children[0]);
     }
     myBalance();
     if (tokenPageActive === true) {
