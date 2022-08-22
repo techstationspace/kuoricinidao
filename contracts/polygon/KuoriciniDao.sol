@@ -177,7 +177,7 @@ contract KuoriciniDao {
         if (userTokens[msg.sender][j].tokenId == tokid) {
           utokens[w].gTokenBalance = userTokens[msg.sender][j].gTokenBalance;
           utokens[w].last_sent = userTokens[msg.sender][j].last_sent;
-          if ( ( block.timestamp < newtime )  || ( utokens[w].last_sent < allTokens[tokid].timestamp ) ) {
+          if ( ( block.timestamp < newtime )  && ( utokens[w].last_sent > allTokens[tokid].timestamp ) ) {
             utokens[w].xBalance = userTokens[msg.sender][j].xBalance;
           }
         }
