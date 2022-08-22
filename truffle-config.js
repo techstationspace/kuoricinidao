@@ -26,12 +26,7 @@ const mnemonic = fs.readFileSync(".secret-matic").toString().trim();
 */
 
 // this for ropstein testnet
- const { projectId, mnemonic } = require('./secrets-ropstein1.json');
-
-
-//
-// const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
+// const { projectId, mnemonic } = require('./secrets-ropstein1.json');
 
 module.exports = {
   /**

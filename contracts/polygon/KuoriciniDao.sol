@@ -44,6 +44,7 @@ contract KuoriciniDao {
     uint tokenId;
     uint gTokenBalance;
     uint xBalance;
+    uint last_sent;
   }
 
   mapping (address => string) names;
@@ -169,13 +170,14 @@ contract KuoriciniDao {
 
     for ( uint w = 0; w < l; w++ ) { // all the tokens of this group 
       uint tokid = daoGroups[gid].tokenIds[w];
-      utokens[w] = UToken ({ tokenId: tokid, gTokenBalance: 0, xBalance: allTokens[tokid].roundSupply});
+      utokens[w] = UToken ({ tokenId: tokid, gTokenBalance: 0, xBalance: allTokens[tokid].roundSupply, last_sent: 0});
       uint newtime = allTokens[tokid].timestamp + allTokens[tokid].roundDuration;
 
       for ( uint j = 0; j < m; j++ ) { // all the tokens of this user
         if (userTokens[msg.sender][j].tokenId == tokid) {
           utokens[w].gTokenBalance = userTokens[msg.sender][j].gTokenBalance;
-          if ( block.timestamp < newtime ) {
+          utokens[w].last_sent = userTokens[msg.sender][j].last_sent;
+          if ( ( block.timestamp < newtime )  || ( utokens[w].last_sent < allTokens[tokid].timestamp ) ) {
             utokens[w].xBalance = userTokens[msg.sender][j].xBalance;
           }
         }
@@ -213,7 +215,7 @@ contract KuoriciniDao {
       }
     }
     if (matchFoundSender == false){
-      _tokSender = UToken({ tokenId: _tokenId, gTokenBalance: 0, xBalance: allTokens[_tokenId].roundSupply});
+      _tokSender = UToken({ tokenId: _tokenId, gTokenBalance: 0, xBalance: allTokens[_tokenId].roundSupply, last_sent: 0});
     }
 
     uint newtimestamp = allTokens[_tokenId].timestamp + allTokens[_tokenId].roundDuration;
@@ -238,21 +240,22 @@ contract KuoriciniDao {
       }
     }
     if ( matchFoundReceiver == false){
-      _tokReceiver= UToken({ tokenId: _tokenId, gTokenBalance: 0, xBalance: allTokens[_tokenId].roundSupply});
+      _tokReceiver= UToken({ tokenId: _tokenId, gTokenBalance: 0, xBalance: allTokens[_tokenId].roundSupply, last_sent: 0});
     }
     _tokSender.xBalance -= value;
+    _tokSender.last_sent = block.timestamp;
     _tokReceiver.gTokenBalance += value;
     if (matchFoundSender == true) {
       userTokens[msg.sender][s] = _tokSender;
     }
     else {
-      userTokens[msg.sender].push( UToken({ tokenId: _tokenId, gTokenBalance: 0, xBalance: _tokSender.xBalance}));
+      userTokens[msg.sender].push( UToken({ tokenId: _tokenId, gTokenBalance: 0, xBalance: _tokSender.xBalance, last_sent: _tokSender.last_sent}));
     }
     if (matchFoundReceiver == true) {
       userTokens[receiver][r] = _tokReceiver;
     }
     else {
-      userTokens[receiver].push( UToken({ tokenId: _tokenId, gTokenBalance: _tokReceiver.gTokenBalance, xBalance: allTokens[_tokenId].roundSupply}));
+      userTokens[receiver].push( UToken({ tokenId: _tokenId, gTokenBalance: _tokReceiver.gTokenBalance, xBalance: allTokens[_tokenId].roundSupply, last_sent: 0}));
     }
     return true;
   }
