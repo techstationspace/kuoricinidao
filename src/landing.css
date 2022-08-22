@@ -1,46 +1,128 @@
-html{
+@font-face {
+    font-family: "press start 2p";
+    src: url(./font/PressStart2P.ttf);
+}
+
+@font-face {
+    font-family: "Lato";
+    src: url(./font/Lato-Regular.ttf);
+}
+
+html {
     --section-height: 40em;
 }
 
-body{
+body {
     margin: 0;
     padding: 0;
 }
 
-.section-1{
-    background: url(images/landing_img/section_1.jpg);
+
+.section-1 {
+    background: url(images/landing_img/section_1_back.jpg);
     background-size: 100% 100%;
-}
-.section-2{
-    background: url(images/landing_img/section_2.jpg);
-    background-size: 100% 100%;
-}
-.section-3{
-    background: url(images/landing_img/section_3.jpg);
-    background-size: 100% 100%;
-}
-.section-4{
-    background: url(images/landing_img/section_4.jpg);
-    background-size: 100% 100%;
-}
-.section-5{
-    background: url(images/landing_img/section_5.jpg);
-    background-size: 100% 100%;
-}
-.section-6{
-    background: url(images/landing_img/section_6.jpg);
-    background-size: 100% 100%;
-}
-.section-7{
-    background: url(images/landing_img/section_2.jpg);
-    background-size: 100% 100%;
-}
-.section-8{
-    background: url(images/landing_img/section_1.jpg);
-    background-size: 100% 100%;
+    font-family: "press start 2p";
+    color: #4d00a5;
+    text-align: center;
 }
 
-.container{
+.section-1>h1 {
+    font-size: 5rem;
+}
+
+.section-1>p {
+    font-size: 2rem;
+}
+
+.section-2 {
+    background: linear-gradient(180deg, #6A0AD8 1.62%, #3B007E 66.2%);
+    ;
+    background-size: 100% 100%;
+    font-family: "press start 2p";
+    color: #fff;
+    text-align: center;
+}
+
+.section-2>h3 {
+    font-size: 1.8rem;
+}
+
+.section-2>p {
+    font-size: 1.5rem;
+}
+
+.section-3 {
+    background: url(images/landing_img/section_3.jpg);
+    background-size: 100% 100%;
+    font-family: "press start 2p";
+    color: #fff;
+    text-align: center;
+}
+
+.section-4 {
+    background: url(images/landing_img/section_4.jpg);
+    background-size: 100% 100%;
+    font-family: "press start 2p";
+    color: #fff;
+    text-align: center;
+}
+
+.section-5 {
+    background: url(images/landing_img/section_5.jpg);
+    background-size: 100% 100%;
+    font-family: "press start 2p";
+    color: #fff;
+    text-align: center;
+}
+
+.section-6 {
+    background: url(images/landing_img/section_6.jpg);
+    background-size: 100% 100%;
+    font-family: "press start 2p";
+    color: #fff;
+    text-align: center;
+}
+
+.section-7 {
+    background: url(images/landing_img/section_4.jpg);
+    background-size: 100% 100%;
+    font-family: "press start 2p";
+    color: #fff;
+    text-align: center;
+}
+
+.section-8 {
+    background: url(images/landing_img/section_2.jpg);
+    background-size: 100% 100%;
+    font-family: "press start 2p";
+    color: #fff;
+}
+
+.section-9 {
+    background: url(images/landing_img/section_1.jpg);
+    background-size: 100% 100%;
+    font-family: "press start 2p";
+    color: #3B007E;
+    text-align: center;
+}
+
+.section-3>h3,
+.section-4>h3,
+.section-5>h3,
+.section-6>h3 {
+    font-size: 1.6rem;
+}
+
+.section-3>p,
+.section-4>p,
+.section-5>p,
+.section-6>p,
+.section-9>p {
+    font-size: 1.5rem;
+    font-family: "Lato";
+}
+
+.container {
     position: relative;
     width: 100%;
     height: auto;
@@ -49,7 +131,7 @@ body{
     gap: 0;
 }
 
-.large-box{
+.large-box {
     grid-column: span 2;
     width: 100%;
     height: var(--section-height);
@@ -57,9 +139,21 @@ body{
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 1em;
 }
 
-.small-box{
+.large-box-info{
+    grid-column: span 2;
+    width: 100%;
+    height: 50em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+}
+
+.small-box {
     width: 100%;
     height: var(--section-height);
     display: flex;
@@ -68,8 +162,92 @@ body{
     justify-content: center;
 }
 
-@media screen and (max-width: 375px){
-    .large-box{
+.vertical-items {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.orizontal-items {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-background {
+    height: 48px;
+    width: 48px;
+}
+
+.logo {
+    position: relative;
+    height: 48px;
+    width: 48px;
+    margin-top: -10px;
+    margin-left: -10px;
+}
+
+.logo-background>img,
+.logo>img {
+    height: 100%;
+    width: 100%;
+}
+
+@media screen and (max-width: 375px) {
+    .large-box {
         grid-column: span 1;
     }
+}
+
+.app-button {
+    background: linear-gradient(rgb(255, 104, 179), rgb(255, 17, 116));
+    height: 4em;
+    width: 16em;
+    color: #fff;
+    font-size: 1.5rem;
+    border: none;
+    font-family: "press start 2p";
+    cursor: pointer;
+}
+
+.space-container-large {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 1em;
+}
+
+.learn-button {
+    background: linear-gradient(rgb(78, 0, 223), rgb(57, 0, 110));
+    height: 4em;
+    width: 16em;
+    color: #fff;
+    font-size: 1.5rem;
+    border: none;
+    font-family: "press start 2p";
+    cursor: pointer;
+}
+
+.space-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1em;
+}
+
+.row-icon{
+    background-color: #4d00a5;
+    width: 80%;
+    height: 2px;
+    border: none;
+}
+
+.icon-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5em;
 }
