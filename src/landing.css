@@ -10,11 +10,17 @@
 
 html {
     --section-height: 40em;
+    --box-gap: 2em;
 }
 
 body {
     margin: 0;
     padding: 0;
+    cursor: default;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-shadow: 4px 4px 6px #5e5e5e;
 }
 
 
@@ -30,9 +36,9 @@ body {
     font-size: 5rem;
 }
 
-.section-1>p {
+/* .section-1>p {
     font-size: 2rem;
-}
+} */
 
 .section-2 {
     background: linear-gradient(180deg, #6A0AD8 1.62%, #3B007E 66.2%);
@@ -47,9 +53,9 @@ body {
     font-size: 1.8rem;
 }
 
-.section-2>p {
+/* .section-2>p {
     font-size: 1.5rem;
-}
+} */
 
 .section-3 {
     background: url(images/landing_img/section_3.jpg);
@@ -60,7 +66,7 @@ body {
 }
 
 .section-4 {
-    background: url(images/landing_img/section_4.jpg);
+    background: linear-gradient(220.55deg, #B974FF 11.52%, #7A44D1 91.08%);
     background-size: 100% 100%;
     font-family: "press start 2p";
     color: #fff;
@@ -68,7 +74,7 @@ body {
 }
 
 .section-5 {
-    background: url(images/landing_img/section_5.jpg);
+    background: linear-gradient(201.1deg, #FBC8FF 4.64%, #C44CED 76.26%);
     background-size: 100% 100%;
     font-family: "press start 2p";
     color: #fff;
@@ -76,7 +82,7 @@ body {
 }
 
 .section-6 {
-    background: url(images/landing_img/section_6.jpg);
+    background: linear-gradient(24.48deg, #D124D4 17.17%, #E57BFF 73.86%);
     background-size: 100% 100%;
     font-family: "press start 2p";
     color: #fff;
@@ -92,7 +98,7 @@ body {
 }
 
 .section-8 {
-    background: url(images/landing_img/section_2.jpg);
+    background: linear-gradient(180deg, #6A0AD8 1.62%, #3B007E 66.2%);
     background-size: 100% 100%;
     font-family: "press start 2p";
     color: #fff;
@@ -106,21 +112,21 @@ body {
     text-align: center;
 }
 
-.section-3>h3,
+/* .section-3>h3,
 .section-4>h3,
 .section-5>h3,
 .section-6>h3 {
     font-size: 1.6rem;
-}
+} */
 
-.section-3>p,
+/* .section-3>p,
 .section-4>p,
 .section-5>p,
 .section-6>p,
 .section-9>p {
     font-size: 1.5rem;
     font-family: "Lato";
-}
+} */
 
 .container {
     position: relative;
@@ -139,7 +145,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1em;
+    gap: var(--box-gap);
 }
 
 .large-box-info{
@@ -150,7 +156,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1em;
+    gap: var(--box-gap);
 }
 
 .small-box {
@@ -160,6 +166,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: var(--box-gap);
 }
 
 .vertical-items {
@@ -197,6 +204,9 @@ body {
 
 @media screen and (max-width: 375px) {
     .large-box {
+        grid-column: span 1;
+    }
+    .large-box-info{
         grid-column: span 1;
     }
 }
@@ -250,4 +260,93 @@ body {
     align-items: center;
     justify-content: center;
     gap: 1.5em;
+}
+
+.large-box > .title-container{
+    font-size: 2rem;
+    font-family: "press start 2p";
+    height: auto;
+    width: 80%;
+    max-width: 40em;
+}
+
+.small-box > .title-container{
+    font-size: 1.6rem;
+    font-family: "press start 2p";
+    height: auto;
+    width: 70%;
+    max-width: 25em;
+}
+
+.large-box > .text-container{
+    font-size: 1.5rem;
+    font-family: "Lato";
+    height: auto;
+    width: 80%;
+    max-width: 25em;
+}
+
+.section-1 .text-container{
+    font-size: 1.6rem;
+    font-family: "press start 2p";
+    height: auto;
+    width: 80%;
+    max-width: 40em;
+}
+
+.section-7 .text-container{
+    font-size: 1.4rem;
+    font-family: "press start 2p";
+    height: auto;
+    width: 80%;
+    max-width: 40em;
+}
+
+.large-box-info > .text-container{
+    font-size: 1.5rem;
+    font-family: "Lato";
+    height: auto;
+    width: 80%;
+    max-width: 40em;
+}
+
+.large-box-info > .title-container{
+    font-size: 2rem;
+    font-family: "press start 2p";
+    height: auto;
+    width: 80%;
+    max-width: 40em;
+}
+
+.small-box > .text-container{
+    font-size: 1.5rem;
+    font-family: "Lato";
+    height: auto;
+    width: 80%;
+    max-width: 25em;
+}
+
+.newsletter-button{
+    background: linear-gradient(rgb(78, 0, 223), rgb(57, 0, 110));
+    height: 4em;
+    width: 16em;
+    color: #fff;
+    font-size: 1.5rem;
+    border: none;
+    font-family: "press start 2p";
+    cursor: pointer;
+}
+
+.email-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 7em;
+    width: 60em;
+    gap: 1em;
+}
+
+.low-image{
+    transform: translateY(1em);
 }
