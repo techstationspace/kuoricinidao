@@ -1,11 +1,7 @@
-
 const canvas = document.getElementById("transition");
 const transition = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-const msHeight = canvas.height / 3000;
+
 const nObj = 5;
-const widthObj = canvas.width / 5;
 const transitionComponents = [];
 let transizione = false;
 let transitionFinished = false;
@@ -13,7 +9,7 @@ let stoptransition = false;
 
 let votePageActive = false;
 let memberPageActive = false;
-let tokenPageActive = false;
+let tokenPageActive = true;
 
 class Oggetto {
     constructor(posX, dir, pageLoading) {
@@ -28,7 +24,7 @@ class Oggetto {
                     y: 0
                 }
             } else {
-                this.height = canvas.height;
+                this.height = canvas.height + 200;
                 this.pos = {
                     x: posX,
                     y: canvas.height
@@ -161,7 +157,7 @@ class Container {
     }
 }
 
-const loader = new Container;
+
 
 function transitionUpdate() {
     if (transitionFinished === true) {
@@ -238,31 +234,34 @@ document.querySelector(".button-update").addEventListener("click", () => {
 function reloadPage() {
     document.querySelector(".button-update").setAttribute("disabled", "true");
     updateDataPage();
-    setTimeout(()=>{if (document.querySelector(".members-container")) {
-        document.querySelector(".members-container").remove();
-    }
-    if (document.querySelector(".tokens-container")) {
-        document.querySelector(".tokens-container").remove();
-    }
-    if (document.querySelector(".votes-container")) {
-        document.querySelector(".votes-container").remove();
-    }
-    if (document.querySelector(".propose-container")) {
-        document.querySelector(".propose-container").remove();
-    }
-    for (let i = 0; i < document.querySelector("#userTableBalance").children.length; i++) {
-        document.querySelector("#userTableBalance").removeChild(document.querySelector("#userTableBalance").children[0]);
-    }
-    myBalance();
-    if (tokenPageActive === true) {
-        tokenPage();
-    }
-    if (memberPageActive === true) {
-        membersPage();
-    }
-    if (votePageActive === true) {
-        votePage();
-    }}, "2000");
+    setTimeout(() => {
+        if (document.querySelector(".members-container")) {
+            document.querySelector(".members-container").remove();
+        }
+        if (document.querySelector(".tokens-container")) {
+            document.querySelector(".tokens-container").remove();
+        }
+        if (document.querySelector(".votes-container")) {
+            document.querySelector(".votes-container").remove();
+        }
+        if (document.querySelector(".propose-container")) {
+            document.querySelector(".propose-container").remove();
+        }
+        const l= document.querySelector("#userTableBalance").children.length;
+        for (let i = 0; i < l; i++) {
+            document.querySelector("#userTableBalance").removeChild(document.querySelector("#userTableBalance").children[0]);
+        }
+        myBalance();
+        if (tokenPageActive === true) {
+            tokenPage();
+        }
+        if (memberPageActive === true) {
+            membersPage();
+        }
+        if (votePageActive === true) {
+            votePage();
+        }
+    }, "2000");
     setTimeout(prova, "5000");
     document.querySelector(".button-update").removeAttribute("disabled");
 }
@@ -306,7 +305,7 @@ async function myBalance() {
         document.getElementById("token" + (i + 1)).appendChild(col6).textContent = token.roundSupply;
     }
 
-    
+
 }
 
 async function membersPage() {
@@ -388,9 +387,9 @@ async function tokenPage() {
     const nTokensTextInput = document.createElement("label");
     const nTokensInput = document.createElement("input");
     const tokenSendButton = document.createElement("button");
-    const br5=document.createElement("br");
-    const br6=document.createElement("br");
-    const br7=document.createElement("br");
+    const br5 = document.createElement("br");
+    const br6 = document.createElement("br");
+    const br7 = document.createElement("br");
     const userTokens = await instance.getUserTokens(listGroups[posListGroup], { from: accounts[0] });
     document.querySelector("main").appendChild(tokensContainer).setAttribute("class", "tokens-container");
     document.querySelector(".tokens-container").appendChild(tokensTitle).setAttribute("class", "tokens-title");
@@ -686,7 +685,7 @@ async function votePage() {
                                 document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).setAttribute("class", "text-token");
                                 break;
                             case 6:
-                               
+
                                 if (candType12[j].voted) {
                                     document.querySelector(".tbody-tr-token-candidate" + j).appendChild(td).textContent = "Already voted";
                                 }
@@ -1182,6 +1181,10 @@ function convertTimestamp(timestamp) {
 }
 
 function updateDataPage() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    msHeight = canvas.height / 5000;
+    widthObj = canvas.width / 5;
     canvas.removeAttribute("style");
     canvas.setAttribute("style", "z-index:100; visibility: visible;");
     transitionFinished = false;
@@ -1196,6 +1199,9 @@ function updateDataPage() {
         }
         posIni += widthObj;
     }
+    loader = new Container;
+    loader.x = Math.ceil((canvas.width / 2) - (this.width / 2));
+    loader.y = Math.ceil((canvas.height / 2) - (this.height / 2));
     transitionUpdate();
 }
 
