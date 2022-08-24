@@ -9,8 +9,7 @@
 }
 
 html {
-    --section-height: 40em;
-    --box-gap: 2em;
+    --box-gap: 2.5em;
 }
 
 body {
@@ -23,26 +22,16 @@ body {
     text-shadow: 4px 4px 6px #5e5e5e;
 }
 
-
 .section-1 {
     background: url(images/landing_img/section_1_back.jpg);
-    background-size: 100% 100%;
+    background-position: center;
     font-family: "press start 2p";
     color: #4d00a5;
     text-align: center;
 }
 
-.section-1>h1 {
-    font-size: 5rem;
-}
-
-/* .section-1>p {
-    font-size: 2rem;
-} */
-
 .section-2 {
     background: linear-gradient(180deg, #6A0AD8 1.62%, #3B007E 66.2%);
-    ;
     background-size: 100% 100%;
     font-family: "press start 2p";
     color: #fff;
@@ -52,10 +41,6 @@ body {
 .section-2>h3 {
     font-size: 1.8rem;
 }
-
-/* .section-2>p {
-    font-size: 1.5rem;
-} */
 
 .section-3 {
     background: url(images/landing_img/section_3.jpg);
@@ -112,22 +97,6 @@ body {
     text-align: center;
 }
 
-/* .section-3>h3,
-.section-4>h3,
-.section-5>h3,
-.section-6>h3 {
-    font-size: 1.6rem;
-} */
-
-/* .section-3>p,
-.section-4>p,
-.section-5>p,
-.section-6>p,
-.section-9>p {
-    font-size: 1.5rem;
-    font-family: "Lato";
-} */
-
 .container {
     position: relative;
     width: 100%;
@@ -140,7 +109,8 @@ body {
 .large-box {
     grid-column: span 2;
     width: 100%;
-    height: var(--section-height);
+    height: 23em;
+    padding: 7em 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -148,10 +118,10 @@ body {
     gap: var(--box-gap);
 }
 
-.large-box-info{
+.large-box-info {
     grid-column: span 2;
     width: 100%;
-    height: 50em;
+    padding: 5em 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -161,7 +131,8 @@ body {
 
 .small-box {
     width: 100%;
-    height: var(--section-height);
+    height: 20em;
+    padding: 5em 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -202,24 +173,21 @@ body {
     width: 100%;
 }
 
-@media screen and (max-width: 900px) {
-    .large-box {
-        grid-column: span 1;
-    }
-    .large-box-info{
-        grid-column: span 1;
-    }
-}
-
 .app-button {
     background: linear-gradient(rgb(255, 104, 179), rgb(255, 17, 116));
-    height: 4em;
-    width: 16em;
+    height: 10%;
+    width: 40%;
+    max-height: 4em;
+    max-width: 16em;
+    padding: 2em 1em;
     color: #fff;
     font-size: 1.5rem;
     border: none;
     font-family: "press start 2p";
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .space-container-large {
@@ -231,13 +199,19 @@ body {
 
 .learn-button {
     background: linear-gradient(rgb(78, 0, 223), rgb(57, 0, 110));
-    height: 4em;
-    width: 16em;
+    height: 10%;
+    width: 40%;
+    max-height: 4em;
+    max-width: 16em;
+    padding: 2em 1em;
     color: #fff;
     font-size: 1.5rem;
     border: none;
     font-family: "press start 2p";
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .space-container {
@@ -247,14 +221,14 @@ body {
     gap: 1em;
 }
 
-.row-icon{
+.row-icon {
     background-color: #4d00a5;
     width: 80%;
     height: 2px;
     border: none;
 }
 
-.icon-container{
+.icon-container {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -262,7 +236,7 @@ body {
     gap: 1.5em;
 }
 
-.large-box > .title-container{
+.large-box>.title-container {
     font-size: 2rem;
     font-family: "press start 2p";
     height: auto;
@@ -270,7 +244,7 @@ body {
     max-width: 40em;
 }
 
-.small-box > .title-container{
+.small-box>.title-container {
     font-size: 1.6rem;
     font-family: "press start 2p";
     height: auto;
@@ -278,7 +252,7 @@ body {
     max-width: 25em;
 }
 
-.large-box > .text-container{
+.large-box>.text-container {
     font-size: 1.5rem;
     font-family: "Lato";
     height: auto;
@@ -286,7 +260,7 @@ body {
     max-width: 25em;
 }
 
-.section-1 .text-container{
+.section-1 .text-container {
     font-size: 1.6rem;
     font-family: "press start 2p";
     height: auto;
@@ -294,15 +268,15 @@ body {
     max-width: 40em;
 }
 
-.section-7 .text-container{
+.section-7 .text-container {
     font-size: 1.4rem;
-    font-family: "press start 2p";
+    font-family: "Lato";
     height: auto;
     width: 80%;
     max-width: 40em;
 }
 
-.large-box-info > .text-container{
+.large-box-info>.text-container {
     font-size: 1.5rem;
     font-family: "Lato";
     height: auto;
@@ -310,7 +284,15 @@ body {
     max-width: 40em;
 }
 
-.large-box-info > .title-container{
+.section-1>.title-container {
+    font-size: 5rem;
+    font-family: "press start 2p";
+    height: auto;
+    width: 80%;
+    max-width: 40em;
+}
+
+.large-box-info>.title-container {
     font-size: 2rem;
     font-family: "press start 2p";
     height: auto;
@@ -318,7 +300,7 @@ body {
     max-width: 40em;
 }
 
-.small-box > .text-container{
+.small-box>.text-container {
     font-size: 1.5rem;
     font-family: "Lato";
     height: auto;
@@ -326,27 +308,133 @@ body {
     max-width: 25em;
 }
 
-.newsletter-button{
+.newsletter-button {
     background: linear-gradient(rgb(78, 0, 223), rgb(57, 0, 110));
-    height: 4em;
-    width: 16em;
+    height: 10%;
+    width: 40%;
+    max-height: 4em;
+    max-width: 16em;
+    padding: 2em 1em;
     color: #fff;
     font-size: 1.5rem;
     border: none;
     font-family: "press start 2p";
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.email-container{
+.email-container {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    height: 7em;
-    width: 60em;
+    height: auto;
+    max-width: 60em;
+    width: 50%;
+    gap: 1%;
+}
+
+.email-image {
+    max-width: 5em;
+    width: 20%;
+}
+
+.low-image {
+    max-width: 8em;
+    width: 15%;
+    transform: translateY(0.8em);
+}
+
+.section-2>img {
+    max-width: 60em;
+    width: 80%;
+    height: auto;
+}
+
+.email-form-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 1em;
 }
 
-.low-image{
-    transform: translateY(1em);
+.list-todo{
+    line-height: 2rem;
+}
+
+.section-8>.title-container{
+    text-align: center;
+}
+
+.section-8>.orizontal-items>img{
+    width: 30%;
+    max-width: 15em;
+}
+
+.email-input{
+    width: 100%;
+}
+
+.mc-field-group{
+    width: 40%;
+    max-width: 16em;
+    padding: 0 1em;
+}
+
+@media screen and (max-width: 60em) {
+    .large-box {
+        grid-column: span 1;
+    }
+
+    .large-box-info {
+        grid-column: span 1;
+    }
+
+    .low-image {
+        transform: translateY(0.5em);
+    }
+
+    .small-box>.text-container,
+    .large-box-info>.text-container,
+    .large-box>.text-container,
+    .section-1 .text-container,
+    .section-7 .text-container {
+        font-size: 1.1rem;
+    }
+
+    .small-box>.title-container,
+    .large-box-info>.title-container{
+        font-size: 1.4rem;
+    }
+
+    .large-box>.title-container {
+        font-size: 1.2rem;
+    }
+
+    .section-1>.title-container {
+        font-size: 3.5rem;
+    }
+
+    .app-button, .learn-button, .newsletter-button{
+        font-size: 1rem;
+    }
+
+    .list-todo{
+        font-size: 0.8rem;
+        line-height: 1.5rem;
+    }
+
+    .mc-field-group{
+        padding: 0;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .list-todo{
+        font-size: 0.6rem;
+        line-height: 1.2rem;
+    }
 }
