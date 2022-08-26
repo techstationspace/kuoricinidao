@@ -56,6 +56,8 @@ contract KuoriciniDao {
   // TODO : these two at least, have to become mappings, BUT REFACTOR QUITE
   Candidate[] allCandidates;
 
+  event Log(uint val);
+
   constructor() {
   }
 
@@ -82,6 +84,7 @@ contract KuoriciniDao {
       require ( invitationLinks[invLink] == 0 );
     }
     invitationLinks[invLink]=daoGroups.length-1;
+    emit Log(0);
     return true;
   }
 
@@ -146,6 +149,7 @@ contract KuoriciniDao {
       uint l = allTokens.length;
       daoGroups[_groupId].tokenIds.push(l-1);
     }
+    emit Log(1);
     return true;
   }
 
@@ -257,6 +261,7 @@ contract KuoriciniDao {
     else {
       userTokens[receiver].push( UToken({ tokenId: _tokenId, gTokenBalance: _tokReceiver.gTokenBalance, xBalance: allTokens[_tokenId].roundSupply, last_sent: 0}));
     }
+    emit Log(10+value);
     return true;
   }
 
@@ -333,7 +338,7 @@ contract KuoriciniDao {
     // update candidate list in the group
     candidateIds[l] = allCandidates.length-1;
     daoGroups[gid].candidateIds = candidateIds;
-
+    emit Log(100+candtype);
     return true;
 
   }
@@ -508,6 +513,7 @@ struct ECandidate {
       daoGroups[gid].candidateIds = newCandidateIds;
 
     }
+    emit Log(2);
 
     return true;
   }
@@ -604,6 +610,7 @@ struct ECandidate {
 
   function nameSet(string calldata name) public returns(bool) {
     names[msg.sender]=name;
+    emit Log(3);
     return true;
   }
 
