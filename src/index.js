@@ -56,8 +56,8 @@ const animationList = {
 function animationEvent() {
     requestAnimationFrame(animationEvent)
     const totHeigth = window.scrollY + window.innerHeight;
-    if (window.innerWidth > 960) {
-        if (window.scrollY < 450) {
+    // if (window.innerWidth > 960) {
+        if (window.scrollY < 440) {
             // console.log("prima: "+animationList.kuore.active)
             if (animationList.kuore.run === false && animationList.kuore.active === false) {
                 // console.log("condizione: "+(animationList.kuore.run === false && animationList.kuore.active === false))
@@ -69,7 +69,7 @@ function animationEvent() {
                     // console.log("kuore")
                     KUORE.removeAttribute("style");
                     animationList.kuore.active = false;
-                }, "2950");
+                }, "2990");
             }
         }
         if (totHeigth >= 625) {
@@ -105,7 +105,7 @@ function animationEvent() {
                 // }
                 // INVADERS_ANIMATION(i);
             // }
-        }
+        // }
         // if (totHeigth >= 625) {
         //     if (window.scrollY >= 950) {
         //         animationList.teamSpaceInvader.run = false;

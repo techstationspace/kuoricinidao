@@ -16,8 +16,149 @@
     50% {
         transform: rotateY(180deg) translateY(0);
     }
+
     100% {
         transform: rotateY(360deg) translateY(0);
+    }
+}
+
+@keyframes kuore-5 {
+    0% {
+        transform: rotateY(0deg);
+    }
+    100% {
+        transform: rotateY(360deg);
+    }
+}
+
+@keyframes small-jump {
+    0%{
+        transform: translateY(0);
+    }
+    35%{
+        transform: translateY(0);
+    }
+    50%{
+        transform: translateY(-2em);
+    }
+    65%{
+        transform: translateY(0);
+    }
+    100%{
+        transform: translateY(0);
+    }
+}
+
+@keyframes invader-4 {
+    0% {
+        transform: translateX(-3em) translateY(0);
+    }
+
+    35%{
+        transform: translateX(-1em) translateY(0);
+    }
+
+    50% {
+        transform: translateX(0) translateY(-2.8em);
+    }
+    65%{
+        transform: translateX(1em) translateY(0);
+    }
+
+    100% {
+        transform: translateX(3em) translateY(0);
+    }
+}
+
+@keyframes kuore-4 {
+    0% {
+        transform: rotateY(0deg) translateY(-2.8em);
+    }
+
+    50% {
+        transform:  rotateY(0deg) translateY(-2.8em);
+    }
+
+    100% {
+        transform:  rotateY(360deg) translateY(-2.8em);
+    }
+}
+
+@keyframes space-invader-left-3{
+    0%{
+        transform: rotate(0deg) translateX(-5em) translateY(-2em);
+    }
+    80%{
+        transform: rotate(360deg);
+    }
+    100%{
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes space-invader-right-3{
+    0%{
+        transform: rotate(0deg) translateX(5em) translateY(-2em);
+    }
+    80%{
+        transform: rotate(-360deg);
+    }
+    100%{
+        transform: rotate(-360deg);
+    }
+}
+
+@keyframes space-invader-center-3{
+    0%{
+        transform: translateY(-2em);
+    }
+    80%{
+        transform: translateY(0em);
+    }
+    100%{
+        transform: translateY(0em);
+    }
+}
+
+@keyframes kuore-6 {
+    0% {
+        transform: translateX(0em) translateY(0em);
+    }
+    20% {
+        transform: translateX(0em) translateY(0em);
+    }
+    268%{
+        transform: translateX(0.6em) translateY(-0.3em);
+    }
+    32%{
+        transform: translateX(1.2em) translateY(-0.5em);
+    }
+    38%{
+        transform: translateX(1.8em) translateY(-0.7em);
+    }
+    44%{
+        transform: translateX(2.4em) translateY(-0.8em);
+    }
+    50%{
+        transform: translateX(3em) translateY(-0.9em);
+    }
+    56% {
+        transform: translateX(3.6em) translateY(-0.8em);
+    }
+    62%{
+        transform: translateX(4.2em) translateY(-0.7em);
+    }
+    68%{
+        transform: translateX(4.8em) translateY(-0.5em);
+    }
+    74%{
+        transform: translateX(5.4em) translateY(-0.3em);
+    }
+    80%{
+        transform:  translateX(6em) translateY(0em);
+    }
+    100% {
+        transform:  translateX(6em) translateY(0em);
     }
 }
 
@@ -35,8 +176,50 @@
     0% {
         transform: translateY(0);
     }
-    50%{
+    10%{
+        transform: translateY(0);
+    }
+    20% {
         transform: translateY(-2.8em);
+    }
+    30%{
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes dots-email{
+    0% {
+        transform:  translateY(0.8em);
+    }
+    10%{
+        transform:  translateY(0.8em);
+    }
+    20%{
+        transform: translateY(0.6em);
+    }
+    30%{
+        transform:  translateY(0.8em);
+    }
+    100% {
+        transform: translateY(0.8em);
+    }
+}
+
+@keyframes email-box{
+    0% {
+        transform: translateY(0);
+    }
+    10%{
+        transform: translateY(0);
+    }
+    20% {
+        transform: translateY(-2em);
+    }
+    30%{
+        transform: translateY(0);
     }
     100% {
         transform: translateY(0);
@@ -59,7 +242,7 @@ body {
 
 .section-1 {
     background: url(images/landing_img/section_1_back.jpg);
-    background-position: center;
+    background-size: 100% 100%;
     font-family: "press start 2p";
     color: #4d00a5;
     text-align: center;
@@ -362,7 +545,6 @@ body {
     width: 50%;
     gap: 1%;
 }
-
 .email-image {
     max-width: 5em;
     width: 20%;
@@ -371,7 +553,129 @@ body {
 .low-image {
     max-width: 8em;
     width: 15%;
-    transform: translateY(0.8em);
+}
+
+.email-image[data-email-box-1]{
+    max-width: 5em;
+    width: 20%;
+    animation-name: email-box;
+    animation-duration: 2500ms;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+}
+
+.low-image[data-dots-email-1]{
+    animation-name: dots-email;
+    animation-duration: 2500ms;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-delay: 150ms;
+}
+
+.email-image[data-email-box-2]{
+    animation-name: email-box;
+    animation-duration: 2500ms;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-delay: 300ms;
+}
+
+.low-image[data-dots-email-2]{
+    animation-name: dots-email;
+    animation-duration: 2500ms;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-delay: 450ms;
+}
+
+.email-image[data-email-box-3]{
+    animation-name: email-box;
+    animation-duration: 2500ms;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-delay: 600ms;
+}
+
+.low-image[data-dots-email-3]{
+    animation-name: dots-email;
+    animation-duration: 2500ms;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-delay: 750ms;
+}
+
+.email-image[data-email-box-4]{
+    animation-name: email-box;
+    animation-duration: 2500ms;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-delay: 900ms;
+}
+
+.low-image[data-dots-email-4]{
+    animation-name: dots-email;
+    animation-duration: 2500ms;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-delay: 1050ms;
+}
+
+.email-image[data-email-box-5]{
+    animation-name: email-box;
+    animation-duration: 2500ms;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-delay: 1200ms;
+}
+
+.low-image[data-dots-email-5]{
+    animation-name: dots-email;
+    animation-duration: 2500ms;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-delay: 1350ms;
+}
+
+.space-container-large > .vertical-items > img[data-kuore-6]{
+    animation-name: kuore-6;
+    animation-duration: 2500ms;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.space-container > img[data-space-invader-left]{
+    animation-name: space-invader-left-3;
+    animation-duration: 2500ms;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+}
+
+.space-container > img[data-space-invader-right]{
+    animation-name: space-invader-right-3;
+    animation-duration: 2500ms;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+}
+
+.space-container > img[data-space-invader-center]{
+    animation-name: space-invader-center-3;
+    animation-duration: 2500ms;
+    animation-timing-function: ease-out;
+    animation-iteration-count: infinite;
+}
+
+.section-5 img[data-space-left], .section-5 img[data-space-right]{
+    animation-name: small-jump;
+    animation-duration: 2500ms;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+}
+
+.section-5 img[data-space-kuore]{
+    animation-name: kuore-5;
+    animation-duration: 2500ms;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
 }
 
 .section-2>img {
@@ -412,24 +716,23 @@ body {
     box-shadow: 0;
 }
 
-.email-input::placeholder{
+.email-input::placeholder {
     color: #fff;
 }
 
-.email-input:focus{
+.email-input:focus {
     border: 0;
     outline: 0;
     border-bottom: 2px solid #fff;
 }
 
-.input-error{
+.input-error {
     font-size: 1.2rem;
     margin: 0;
     margin-top: 1em;
-    
 }
 
-.mce_inline_error{
+.mce_inline_error {
     font-size: 1rem;
     display: flex;
     align-items: center;
@@ -446,7 +749,7 @@ body {
     gap: 10%;
 }
 
-.space-invader-container{
+.space-invader-container {
     width: 80%;
     display: flex;
     flex-direction: row;
@@ -455,9 +758,79 @@ body {
     gap: 2%;
 }
 
-.space-invader-container>img{
+.space-invader-container>img {
     width: 15%;
     max-width: 7em;
+}
+
+.space-invader-container>img:nth-child(1) {
+    animation-name: jump;
+    animation-timing-function: ease-in-out;
+    animation-duration: 2000ms;
+    animation-iteration-count: infinite;
+}
+
+.space-invader-container>img:nth-child(2) {
+    animation-name: jump;
+    animation-timing-function: ease-in-out;
+    animation-duration: 2000ms;
+    animation-iteration-count: infinite;
+    animation-delay: 125ms;
+}
+
+.space-invader-container>img:nth-child(3) {
+    animation-name: jump;
+    animation-timing-function: ease-in-out;
+    animation-duration: 2000ms;
+    animation-iteration-count: infinite;
+    animation-delay: 250ms;
+}
+
+.space-invader-container>img:nth-child(4) {
+    animation-name: jump;
+    animation-timing-function: ease-in-out;
+    animation-duration: 2000ms;
+    animation-iteration-count: infinite;
+    animation-delay: 375ms;
+}
+
+.space-invader-container>img:nth-child(5) {
+    animation-name: jump;
+    animation-timing-function: ease-in-out;
+    animation-duration: 2000ms;
+    animation-iteration-count: infinite;
+    animation-delay: 500ms;
+}
+
+.space-invader-container>img:nth-child(6) {
+    animation-name: jump;
+    animation-timing-function: ease-in-out;
+    animation-duration: 2000ms;
+    animation-iteration-count: infinite;
+    animation-delay: 625ms;
+}
+
+.space-invader-container>img:nth-child(7) {
+    animation-name: jump;
+    animation-timing-function: ease-in-out;
+    animation-duration: 2000ms;
+    animation-iteration-count: infinite;
+    animation-delay: 750ms;
+}
+
+.space-invader-animation-4>img[data-invader] {
+    width: 3.5em;
+    animation-name: invader-4;
+    animation-timing-function: ease-in-out;
+    animation-duration: 1500ms;
+    animation-iteration-count: infinite;
+}
+
+.space-invader-animation-4>img[data-kuore] {
+    animation-name: kuore-4;
+    animation-timing-function: ease-in-out;
+    animation-duration: 1500ms;
+    animation-iteration-count: infinite;
 }
 
 @media screen and (max-width: 60em) {
