@@ -1,6 +1,6 @@
 {
    "server": {
-       "baseDir": ["./src", "./build/contracts", "./build/polygon-contracts"]
+       "baseDir": ["./src", "./build/polygon-contracts"]
    }
 
 }

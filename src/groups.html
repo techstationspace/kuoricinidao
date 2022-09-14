@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="app.css">
+    <link rel="stylesheet" href="groups.css">
+    <script src="web3.min.js"></script>
+    <script src="truffle-contract.min.js"></script>
+    <script src="jquery.min.js"></script>
+    <script src="groups.js" defer></script>
+    <title>KuoriciniDAO</title>
+</head>
+
+<body>
+    <header>
+        <a class="logo" href="home.html"><img src="images/logo.png" h width="260" height="60"></a>
+        <div class="user">
+            <span id="userImage"></span>
+            <span id="userName"></span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="groups.html">GROUPS</a>
+                    <ul class="groups-navbar">
+                        <li><a href="groups.html">List groups</a></li>
+                    </ul>
+                </li>
+                <li><a href="profile.html">PROFILE</a>
+                    <ul class="profile-navbar">
+                        <li><a href="profile.html">Settings</a></li>
+                        <li><a href="index.html">Disconnect</a></li>
+                    </ul>
+                </li>
+                <li><a href="help.html">?</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <div class="nothing"></div>
+        <br>
+        <section class="new-group">
+            <!-- <span class="close-button" id="closeButton"><img src="img/cross.png" height="30" width="30"></span> -->
+            <h2>New group</h2>
+            <p>Do you want create a new group?</p>
+            <button id="newGroup">Create Group</button>
+            <br>
+        </section>
+        <h2 class="title">List of groups!</h2>
+        <table class="groups-table">
+            <thead>
+                <tr>
+                    <th>Name of groups</th>
+                    <th>Members</th>
+                </tr>
+            </thead>
+            <tbody id="listGroups">
+            </tbody>
+        </table>
+        <br><br><br><br>
+    </main>
+    <footer>
+        <p>KuoriciniDAO is in Pilot Stage! You are free to play with it and tell us what you think about it</p>
+        <ul class="link">
+            <li><a href="https://discord.gg/tdCCgXrsnb">Discord</a></li>
+            <li>|</li>
+            <li><a href="https://mobile.twitter.com/kuoricinidao">Twitter</a></li>
+            <li>|</li>
+            <li><a href="https://t.me/+Fd2MefdXzoM5OWNk">Telegram</a></li>
+            <li>|</li>
+            <li><a href="https://github.com/techstationspace/kuoricinidao">Github</a></li>
+        </ul>
+    </footer>
+</body>
+
+</html>

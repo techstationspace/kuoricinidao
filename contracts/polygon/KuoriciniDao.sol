@@ -1,33 +1,27 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-
 contract KuoriciniDao {
 
   struct DaoGroup {
     string name;
     address[] members;
     uint[] tokenIds;
-    uint[] candidatesIds;
-    uint[] candidateTokenIds;
+    uint[] candidateIds;
     uint voteThreshold;
+    uint voteDuration;
     string invitationLink;
   }
   
-  struct Candidate {
-    address candidateAddress;
-    uint votes;
-    address[] voters;
-  }
-
     /* CandType
     0 : new address
     1 : new token
     2 : change existing token
     3 : new quorum
+    4 : new vote duration
     */
 
-  struct CandidateToken {
+  struct Candidate {
     uint id;
     uint candType;
     string name;
@@ -36,6 +30,7 @@ contract KuoriciniDao {
     address candidateAddress;
     uint votes;
     address[] voters;
+    uint timestamp;
   }
 
   struct GToken {
@@ -49,6 +44,7 @@ contract KuoriciniDao {
     uint tokenId;
     uint gTokenBalance;
     uint xBalance;
+    uint last_sent;
   }
 
   mapping (address => string) names;
@@ -59,7 +55,8 @@ contract KuoriciniDao {
 
   // TODO : these two at least, have to become mappings, BUT REFACTOR QUITE
   Candidate[] allCandidates;
-  CandidateToken[] allCandidateTokens;
+
+  event Log(uint val);
 
   constructor() {
   }
@@ -69,16 +66,16 @@ contract KuoriciniDao {
     addr[0] = msg.sender;
     uint[] memory defaultTokens;
     uint[] memory defaultCandidates;
-    uint[] memory defaultCandidateTokens;
     uint threshold = 5;
+    uint voteduration = 1209600; // 14 days
     string memory invLink = generateInvitationLink(_name);
     DaoGroup memory new_group = DaoGroup({ 
       name: _name, 
       members: addr, 
       tokenIds: defaultTokens, 
-      candidatesIds: defaultCandidates, 
-      candidateTokenIds: defaultCandidateTokens,
+      candidateIds: defaultCandidates, 
       voteThreshold: threshold,
+      voteDuration: voteduration,
       invitationLink: invLink
     });
     daoGroups.push(new_group);
@@ -87,6 +84,7 @@ contract KuoriciniDao {
       require ( invitationLinks[invLink] == 0 );
     }
     invitationLinks[invLink]=daoGroups.length-1;
+    emit Log(0);
     return true;
   }
 
@@ -96,12 +94,16 @@ contract KuoriciniDao {
   
   function checkInvitationLink(string calldata link) public view returns (uint) {    
     uint groupInv =  invitationLinks[link];
-    require(!isAddressInGroup(groupInv, msg.sender), "member already present" );
-    uint l = daoGroups[groupInv].candidateTokenIds.length;
-    uint[] memory candidateTokenIds = new uint[](l+1);
+    if (isAddressInGroup(groupInv, msg.sender)) {
+      return 0;      
+    }
+    uint l = daoGroups[groupInv].candidateIds.length;
+    uint[] memory candidateIds = new uint[](l+1);
     for (uint i = 0; i < l; i++) {
-      candidateTokenIds[i] = daoGroups[groupInv].candidateTokenIds[i];
-      require ( allCandidateTokens[candidateTokenIds[i]].candidateAddress != msg.sender, "candidate already present" );
+      candidateIds[i] = daoGroups[groupInv].candidateIds[i];
+      if ( allCandidates[candidateIds[i]].candidateAddress == msg.sender ){
+        return 0;
+      }
     }    
     return groupInv;
   }
@@ -128,7 +130,6 @@ contract KuoriciniDao {
     return allTokens[_tokenid];
   }
 
-    
   function createGToken(uint tokid, string memory _name, uint _supply, uint _duration, bool present, uint _groupId) private returns(bool){
     require(isAddressInGroup(_groupId, msg.sender), "member cannot vote!" );
 
@@ -148,37 +149,61 @@ contract KuoriciniDao {
       uint l = allTokens.length;
       daoGroups[_groupId].tokenIds.push(l-1);
     }
+    emit Log(1);
     return true;
   }
 
-//  event Timeupdate(uint tokenId, uint newTime, uint stamp);
-//  event BalanceUpdated(uint tokenId, uint xbalance, uint stamp);
 
-  function getUserTokens(uint _gid) public view returns(UToken[] memory) {
-    uint l = daoGroups[_gid].tokenIds.length;
-    UToken[] memory _userTokens = new UToken[](l);
-    for (uint w = 0; w < l; w++) {
-      uint q = daoGroups[_gid].tokenIds[w];
-      uint m = userTokens[msg.sender].length;
-      bool matchFound = false;
-      for (uint j = 0; j < m; j++) {
-        if (userTokens[msg.sender][j].tokenId == q) {
-          _userTokens[w]=userTokens[msg.sender][j];
-          uint newtime = allTokens[q].timestamp + allTokens[q].roundDuration;
-//          emit Timeupdate(q, newtime, block.timestamp);
-          if (block.timestamp > newtime ) {
-            _userTokens[w].xBalance = allTokens[q].roundSupply;
-//            emit BalanceUpdated(q, _userTokens[w].xBalance, block.timestamp);
-          }      
-          matchFound = true;
-          break;
+// temporary struct to make the output of a token more verbose
+
+  struct EToken {
+    uint tokenId;
+    uint gTokenBalance;
+    uint xBalance;
+    uint blocktimestamp;
+    uint newtime;
+    uint residualtime;
+  }
+
+  function getUserTokens(uint gid) public view returns(EToken[] memory) {
+    require(isAddressInGroup(gid, msg.sender), "user not authorized"); 
+    uint l = daoGroups[gid].tokenIds.length;
+    uint m = userTokens[msg.sender].length;
+    UToken[] memory utokens = new UToken[](l);
+    EToken[] memory etokens = new EToken[](l);
+
+    for ( uint w = 0; w < l; w++ ) { // all the tokens of this group 
+      uint tokid = daoGroups[gid].tokenIds[w];
+      utokens[w] = UToken ({ tokenId: tokid, gTokenBalance: 0, xBalance: allTokens[tokid].roundSupply, last_sent: 0});
+      uint newtime = allTokens[tokid].timestamp + allTokens[tokid].roundDuration;
+
+      for ( uint j = 0; j < m; j++ ) { // all the tokens of this user
+        if (userTokens[msg.sender][j].tokenId == tokid) {
+          utokens[w].gTokenBalance = userTokens[msg.sender][j].gTokenBalance;
+          utokens[w].last_sent = userTokens[msg.sender][j].last_sent;
+          if ( ( block.timestamp < newtime )  && ( utokens[w].last_sent > allTokens[tokid].timestamp ) ) {
+            utokens[w].xBalance = userTokens[msg.sender][j].xBalance;
+          }
         }
       }
-      if (matchFound == false) {
-        _userTokens[w]=UToken({ tokenId: q, gTokenBalance: 0, xBalance: allTokens[q].roundSupply});
+      etokens[w].tokenId = utokens[w].tokenId;
+      etokens[w].gTokenBalance = utokens[w].gTokenBalance;
+      etokens[w].xBalance = utokens[w].xBalance;
+      etokens[w].blocktimestamp = block.timestamp;
+
+      // expiration time calculation
+      while (newtime < block.timestamp) {
+        newtime += allTokens[tokid].roundDuration;
       }
+      etokens[w].newtime = newtime;
+
+      // residual time calculation
+      while ( ( newtime - block.timestamp ) > allTokens[tokid].roundDuration ) {
+        newtime -= allTokens[tokid].roundDuration;
+      }
+      etokens[w].residualtime = newtime - block.timestamp;
     }
-    return _userTokens;
+    return etokens;
   }
 
   function transferToken(uint _tokenId, address receiver, uint value) public returns(bool) {
@@ -194,17 +219,18 @@ contract KuoriciniDao {
       }
     }
     if (matchFoundSender == false){
-      _tokSender = UToken({ tokenId: _tokenId, gTokenBalance: 0, xBalance: allTokens[_tokenId].roundSupply});
+      _tokSender = UToken({ tokenId: _tokenId, gTokenBalance: 0, xBalance: allTokens[_tokenId].roundSupply, last_sent: 0});
     }
-    
-    if (block.timestamp > (allTokens[_tokenId].timestamp + allTokens[_tokenId].roundDuration * 1 seconds) ) {
+
+    uint newtimestamp = allTokens[_tokenId].timestamp + allTokens[_tokenId].roundDuration;
+    if (block.timestamp > newtimestamp ) {
       _tokSender.xBalance = allTokens[_tokenId].roundSupply;
-      uint _newTimestamp = allTokens[_tokenId].timestamp;
-      for (uint k = 0; _newTimestamp < block.timestamp ; k++) {
-        _newTimestamp += allTokens[_tokenId].roundDuration;
-//      _newTimestamp += allTokens[_tokenId].roundDuration * k; // WAS with *k in Ropstein, ARE YOU SURE  ???
+
+      while ( block.timestamp > (newtimestamp + allTokens[_tokenId].roundDuration)) {
+        newtimestamp += allTokens[_tokenId].roundDuration;
       }
-      allTokens[_tokenId].timestamp=_newTimestamp;
+      
+      allTokens[_tokenId].timestamp=newtimestamp;
     }
     
     require(_tokSender.xBalance >= value, "non hai abbastanza token");
@@ -218,26 +244,26 @@ contract KuoriciniDao {
       }
     }
     if ( matchFoundReceiver == false){
-      _tokReceiver= UToken({ tokenId: _tokenId, gTokenBalance: 0, xBalance: allTokens[_tokenId].roundSupply});
+      _tokReceiver= UToken({ tokenId: _tokenId, gTokenBalance: 0, xBalance: allTokens[_tokenId].roundSupply, last_sent: 0});
     }
     _tokSender.xBalance -= value;
+    _tokSender.last_sent = block.timestamp;
     _tokReceiver.gTokenBalance += value;
     if (matchFoundSender == true) {
       userTokens[msg.sender][s] = _tokSender;
     }
     else {
-      userTokens[msg.sender].push( UToken({ tokenId: _tokenId, gTokenBalance: 0, xBalance: _tokSender.xBalance}));
+      userTokens[msg.sender].push( UToken({ tokenId: _tokenId, gTokenBalance: 0, xBalance: _tokSender.xBalance, last_sent: _tokSender.last_sent}));
     }
     if (matchFoundReceiver == true) {
       userTokens[receiver][r] = _tokReceiver;
     }
     else {
-      userTokens[receiver].push( UToken({ tokenId: _tokenId, gTokenBalance: _tokReceiver.gTokenBalance, xBalance: allTokens[_tokenId].roundSupply}));
+      userTokens[receiver].push( UToken({ tokenId: _tokenId, gTokenBalance: _tokReceiver.gTokenBalance, xBalance: allTokens[_tokenId].roundSupply, last_sent: 0}));
     }
+    emit Log(10+value);
     return true;
   }
-
-
 
   function isTokenInGroup(uint tokid, uint gid) private view returns(bool) {
     for ( uint i = 0; i < daoGroups[gid].tokenIds.length; i++){
@@ -267,7 +293,7 @@ contract KuoriciniDao {
 
 
   // propose token change
-  function changeToken(uint val, string calldata name, uint supply, uint duration, uint gid, uint candtype) public returns(bool) {
+  function changeToken(uint val, string memory name, uint supply, uint duration, uint gid, uint candtype) public returns(bool) {
 
     if ( candtype == 0 ) {
       require(!isAddressInGroup(gid, msg.sender), "member already present!");
@@ -285,19 +311,19 @@ contract KuoriciniDao {
       require(val <= 10, "invalid quorum");
     }
 
-    uint l = daoGroups[gid].candidateTokenIds.length;
-    uint[] memory candidateTokenIds = new uint[](l+1);
+    uint l = daoGroups[gid].candidateIds.length;
+    uint[] memory candidateIds = new uint[](l+1);
     
     for (uint i = 0; i < l; i++) {
-      candidateTokenIds[i] = daoGroups[gid].candidateTokenIds[i];
-       if ( candtype == 0 ) {    
-        require(allCandidateTokens[candidateTokenIds[i]].candidateAddress != msg.sender, "candidate already added!");
+      candidateIds[i] = daoGroups[gid].candidateIds[i];
+      if ( ( candtype == 0 ) &&  ( allCandidates[candidateIds[i]].candidateAddress == msg.sender ) ) {
+        require ( !candidateValid(allCandidates[candidateIds[i]].timestamp, gid), "candidate already added" ); 
       }
     }
 
     // generate a new candidate
     address[] memory vot = new address[](0);
-    allCandidateTokens.push(CandidateToken({
+    allCandidates.push(Candidate({
       id: val,
       candType: candtype,
       name: name,
@@ -305,167 +331,133 @@ contract KuoriciniDao {
       roundDuration: duration,
       candidateAddress: msg.sender,
       votes: 0,
-      voters: vot
+      voters: vot,
+      timestamp: block.timestamp
     }));
 
     // update candidate list in the group
-/*    for ( uint i = 0; i < l ; i++ ){
-      candidateTokenIds[i] = daoGroups[gid].candidateTokenIds[i];
-    }
-*/    
-    candidateTokenIds[l] = allCandidateTokens.length-1;
-    daoGroups[gid].candidateTokenIds = candidateTokenIds;
-
+    candidateIds[l] = allCandidates.length-1;
+    daoGroups[gid].candidateIds = candidateIds;
+    emit Log(100+candtype);
     return true;
 
   }
+/*
+ * New PROPOSALS API
+ * Commented for now (run out of gas cannot compile)
+ *
+
+function proposeQuorum(uint val, uint gid) public returns(bool) {
+  require(val <= 10, "invalid quorum");
+  changeToken(val, "", 0, 0, gid, 3);
+  return true; 
+}
+
+struct quorumProposal {
+  uint proposalId;
+  address proposer;
+  uint votes;
+  bool voted;
+  uint timestamp;
+  uint quorum;
+}
+
+function getQuorumProposals(uint gid) public view returns (quorumProposal[] memory) {
+  require(isAddressInGroup(gid, msg.sender), "member not allowed!" );
+  uint l = daoGroups[gid].candidateIds.length;
+  quorumProposal[] memory proposals = new quorumProposal[](l);
+  quorumProposal memory proposal;
+  Candidate memory candidate;
+  uint counter = 0;
+  for (uint i = 0; i < l; i++) {
+    uint c = daoGroups[gid].candidateIds[i];
+    candidate = allCandidates[c];
+    if (candidate.candType == 3) {
+      proposal.proposalId = allCandidates[c].id;
+      proposal.proposer = allCandidates[c].candidateAddress;
+      proposal.votes = allCandidates[c].votes;
+      proposal.voted = false;
+      for (uint q=0; q < allCandidates[c].voters.length ; q++ ) {
+        if ( allCandidates[c].voters[q] == msg.sender) {
+          proposal.voted = true;
+        }
+      }
+      proposal.timestamp = allCandidates[c].timestamp;
+      proposal.quorum = allCandidates[c].id;
+      proposals[counter] = proposal;
+      counter++;
+    }
+  }
+  return proposals;
+}
+*/
+
+// hide voters expose voted
+struct ECandidate {
+  uint id;
+  uint candType;
+  string name;
+  uint roundSupply;
+  uint roundDuration;
+  address candidateAddress;
+  uint votes;
+  bool voted;
+  uint timestamp;
+}
 
   // get candidate tokens of a group
-  function getGroupCandidateTokens(uint gid) public view returns(CandidateToken[] memory) {
+  function getGroupCandidates(uint gid) public view returns(ECandidate[] memory) {
     require(isAddressInGroup(gid, msg.sender), "member not allowed!" );
-    uint l = daoGroups[gid].candidateTokenIds.length;
-    CandidateToken[] memory candidatetokens = new CandidateToken[](l);
+    uint l = daoGroups[gid].candidateIds.length;
+    ECandidate[] memory candidates = new ECandidate[](l);
     for (uint i = 0; i < l; i++) {
-      uint c = daoGroups[gid].candidateTokenIds[i];
-      candidatetokens[i] = allCandidateTokens[c];
+      uint c = daoGroups[gid].candidateIds[i];
+      candidates[i].id = allCandidates[c].id;
+      candidates[i].candType = allCandidates[c].candType;
+      candidates[i].name = allCandidates[c].name;
+      candidates[i].roundSupply = allCandidates[c].roundSupply;
+      candidates[i].roundDuration = allCandidates[c].roundDuration;
+      candidates[i].candidateAddress = allCandidates[c].candidateAddress;
+      candidates[i].votes = allCandidates[c].votes;
+      candidates[i].voted = false;
+      for (uint q=0; q < allCandidates[c].voters.length ; q++ ) {
+        if ( allCandidates[c].voters[q] == msg.sender) {
+          candidates[i].voted = true;
+        }
+      }
+      if ( candidateValid(allCandidates[c].timestamp, gid) ) {
+        candidates[i].timestamp = allCandidates[c].timestamp;
+      } else {
+        candidates[i].timestamp = 0;
+      }
     }
-    return candidatetokens;
+    return candidates;
+  }
+
+  function candidateValid(uint candidateTimestamp, uint gid) private view returns(bool) {
+    return ( ( candidateTimestamp + daoGroups[gid].voteDuration) > block.timestamp );
   }
 
   // vote candidate token and eventually promote the change if quorum is passed
-  function voteCandidateToken(uint gid, uint candTokId, uint vote) public returns(bool) {
+  function voteCandidate(uint gid, uint candTokId, uint vote) public returns(bool) {
     require(isAddressInGroup(gid, msg.sender), "member cannot vote!" );
 
     // find candidate
-    CandidateToken memory candidatetoken;
-    // check it exists in the group
-    uint l = daoGroups[gid].candidateTokenIds.length;
-    bool candidateTokenFound = false; 
-    for (uint i = 0; i < l; i++) {
-      if (daoGroups[gid].candidateTokenIds[i] == candTokId) {
-        candidatetoken = allCandidateTokens[candTokId];
-        candidateTokenFound = true;
-        break;
-      }
-    }
-    require(candidateTokenFound, "candidate token doesn't exists");
-
-    // add voter (this would be the same if we merge)
-    uint m = candidatetoken.voters.length;
-    address[] memory v = new address[](m+1);
-    for (uint i = 0; i < m; i++) {
-      require(candidatetoken.voters[i] != msg.sender, "address already voted!");
-      v[i]=candidatetoken.voters[i];
-    }
-    v[m]=msg.sender;
-    candidatetoken.voters=v;
-
-    // assign vote   
-    if (vote > 0) {
-      candidatetoken.votes += 1;
-    }
-    
-    // write on chain
-    allCandidateTokens[candTokId] = candidatetoken;
-
-    // check if candidate win
-    uint quorum = getQuorum(gid);
-    if ( candidatetoken.votes > quorum ) {
-      if ( candidatetoken.candType == 0 ) {
-        addAddresstoGroup(gid, candidatetoken.candidateAddress);
-      }       
-      if ( ( candidatetoken.candType == 1 ) || ( candidatetoken.candType == 2 ) ) {
-        createGToken(candidatetoken.id, candidatetoken.name, candidatetoken.roundSupply, candidatetoken.roundDuration, (candidatetoken.candType == 2), gid);
-      }
-      if ( candidatetoken.candType == 3 ) {
-        daoGroups[gid].voteThreshold = candidatetoken.id;  
-      } 
-
-/*
-      uint[] memory newCandidateTokenIds;
-      for (uint i = 0; i < l; i++) {
-        if ( daoGroups[gid].candidateTokenIds[i] != candPos ) {
-          newCandidateTokenIds[i] = daoGroups[gid].candidateTokenIds[i];
-        }
-      }
-*/
-      // remove element from candidates array
-      uint[] memory newCandidateTokenIds = new uint[](l-1);
-      uint index;
-      uint k;
-      for (k = 0; k < l; k++) {
-        if ( daoGroups[gid].candidateTokenIds[k] == candTokId ) {
-          index = k;
-          break;
-        }
-      }
-      for (k = 0; k < l; k++) {
-        if ( k < index) {
-          newCandidateTokenIds[k] = daoGroups[gid].candidateTokenIds[k];
-        }
-        if ( k > index) {
-          newCandidateTokenIds[k-1] = daoGroups[gid].candidateTokenIds[k];
-        }
-      }
-      
-      daoGroups[gid].candidateTokenIds = newCandidateTokenIds;
-
-    }
-
-    return true;
-  }
-
-
-
-/*  
-*   Candidates
-*
-*/
-/*
-  function addCandidate(uint _gid, string calldata invitation) public returns(bool) {
-    require( !isAddressInGroup(_gid, msg.sender), "member already present!");
-    require( invitationLinks[invitation] == _gid, "link not authorized" ); 
-    require( _gid != 0, "group not authorized" );
-    
-    // check if candidate already present in current candidate list
-    uint l = daoGroups[_gid].candidatesIds.length;
-    uint[] memory candidatesIds = new uint[](l+1);
-    for (uint i = 0; i < l; i++) {
-      candidatesIds[i] = daoGroups[_gid].candidatesIds[i];
-      require(allCandidates[candidatesIds[i]].candidateAddress != msg.sender, "candidate already added!");
-    }
-    // generate a new candidate
-    address[] memory vot = new address[](0);
-    allCandidates.push(Candidate({
-      candidateAddress: msg.sender,
-      votes: 0,
-      voters: vot
-    }));
-    // update candidate list in the group
-    candidatesIds[l] = allCandidates.length-1;
-    daoGroups[_gid].candidatesIds = candidatesIds;
-
-    return true;
-  }
-
-  function voteCandidate(uint gid, uint candPos, uint vote) public returns(bool) {
-    require(isAddressInGroup(gid, msg.sender), "member cannot vote!" );
-
-    // find candidate 
     Candidate memory candidate;
-    // check if exists
-    uint l = daoGroups[gid].candidatesIds.length;
-    bool candidateFound = false;
+    // check it exists in the group
+    uint l = daoGroups[gid].candidateIds.length;
+    bool candidateFound = false; 
     for (uint i = 0; i < l; i++) {
-      if (daoGroups[gid].candidatesIds[i] == candPos) {
-        candidate = allCandidates[candPos];
+      if (daoGroups[gid].candidateIds[i] == candTokId) {
+        candidate = allCandidates[candTokId];
         candidateFound = true;
         break;
       }
     }
-    require(candidateFound, "candidate address doesn't exists");
+    require(candidateFound, "candidate token doesn't exists");
+    require(candidateValid(candidate.timestamp, gid), "candidate invalid");
 
-    // add voter
+    // add voter (this would be the same if we merge)
     uint m = candidate.voters.length;
     address[] memory v = new address[](m+1);
     for (uint i = 0; i < m; i++) {
@@ -475,62 +467,62 @@ contract KuoriciniDao {
     v[m]=msg.sender;
     candidate.voters=v;
 
-    // assign vote
+    // assign vote   
     if (vote > 0) {
       candidate.votes += 1;
     }
     
     // write on chain
-    allCandidates[candPos] = candidate;    
+    allCandidates[candTokId] = candidate;
 
     // check if candidate win
     uint quorum = getQuorum(gid);
     if ( candidate.votes > quorum ) {
-      addAddresstoGroup(gid, candidate.candidateAddress);
+      if ( candidate.candType == 0 ) {
+        addAddresstoGroup(gid, candidate.candidateAddress);
+      }       
+      if ( ( candidate.candType == 1 ) || ( candidate.candType == 2 ) ) {
+        createGToken(candidate.id, candidate.name, candidate.roundSupply, candidate.roundDuration, (candidate.candType == 2), gid);
+      }
+      if ( candidate.candType == 3 ) {
+        daoGroups[gid].voteThreshold = candidate.id;  
+      } 
+      if ( candidate.candType == 4 ) {
+        daoGroups[gid].voteDuration = candidate.id;  
+      } 
 
-      uint[] memory newCandidatesIds = new uint[](l-1);
+      // remove element from candidates array
+      uint[] memory newCandidateIds = new uint[](l-1);
       uint index;
       uint k;
-      
       for (k = 0; k < l; k++) {
-        if ( daoGroups[gid].candidatesIds[k] == candPos ) {
+        if ( daoGroups[gid].candidateIds[k] == candTokId ) {
           index = k;
           break;
         }
       }
-      
       for (k = 0; k < l; k++) {
         if ( k < index) {
-          newCandidatesIds[k] = daoGroups[gid].candidatesIds[k];
+          newCandidateIds[k] = daoGroups[gid].candidateIds[k];
         }
         if ( k > index) {
-          newCandidatesIds[k-1] = daoGroups[gid].candidatesIds[k];
+          newCandidateIds[k-1] = daoGroups[gid].candidateIds[k];
         }
       }
       
-      daoGroups[gid].candidatesIds = newCandidatesIds;
-    
+      daoGroups[gid].candidateIds = newCandidateIds;
+
     }
+    emit Log(2);
+
     return true;
   }
-  */
 
   function getQuorum(uint gid) private view returns(uint) {
     require(isAddressInGroup(gid, msg.sender));
     return daoGroups[gid].members.length * daoGroups[gid].voteThreshold / 10 ;
   }
-/*
-  function getGroupCandidates(uint gid) public view returns(Candidate[] memory) {
-    require(isAddressInGroup(gid, msg.sender), "member cannot vote!" );
-    uint l = daoGroups[gid].candidatesIds.length;
-    Candidate[] memory candidates = new Candidate[](l);
-    for (uint i = 0; i < l; i++) {
-      uint c = daoGroups[gid].candidatesIds[i];
-      candidates[i] = allCandidates[c];
-    }
-    return candidates;
-  }
-*/
+
 /*
 *
 *   Group Members
@@ -618,31 +610,8 @@ contract KuoriciniDao {
 
   function nameSet(string calldata name) public returns(bool) {
     names[msg.sender]=name;
+    emit Log(3);
     return true;
   }
 
-/*
-*   Round functions that probably should be removed
-*    
-*/
-/*
-  function tellmeNow() public view returns (uint) {
-    return block.timestamp;
-  }
-
-  function resetRound(uint _tokenId, uint _groupId) public returns(bool) {
-    address[] memory _members = daoGroups[_groupId].members;
-    uint l = _members.length;
-    for (uint s = 0; s < l ; s++) {
-      address member = _members[s];
-      uint lu = userTokens[member].length;
-      for (uint w = 0; w < lu; w++) {
-        if (userTokens[member][w].tokenId == _tokenId) {
-          userTokens[member][w].xBalance = allTokens[_tokenId].roundSupply;
-        }
-      }
-    }
-    return true;
-  }
-*/
 }
