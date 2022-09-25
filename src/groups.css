@@ -1,31 +1,36 @@
-.groups-table{
+@font-face {
+    font-family: "Lato";
+    src: url(./font/Lato-Regular.ttf);
+}
+
+.groups-table {
     width: 80%;
     margin-left: 10%;
     border: 1px solid rgb(112, 112, 112);
     border-radius: 1em;
 }
 
-.groups-table thead th{
+.groups-table thead th {
     width: 50%;
     font-size: 1.2rem;
 }
 
-.groups-table tbody td{
+.groups-table tbody td {
     width: 50%;
     text-align: center;
     padding: 0.5em 0em;
     z-index: -1;
 }
 
-.groups-table tbody tr{
+.groups-table tbody tr {
     cursor: pointer;
 }
 
-.groups-table tbody tr:hover{
+.groups-table tbody tr:hover {
     background: rgb(151, 151, 151);
 }
 
-.new-group{
+.new-group {
     width: 80%;
     margin-left: 10%;
     display: flex;
@@ -38,18 +43,19 @@
     border-bottom: 1px solid #000;
 }
 
-#newGroup{
+#newGroup {
     border-radius: 1em;
     border: 0px;
     transition: background ease-out 300ms, color ease-out 300ms;
 }
 
-#newGroup:hover{
+#newGroup:hover {
     background: gray;
     color: white;
 }
 
-.new-group-section, .box-section {
+.new-group-section,
+.box-section {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -62,7 +68,8 @@
     z-index: 5;
 }
 
-.new-group-container, .box-container {
+.new-group-container,
+.box-container {
     width: 40em;
     height: auto;
     background: #fff;
@@ -70,11 +77,30 @@
     padding: 20px;
 }
 
-.new-group-container h2, .box-container h2 {
+.new-group-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.new-group-container input {
+    width: 50%;
+    font-size: 1.3rem;
+}
+
+.new-group-container p {
+    text-align: center;
+    font-size: 1.3rem;
+    margin-top: 0;
+}
+
+.new-group-container h2,
+.box-container h2 {
     text-align: center;
 }
 
-.new-group-container label, .box-container label {
+.box-container label {
     margin-left: 3em;
     font-size: 1.2rem;
 }
@@ -83,7 +109,6 @@
     position: relative;
     width: 80%;
     height: 3em;
-    margin-left: 10%;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -109,4 +134,80 @@
     border: 1px solid #000;
     border-radius: 0.2em;
     cursor: pointer;
+}
+
+.tutorial-space {
+    border-radius: 50%;
+    border: none;
+    height: 10em;
+    width: 20em;
+    background-color: transparent;
+    margin-top: 6em;
+    margin-left: calc(50% - 10em);
+    box-shadow: 0px 0px 0px 10000px rgba(0, 0, 0, 0.6);
+    z-index: 50;
+    opacity: 0;
+    transition: opacity 1000ms ease-in-out;
+}
+
+.tutorial-components img {
+    height: 100%;
+    width: 100%;
+}
+
+.tutorial-container {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 17em;
+    width: 20em;
+    /* outline: 3px solid green; */
+    z-index: 51;
+    bottom: 2em;
+    right: -10em;
+    transition: right 1000ms ease-in-out;
+}
+
+.tutorial-container>.cloud-tutorial {
+    opacity: 0;
+    background-color: #fff;
+    height: 10em;
+    width: 100%;
+    border-radius: 2em;
+    border: none;
+    align-self: flex-start;
+    transition: opacity 1000ms ease-in-out;
+}
+
+.tutorial-container>.cloud-tutorial::after {
+    position: absolute;
+    content: '';
+    top: 8em;
+    left: 11em;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 4em 2em 0 2em;
+    border-color: #fff transparent transparent transparent;
+    transform: rotate(320deg);
+}
+
+/* .tutorial-container>.tutorial-arrow {} */
+
+.tutorial-container>.image-tutorial {
+    height: 5em;
+    width: 7em;
+    align-self: flex-end;
+}
+
+.text-cloud{
+    margin: 0;
+    padding: 0.8em;
+    font-family: "Lato";
+    font-size: 1.3rem;
+}
+
+body {
+    overflow-y: hidden;
 }

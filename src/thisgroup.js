@@ -187,11 +187,11 @@ async function initWeb3() {
         try {
             await window.ethereum.request({ method: "eth_requestAccounts" });;
         } catch (err) {
-            console.log("User denied account access");
+            alert("User denied account access");
         }
     } else {
-        console.log("I cannot connect to your wallet. Make sure you have a Polygon MATIC wallet connected.");
-        //return;
+        alert("I cannot connect to your wallet. Make sure you have a Polygon MATIC wallet connected.");
+        return;
     }
     web3 = new Web3(web3Provider);
     userGas = (sessionStorage.getItem("userGas") == "null" ? null : parseInt(sessionStorage.getItem("userGas")));
@@ -212,6 +212,9 @@ async function readAccount() {
     } catch (err) {
         console.log("Error reading account info!", err);
     };
+    if(user.name===""){
+        window.location="groups.html";
+    }
     document.getElementById("userName").textContent = user.name;
 }
 
@@ -877,9 +880,12 @@ function newTokenPage() {
 
 
         try {
-            const prova = await instance.changeToken(0, nameToken, nToken, timeToken, listGroups[posListGroup], 1, { from: accounts[0], gas: userGas, gasPrice: null });
+            await instance.changeToken(0, nameToken, nToken, timeToken, listGroups[posListGroup], 1, { from: accounts[0], gas: userGas, gasPrice: null });
             document.querySelector(".new-token-section").remove();
         } catch (err) {
+            console.log(err)
+            console.dir(err)
+            console.time(err)
             alert("Transition failed!");
             document.querySelector(".confirm-button").removeAttribute("disabled");
         }
