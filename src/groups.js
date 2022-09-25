@@ -1,7 +1,7 @@
-$(window).on("load", async function () {
-	await initWeb3();
-	await readAccount();
-	await startComponents();
+document.addEventListener("DOMContentLoaded", async function () {
+    await initWeb3();
+    await readAccount();
+    await startComponents();
 });
 
 async function initWeb3() {
