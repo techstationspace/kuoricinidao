@@ -1,11 +1,11 @@
 body {
     margin: 0;
     padding: 0;
-    background: linear-gradient(180deg, #FBCAFF 22.92%, rgba(59, 207, 239, 0.88) 49.48%, #6459A7 100%);    
+    background: linear-gradient(180deg, #FBCAFF 22.92%, rgba(59, 207, 239, 0.88) 49.48%, #6459A7 100%);
     font-family: 'Arial';
     font-style: normal;
-    font-weight: 500;   
-    overflow-x: hidden; 
+    font-weight: 500;
+    overflow-x: hidden;
 }
 
 header {
@@ -22,7 +22,83 @@ header {
     z-index: 1;
 }
 
-header ul {
+.navbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+    gap: 1em;
+}
+
+.nav-normal {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.nav-section-txt {
+    color: rgb(255, 255, 255);
+    font-size: 1.5rem;
+    text-transform: uppercase;
+}
+
+.nav-normal .nav-section-link {
+    color: rgb(255, 255, 255);
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.nav-normal .nav-dropdown {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(255, 255, 255, 0.8);
+    transform: translateX(-1em);
+    border-radius: 0.6em;
+    height: 0;
+    overflow-y: hidden;
+    transition: height ease-out 300ms;
+}
+
+.nav-normal .nav-dropdown-link {
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+    font-size: 1.5rem;
+    text-transform: none;
+    padding: 0.5em 1em 0.5em 1em;
+    transition: background ease-out 400ms;
+}
+
+.nav-normal .nav-dropdown-link:hover {
+    background: rgb(187, 187, 187);
+}
+
+.nav-normal:hover .dropdown-groups {
+    height: 2.1em;
+}
+
+.nav-normal:hover .dropdown-profile {
+    height: 4.3em;
+}
+
+.nav-collapsed {
+    display: none;
+    position: absolute;
+    z-index: 100;
+    height: 100vh;
+    width: 50vw;
+    top: 0;
+    left: 50vw;
+    background-color: rgb(0, 0, 0);
+    opacity: 0.6;
+    flex-direction: column;
+}
+
+.nav-switch{
+    padding: 0 0.3em 0 0.3em;
+}
+
+/* header ul {
     margin: 0em;
     padding: 0em;
     list-style-type: none;
@@ -80,7 +156,7 @@ header li:hover .profile-navbar{
 
 header li:hover .this-group-navbar{
     height: 13.5em;
-}
+} */
 
 .nothing {
     position: relative;
@@ -88,7 +164,7 @@ header li:hover .this-group-navbar{
     width: 100%;
 }
 
-footer{
+footer {
     position: relative;
     height: 7em;
     width: 100%;
@@ -99,44 +175,44 @@ footer{
     justify-content: center;
 }
 
-footer p{
+footer p {
     color: #fff;
     font-size: 1rem;
 }
 
-.link{
+.link {
     padding: 0em;
     list-style-type: none;
 }
 
-.link li{
+.link li {
     display: inline;
     padding: 1em;
     color: #fff;
 }
 
-.link li a{
+.link li a {
     color: #fff;
     text-decoration: none;
     font-size: 1rem;
 }
 
-main{
+main {
     position: relative;
     min-height: 90vh;
     height: auto;
     width: 100%;
 }
 
-.logo{
+.logo {
     height: 60px;
 }
 
-.title{
+.title {
     text-align: center;
 }
 
-.user{
+.user {
     color: #fff;
     font-size: 1.3rem;
 }
@@ -145,18 +221,69 @@ main{
 
 @media screen and (max-width: 800px) {
     html {
-        font-size: 12px;
+        font-size: 0.8rem;
     }
-    header {
+
+    .navbar {
+        height: 100vh;
+    }
+
+    .nav-normal {
+        display: none;
+    }
+
+    .nav-collapsed {
+        display: flex;
+    }
+
+    .nav-section-txt {
+        color: rgb(255, 255, 255);
+        font-size: 1.5rem;
+        text-transform: uppercase;
+    }
+
+    .nav-section-link {
+        color: rgb(255, 255, 255);
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        text-decoration: none;
+    }
+
+    .nav-dropdown {
+        position: absolute;
+        display: flex;
         flex-direction: column;
-        height: 10em;
+        background-color: rgb(255, 255, 255, 0.8);
+        transform: translateX(-1em);
+        border-radius: 0.6em;
+        height: 0;
+        overflow-y: hidden;
+        transition: height ease-out 300ms;
     }
-    .nothing {
-        height: 10em;
+
+    .nav-dropdown-link {
+        color: rgb(0, 0, 0);
+        text-decoration: none;
+        font-size: 1.5rem;
+        text-transform: none;
+        padding: 0.5em 1em 0.5em 1em;
+        transition: background ease-out 400ms;
+    }
+
+    .nav-dropdown-link:hover {
+        background: rgb(187, 187, 187);
+    }
+
+    .nav-normal:hover .dropdown-groups {
+        height: 2.1em;
+    }
+
+    .nav-normal:hover .dropdown-profile {
+        height: 4.3em;
     }
 }
 
-#transition{
+#transition {
     position: fixed;
     top: 0;
     left: 0;
