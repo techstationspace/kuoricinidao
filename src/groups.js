@@ -41,6 +41,7 @@ async function readAccount() {
   } catch (err) {
     alert("Error reading account info!", err);
   }
+  document.getElementById("userName").textContent = user.name;
 //   document.getElementById("userName").textContent = user.name;
 //   if (user.name === "goldmark") {
 //     tutorial();

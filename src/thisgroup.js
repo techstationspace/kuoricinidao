@@ -224,7 +224,11 @@ async function startComponents() {
         return console.log("fictional group");
     }
     group = await instance.getGroup(listGroups[posListGroup], { from: accounts[0] });
-    document.getElementById("groupName").textContent = group.name;
+    const groupNameSet=document.querySelectorAll("#groupName");
+    const groupNameSetLength=groupNameSet.length;
+    for(let i=0; i<groupNameSetLength; i++){
+        groupNameSet[i].textContent = group.name;
+    }
     myBalance();
     tokenPage();
 

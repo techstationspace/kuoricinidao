@@ -22,20 +22,18 @@ header {
     z-index: 1;
 }
 
-.navbar {
+.nav-normal {
+    height: 100%;
+    width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: left;
-    gap: 1em;
+    gap: 4em;
+    padding-right: 2em;
 }
 
-.nav-normal {
-    padding-left: 1em;
-    padding-right: 1em;
-}
-
-.nav-section-txt {
+.nav-normal .nav-section-txt {
     color: rgb(255, 255, 255);
     font-size: 1.5rem;
     text-transform: uppercase;
@@ -73,29 +71,113 @@ header {
     background: rgb(187, 187, 187);
 }
 
-.nav-normal:hover .dropdown-groups {
+.nav-normal .nav-section-txt:hover .dropdown-groups {
     height: 2.1em;
 }
 
-.nav-normal:hover .dropdown-profile {
+.nav-normal .nav-section-txt:hover .dropdown-profile {
     height: 4.3em;
 }
 
-.nav-collapsed {
-    display: none;
-    position: absolute;
-    z-index: 100;
-    height: 100vh;
-    width: 50vw;
-    top: 0;
-    left: 50vw;
-    background-color: rgb(0, 0, 0);
-    opacity: 0.6;
-    flex-direction: column;
+.nav-normal .nav-section-txt:hover .dropdown-thisgroup {
+    height: 8.6em;
 }
 
-.nav-switch{
+.nav-collapsed {
+    display: flex;
+    position: absolute;
+    z-index: 1000;
+    height: 100vh;
+    width: 40vw;
+    top: 0;
+    right: -50vw;
+    background-color: rgb(0, 0, 0);
+    opacity: 1;
+    flex-direction: row;
+    gap: 1em;
+    transition: right ease-out 400ms;
+}
+
+.content-collapsed {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    margin-top: 1em;
+}
+
+.close-collapsed {
+    color: #ffffff;
+    font-size: 2rem;
+    width: 3em;
+    margin-left: 1em;
+    margin-top: 1em;
+}
+
+.nav-collapsed-switch {
+    display: none;
+    margin-right: 2em;
+    height: 3em;
+    width: 3em;
+    color: rgb(255, 255, 255);
+}
+
+.nav-collapsed-switch>img {
+    height: 100%;
+    width: 100%;
+}
+
+.nav-switch {
     padding: 0 0.3em 0 0.3em;
+    font-size: 2rem;
+}
+
+.nav-collapsed .nav-section-txt,
+.nav-collapsed .nav-section-link {
+    color: rgb(255, 255, 255);
+    font-size: 2rem;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.nav-collapsed .nav-dropdown {
+    width: 100%;
+    margin-top: 0.3em;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(255, 255, 255, 1);
+    transform: translateX(-1em);
+    height: 0;
+    overflow-y: hidden;
+    transition: height ease-out 300ms;
+}
+
+.nav-collapsed .nav-dropdown-link {
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+    font-size: 1.8rem;
+    text-transform: none;
+    padding: 0.5em 1em 0.5em 1em;
+    transition: background ease-out 400ms;
+}
+
+.dropdown-groups[data-nav-dropdown-col="active"] {
+    height: 1.9em;
+}
+
+.dropdown-profile[data-nav-dropdown-col="active"] {
+    height: 3.9em;
+}
+
+.dropdown-thisgroup[data-nav-dropdown-col="active"] {
+    height: 7.7em;
+}
+
+.dropdown-groups[data-nav-dropdown-col="inactive"],
+.dropdown-profile[data-nav-dropdown-col="inactive"],
+.dropdown-thisgroup[data-nav-dropdown-col="inactive"] {
+    height: 0;
 }
 
 /* header ul {
@@ -219,67 +301,17 @@ main {
 
 
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 60em) {
     html {
         font-size: 0.8rem;
-    }
-
-    .navbar {
-        height: 100vh;
     }
 
     .nav-normal {
         display: none;
     }
 
-    .nav-collapsed {
-        display: flex;
-    }
-
-    .nav-section-txt {
-        color: rgb(255, 255, 255);
-        font-size: 1.5rem;
-        text-transform: uppercase;
-    }
-
-    .nav-section-link {
-        color: rgb(255, 255, 255);
-        font-size: 1.5rem;
-        text-transform: uppercase;
-        text-decoration: none;
-    }
-
-    .nav-dropdown {
-        position: absolute;
-        display: flex;
-        flex-direction: column;
-        background-color: rgb(255, 255, 255, 0.8);
-        transform: translateX(-1em);
-        border-radius: 0.6em;
-        height: 0;
-        overflow-y: hidden;
-        transition: height ease-out 300ms;
-    }
-
-    .nav-dropdown-link {
-        color: rgb(0, 0, 0);
-        text-decoration: none;
-        font-size: 1.5rem;
-        text-transform: none;
-        padding: 0.5em 1em 0.5em 1em;
-        transition: background ease-out 400ms;
-    }
-
-    .nav-dropdown-link:hover {
-        background: rgb(187, 187, 187);
-    }
-
-    .nav-normal:hover .dropdown-groups {
-        height: 2.1em;
-    }
-
-    .nav-normal:hover .dropdown-profile {
-        height: 4.3em;
+    .nav-collapsed-switch {
+        display: block;
     }
 }
 

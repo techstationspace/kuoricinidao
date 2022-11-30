@@ -10,6 +10,7 @@
     <script src="web3.min.js"></script>
     <script src="truffle-contract.min.js"></script>
     <script src="jquery.min.js"></script>
+    <script src="nav.js" defer></script>
     <script src="profile.js" defer></script>
     <title>KuoriciniDAO</title>
 </head>
@@ -21,23 +22,39 @@
             <span id="userImage"></span>
             <span id="userName"></span>
         </div>
-        <nav>
-            <ul>
-                <li>
-                    <a href="groups.html">GROUPS</a>
-                    <ul class="groups-navbar">
-                        <li><a href="groups.html">List groups</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="profile.html">PROFILE</a>
-                    <ul class="profile-navbar">
-                        <li><a href="profile.html">Settings</a></li>
-                        <li><a href="index.html">Disconnect</a></li>
-                    </ul>
-                </li>
-                <li><a href="help.html">?</a></li>
-            </ul>
+        <nav class="navbar">
+            <span class="nav-collapsed-switch"><img src="./images/icon/navbar-icon.svg"></span>
+            <div class="nav-collapsed">
+                <span class="close-collapsed">X</span>
+                <div class="content-collapsed">
+                    <div class="nav-section-txt" data-nav-info="groups">groups<span class="nav-switch">+</span>
+                        <div class="nav-dropdown dropdown-groups" data-nav-dropdown-col="inactive">
+                            <a class="nav-dropdown-link" href="groups.html">List groups</a>
+                        </div>
+                    </div>
+                    <div class="nav-section-txt" data-nav-info="profile">profile<span class="nav-switch">+</span>
+                        <div class="nav-dropdown dropdown-profile" data-nav-dropdown-col="inactive">
+                            <a class="nav-dropdown-link" href="profile.html">Settings</a>
+                            <a class="nav-dropdown-link" href="index.html">Disconnect</a>
+                        </div>
+                    </div>
+                    <div class=""><a class="nav-section-link" href="help.html">?</a></div>
+                </div>
+            </div>
+            <div class="nav-normal">
+                <div class="nav-section-txt">groups
+                    <div class="nav-dropdown dropdown-groups">
+                        <a class="nav-dropdown-link" href="groups.html">List groups</a>
+                    </div>
+                </div>
+                <div class="nav-section-txt">profile
+                    <div class="nav-dropdown dropdown-profile">
+                        <a class="nav-dropdown-link" href="profile.html">Settings</a>
+                        <a class="nav-dropdown-link" href="index.html">Disconnect</a>
+                    </div>
+                </div>
+                <div><a class="nav-section-link" href="help.html">?</a></div>
+            </div>
         </nav>
     </header>
     <main>
@@ -63,7 +80,8 @@
                             Name:
                         </td>
                         <td>
-                            <div class="profile-name-container"><span id="profileName"></span><button class="change-name">Change name</button></div>
+                            <div class="profile-name-container"><span id="profileName"></span><button
+                                    class="change-name">Change name</button></div>
                         </td>
                     </tr>
                 </tbody>
